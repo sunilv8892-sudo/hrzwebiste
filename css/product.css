@@ -1,0 +1,383 @@
+/* =============================================
+   HRz PITSTOP – CSS Product Cards, Catalog & Details
+   ============================================= */
+
+/* Catalog Controls Bar */
+.catalog-header-bar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.active-bike-filter-note {
+  color: var(--color-green);
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.sort-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border);
+  padding: 6px 14px;
+  border-radius: var(--radius-md);
+}
+
+.sort-wrapper select {
+  background: var(--color-surface);
+  color: #fff;
+  border: 1px solid var(--color-border);
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  outline: none;
+}
+
+.category-filter-pills {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.filter-pill {
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border);
+  color: var(--color-ink-muted);
+  font-weight: 600;
+  padding: 8px 18px;
+  border-radius: 99px;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+
+.filter-pill:hover { background: var(--color-card-hover); color: #fff; }
+.filter-pill.active { background: var(--color-accent); border-color: var(--color-accent); color: #fff !important; }
+
+/* Product Grid */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.product-card {
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all var(--transition-normal);
+  position: relative;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-border-hover);
+  box-shadow: var(--shadow-lg);
+  background: var(--color-card-hover);
+}
+
+.product-card-media {
+  position: relative;
+  background: #0e1017;
+  padding: 16px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.product-card-media img {
+  height: 180px;
+  width: 100%;
+  object-fit: contain;
+  transition: transform var(--transition-smooth);
+}
+
+.product-card:hover .product-card-media img {
+  transform: scale(1.05);
+}
+
+.product-badge {
+  position: absolute;
+  top: 12px; left: 12px;
+  background: var(--color-accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  z-index: 2;
+}
+
+.wishlist-toggle-btn {
+  position: absolute;
+  top: 12px; right: 12px;
+  background: rgba(18,21,29,0.7);
+  border: 1px solid var(--color-border);
+  border-radius: 99px;
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 2;
+  transition: all var(--transition-fast);
+}
+
+.fitment-confidence-tag {
+  position: absolute;
+  bottom: 8px; left: 8px; right: 8px;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+  backdrop-filter: blur(6px);
+}
+
+.fitment-confidence-tag.verified {
+  background: rgba(16, 185, 129, 0.85);
+  color: #ffffff;
+}
+
+.fitment-confidence-tag.universal {
+  background: rgba(30, 41, 59, 0.85);
+  color: var(--color-ink-muted);
+}
+
+.product-card-content {
+  padding: 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-category-strip {
+  font-size: 11px;
+  color: var(--color-ink-muted);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.product-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+.product-title:hover { color: var(--color-accent-light); }
+
+.card-social-proof {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  font-size: 12px;
+}
+
+.rating-stars { color: var(--color-gold); font-size: 14px; }
+.rating-num { color: #ffffff; margin-left: 4px; }
+.riders-installed-count { color: var(--color-ink-muted); font-size: 11px; }
+
+.price-action-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.current-price {
+  font-size: 18px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.original-price {
+  font-size: 13px;
+  color: var(--color-ink-muted);
+  text-decoration: line-through;
+  margin-left: 6px;
+}
+
+/* Product Detail Page Layout */
+.product-detail-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 36px;
+  margin-top: 20px;
+}
+
+@media (max-width: 860px) {
+  .product-detail-layout { grid-template-columns: 1fr; }
+}
+
+.main-image-frame {
+  background: #0e1017;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  text-align: center;
+}
+
+.main-image-frame img {
+  max-height: 380px;
+  margin: 0 auto;
+  object-fit: contain;
+}
+
+.thumbnail-strip {
+  display: flex;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.thumb-btn {
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 6px;
+  width: 64px; height: 64px;
+}
+
+.thumb-btn.active { border-color: var(--color-accent); }
+.thumb-btn img { width: 100%; height: 100%; object-fit: contain; }
+
+.fitment-guarantee-banner {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid var(--color-green);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.fitment-guarantee-banner.universal-fit {
+  background: rgba(255, 183, 3, 0.1);
+  border-color: var(--color-gold);
+}
+
+.fitment-guarantee-banner .banner-icon { font-size: 24px; }
+.fitment-guarantee-banner p { font-size: 13px; color: var(--color-ink-muted); margin-top: 4px; }
+
+.detail-trust-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.trust-pill {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.purchase-actions-row {
+  display: flex;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.rider-proof-section {
+  margin-top: 48px;
+  border-top: 1px solid var(--color-border);
+  padding-top: 36px;
+}
+
+.install-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  margin: 16px 0 32px 0;
+}
+
+.install-card {
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.install-card img { height: 140px; width: 100%; object-fit: cover; }
+.install-caption { padding: 10px; font-size: 12px; }
+.install-caption strong { display: block; }
+.install-caption small { color: var(--color-ink-muted); }
+
+.review-card {
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-bottom: 14px;
+}
+
+.review-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.review-bike-tag {
+  background: var(--color-green-bg);
+  color: var(--color-green);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 99px;
+}
+
+/* Orders History List */
+.orders-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.order-card {
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+}
+
+.order-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+}
+
+.order-bike-tag {
+  background: rgba(255,255,255,0.05);
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.order-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding-top: 12px;
+  margin-top: 12px;
+  font-size: 13px;
+}

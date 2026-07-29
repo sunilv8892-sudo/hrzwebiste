@@ -1,0 +1,56 @@
+/* =============================================
+   HRz PITSTOP – CSS Responsive & Mobile Adaptations
+   ============================================= */
+
+@media (max-width: 768px) {
+  .topbar-brand-row {
+    flex-wrap: wrap;
+  }
+  
+  .header-search-container {
+    order: 3;
+    max-width: 100%;
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  .bike-chip-button {
+    padding: 6px 8px;
+  }
+
+  .bike-chip-info small {
+    display: none;
+  }
+
+  .hero-bike-action-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero-select-bike-btn {
+    width: 100%;
+  }
+
+  .cart-drawer {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .brand-title {
+    font-size: 17px;
+  }
+
+  .brand-logo-icon {
+    width: 36px; height: 36px;
+    font-size: 15px;
+  }
+
+  .rider-hero {
+    padding: 24px 16px;
+  }
+
+  .product-grid {
+    grid-template-columns: 1fr;
+  }
+}

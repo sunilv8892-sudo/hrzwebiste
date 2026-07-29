@@ -1,0 +1,213 @@
+/* =============================================
+   HRz PITSTOP – CSS Admin CMS Dashboard & Hero Manager
+   ============================================= */
+
+.admin-cms-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.admin-role-switch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border);
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+}
+
+.admin-role-switch select {
+  background: var(--color-surface);
+  color: #fff;
+  border: 1px solid var(--color-border);
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+}
+
+.admin-tabs-bar {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 24px;
+  overflow-x: auto;
+}
+
+.admin-tab-btn {
+  background: none;
+  border: none;
+  color: var(--color-ink-muted);
+  font-weight: 700;
+  padding: 12px 20px;
+  border-bottom: 3px solid transparent;
+  white-space: nowrap;
+}
+
+.admin-tab-btn.active {
+  color: var(--color-accent-light);
+  border-bottom-color: var(--color-accent);
+}
+
+.cms-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+/* Hero CMS Card & Form */
+.hero-cms-card {
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+}
+
+.hero-preview-box {
+  margin-top: 24px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  background: var(--color-surface);
+}
+
+.hero-preview-box h4 {
+  font-size: 13px;
+  color: var(--color-ink-muted);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.image-preset-picker {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.image-preset-picker .label {
+  font-size: 12px;
+  color: var(--color-ink-muted);
+}
+
+.preset-img-btn {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+}
+.preset-img-btn:hover { border-color: var(--color-accent); }
+
+.preset-thumbs-row {
+  display: flex;
+  gap: 8px;
+}
+
+.thumb-pick-btn {
+  width: 48px; height: 48px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 2px solid var(--color-border);
+  cursor: pointer;
+  background: #0e1017;
+}
+
+.thumb-pick-btn:hover { border-color: var(--color-accent); }
+
+.admin-table-wrapper {
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 14px;
+}
+
+.admin-table th, .admin-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.admin-table th {
+  background: var(--color-surface);
+  color: var(--color-ink-muted);
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.cat-tag {
+  background: rgba(255,255,255,0.06);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.small-action-btn {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+}
+.small-action-btn.danger { color: #ef4444; border-color: rgba(239,68,68,0.4); }
+
+.reviews-moderation-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.moderation-card {
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+}
+
+.moderation-card.pending { border-left: 4px solid var(--color-gold); }
+.moderation-card.published { border-left: 4px solid var(--color-green); }
+
+.csv-tools-card, .audit-logs-card {
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+}
+
+.csv-actions-row {
+  display: flex;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.audit-log-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.log-item {
+  background: var(--color-surface);
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  border: 1px solid rgba(255,255,255,0.04);
+}
+
+.log-time { color: var(--color-accent-light); font-weight: 700; margin-right: 8px; }
