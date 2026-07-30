@@ -196,27 +196,15 @@ class App {
     container.innerHTML = `
       <!-- Hero -->
       <section class="hero">
-        <img src="${heroBanner.bgImage || 'images/hero-rider.png'}" alt="Hero Banner" />
+        <img src="${heroBanner.bgImage || 'images/hero-rider.png'}" alt="Motorcyclist and sport motorcycle in a dark garage" />
         <div class="hero-shade"></div>
         <div class="hero-copy">
-          <p class="eyebrow red">${heroBanner.badge || 'Built for every mile'}</p>
-          <h1 class="hero-headline-custom">${heroBanner.title || 'GEAR UP. <em>GO FAR.</em>'}</h1>
+          <p class="eyebrow">${heroBanner.badge || 'Built for every mile'}</p>
+          <h1>${heroBanner.title || 'GEAR UP.<br /><em>GO FAR.</em>'}</h1>
           <p class="hero-text">${heroBanner.subtitle || 'Purpose-built protection and performance for riders who never take the easy road.'}</p>
-
-          <div class="hero-bike-action-card">
-            <div class="active-bike-summary">
-              <span class="bike-icon">🏍️</span>
-              <div>
-                <small>Currently Shopping For:</small>
-                <strong>${activeBike ? activeBike.brand + " " + activeBike.model + " (" + activeBike.variant + ")" : "No Bike Selected"}</strong>
-              </div>
-            </div>
-            <button class="button button-red hero-select-bike-btn" id="heroSelectBikeBtn" style="position: relative;">
-              ${!activeBike ? '<div class="tutorial-pointer">Start Here</div>' : ''}
-              ${activeBike ? "Change Motorcycle" : "Select Your Motorcycle"} <span>→</span>
-            </button>
-          </div>
+          <a class="button button-red" href="#shop">Shop the collection <span>→</span></a>
         </div>
+        <a class="scroll" href="#categories">SCROLL TO EXPLORE <span></span></a>
       </section>
 
       <!-- Benefits Strip -->
@@ -395,9 +383,6 @@ class App {
     `;
 
     // Bind events
-    const selectBtn = container.querySelector("#heroSelectBikeBtn");
-    if (selectBtn) selectBtn.onclick = () => window.HRz.Garage.openBikeModal();
-
     catalog.bindCardEvents(container);
 
     // Filter buttons

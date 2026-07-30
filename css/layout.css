@@ -46,10 +46,23 @@
   font-size: 15px;
   margin: 28px 0;
 }
-.hero-headline-custom {
-  font-size: clamp(40px, 5.5vw, 76px);
-  margin-bottom: 16px;
-  line-height: 1;
+.scroll {
+  position: absolute;
+  bottom: 30px;
+  left: 4.5vw;
+  font-family: 'Barlow Condensed';
+  font-size: 11px;
+  letter-spacing: 1.6px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.scroll span {
+  display: block;
+  width: 53px;
+  height: 1px;
+  background: #fff;
 }
 
 /* Hero Bike Action Card (overlaid on hero) */
