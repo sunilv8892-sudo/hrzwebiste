@@ -196,14 +196,15 @@ class App {
     container.innerHTML = `
       <!-- Hero -->
       <section class="hero">
-        <img src="${heroBanner.bgImage || 'images/hero-rider.png'}" alt="Motorcyclist and sport motorcycle in a dark garage" />
+        <img src="images/hero-rider.png" alt="Motorcyclist and sport motorcycle in a dark garage" />
         <div class="hero-shade"></div>
         <div class="hero-copy">
-          <p class="eyebrow">${heroBanner.badge || 'Built for every mile'}</p>
-          <h1>${heroBanner.title || 'GEAR UP.<br /><em>GO FAR.</em>'}</h1>
-          <p class="hero-text">${heroBanner.subtitle || 'Purpose-built protection and performance for riders who never take the easy road.'}</p>
-          <a class="button button-red" href="#catalog">Shop the collection <span>→</span></a>
+          <p class="eyebrow">Built for every mile</p>
+          <h1>GEAR UP.<br /><em>GO FAR.</em></h1>
+          <p class="hero-text">Purpose-built protection and performance for riders who never take the easy road.</p>
+          <a class="button button-red" href="#shop">Shop the collection <span>→</span></a>
         </div>
+        <a class="scroll" href="#categories">SCROLL TO EXPLORE <span></span></a>
       </section>
 
       <!-- Benefits Strip -->

@@ -161,6 +161,10 @@ html, body {
     top: 51%;
     transform: translateY(-32%);
   }
+  .scroll {
+    display: none;
+  }
+
 
   /* ---- Benefits Strip ---- */
   .benefits { grid-template-columns: 1fr 1fr; padding: 10px 4vw; gap: 0; }
