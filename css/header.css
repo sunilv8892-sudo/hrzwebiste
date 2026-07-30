@@ -65,8 +65,12 @@
   background: transparent;
   color: white;
   cursor: pointer;
-  font-size: 25px;
-  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
   transition: .2s;
 }
 .icon-button:hover { color: var(--red2); }
