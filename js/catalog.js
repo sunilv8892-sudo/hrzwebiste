@@ -1,5 +1,6 @@
 /* =============================================
    HRz PITSTOP – Product Catalog & Filtering Module
+   Adapted for editorial design
    ============================================= */
 
 window.HRz = window.HRz || {};
@@ -42,27 +43,28 @@ class CatalogView {
     const categories = ["All", "Protection", "Helmets", "Lights", "Luggage", "Touring"];
 
     container.innerHTML = `
-      <div class="catalog-header-bar">
-        <div>
-          <p class="eyebrow">Guaranteed Motorcycle Parts</p>
-          <h2>Product Catalog</h2>
-          ${activeBike ? `<p class="active-bike-filter-note">Showing parts compatible with <strong>${activeBike.brand} ${activeBike.model} (${activeBike.variant})</strong></p>` : ""}
-        </div>
+      <div class="breadcrumb-trail">
+        <a href="#home">Home</a> / <span class="current">Shop All</span>
+      </div>
 
-        <div class="catalog-controls">
-          <div class="sort-wrapper">
-            <label for="catalogSort">Sort By:</label>
-            <select id="catalogSort">
-              <option value="featured" ${this.sortBy === "featured" ? "selected" : ""}>Featured</option>
-              <option value="price-low" ${this.sortBy === "price-low" ? "selected" : ""}>Price: Low to High</option>
-              <option value="price-high" ${this.sortBy === "price-high" ? "selected" : ""}>Price: High to Low</option>
-              <option value="rating" ${this.sortBy === "rating" ? "selected" : ""}>Customer Rating</option>
-            </select>
-          </div>
+      <div class="view-header">
+        <div>
+          <p class="eyebrow red">Guaranteed Motorcycle Parts</p>
+          <h2>PRODUCT <em>CATALOG</em></h2>
+          ${activeBike ? `<p class="active-bike-filter-note" style="margin-top:8px;">Showing parts compatible with <strong>${activeBike.brand} ${activeBike.model} (${activeBike.variant})</strong></p>` : ""}
+        </div>
+        <div class="sort-wrapper">
+          <label for="catalogSort">Sort By:</label>
+          <select id="catalogSort">
+            <option value="featured" ${this.sortBy === "featured" ? "selected" : ""}>Featured</option>
+            <option value="price-low" ${this.sortBy === "price-low" ? "selected" : ""}>Price: Low to High</option>
+            <option value="price-high" ${this.sortBy === "price-high" ? "selected" : ""}>Price: High to Low</option>
+            <option value="rating" ${this.sortBy === "rating" ? "selected" : ""}>Customer Rating</option>
+          </select>
         </div>
       </div>
 
-      <div class="category-filter-pills">
+      <div class="category-filter-pills" style="padding:0 7vw;">
         ${categories.map(cat => `
           <button class="filter-pill ${this.activeCategory === cat ? "active" : ""}" data-category="${cat}">
             ${cat}
@@ -75,10 +77,10 @@ class CatalogView {
           <div class="empty-icon">🔍</div>
           <h3>No Compatible Parts Found</h3>
           <p>We couldn't find any products in "${this.activeCategory}" matching your criteria for ${activeBike ? activeBike.brand + " " + activeBike.model : "this filter"}.</p>
-          <button class="secondary-button" id="resetCatalogFiltersBtn">Reset All Filters</button>
+          <button class="accent-button" id="resetCatalogFiltersBtn">Reset All Filters</button>
         </div>
       ` : `
-        <div class="product-grid">
+        <div class="product-grid inner-section">
           ${products.map(p => this.renderProductCard(p, activeBike, wishlist)).join("")}
         </div>
       `}
@@ -117,14 +119,13 @@ class CatalogView {
     const utils = window.HRz.Utils;
     
     return `
-      <div class="product-card" data-id="${p.id}" style="cursor:pointer;">
+      <div class="product-card reveal" data-id="${p.id}" style="cursor:pointer;">
         <div class="product-card-media">
           ${p.badge ? `<span class="product-badge">${p.badge}</span>` : ""}
           <button class="wishlist-toggle-btn ${isWishlisted ? "active" : ""}" data-id="${p.id}" aria-label="Toggle wishlist">
             ${isWishlisted ? "❤️" : "🤍"}
           </button>
-          <img src="${p.image}" alt="${p.name}" loading="lazy" width="300" height="220" onerror="this.src='images/helmet_product.png'" />
-          
+          <img src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.src='images/helmet_product.png'" />
           ${fitment ? `
             <div class="fitment-confidence-tag verified">
               <span class="fit-icon">✓</span> Fits ${activeBike.model} (${fitment.fitType})
@@ -135,22 +136,18 @@ class CatalogView {
             </div>
           `}
         </div>
-
         <div class="product-card-content">
           <div class="card-category-strip">${p.category} · SKU: ${p.sku}</div>
           <h3 class="product-title">${p.name}</h3>
-          
           <div class="card-social-proof">
             ${utils.renderStarRating(p.rating)}
             <span class="riders-installed-count">Installed by <strong>${p.ridersInstalled || 120}+</strong> Riders</span>
           </div>
-
           <div class="price-action-row">
             <div class="price-lockup">
               <span class="current-price">${utils.formatCurrency(p.price)}</span>
               ${p.originalPrice ? `<span class="original-price">${utils.formatCurrency(p.originalPrice)}</span>` : ""}
             </div>
-
             <button class="accent-button add-to-cart-btn" data-id="${p.id}">
               + Bag
             </button>
@@ -164,7 +161,7 @@ class CatalogView {
     container.querySelectorAll(".product-card").forEach(card => {
       card.onclick = (e) => {
         if (e.target.closest(".wishlist-toggle-btn") || e.target.closest(".add-to-cart-btn")) {
-          return; // Ignore card click if button was clicked
+          return;
         }
         const id = card.dataset.id;
         if (id) {

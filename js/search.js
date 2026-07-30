@@ -1,5 +1,6 @@
 /* =============================================
-   HRz PITSTOP – Header Search & Autocomplete Module
+   HRz PITSTOP – Search Panel & Autocomplete Module
+   Adapted for editorial design search panel
    ============================================= */
 
 window.HRz = window.HRz || {};
@@ -7,7 +8,6 @@ window.HRz = window.HRz || {};
 class SearchEngine {
   static init() {
     const input = document.getElementById("globalSearch");
-    const goBtn = document.getElementById("globalSearchGo");
     const popover = document.getElementById("searchAutocomplete");
 
     if (!input || !popover) return;
@@ -15,7 +15,6 @@ class SearchEngine {
     const handleSearch = window.HRz.Utils.debounce(() => {
       const q = input.value.trim().toLowerCase();
       if (q.length < 2) {
-        popover.classList.remove("show");
         popover.innerHTML = "";
         return;
       }
@@ -30,7 +29,7 @@ class SearchEngine {
       ).slice(0, 5);
 
       if (matches.length === 0) {
-        popover.innerHTML = `<div class="autocomplete-no-results">No parts matching "${q}"</div>`;
+        popover.innerHTML = `<p style="padding:14px;color:#666;">No gear found. Try crash guard or helmet.</p>`;
       } else {
         popover.innerHTML = matches.map(p => `
           <div class="autocomplete-item" data-id="${p.id}">
@@ -43,13 +42,14 @@ class SearchEngine {
         `).join("");
       }
 
-      popover.classList.add("show");
-
       popover.querySelectorAll(".autocomplete-item").forEach(item => {
         item.onclick = () => {
           const id = item.dataset.id;
-          popover.classList.remove("show");
+          popover.innerHTML = "";
           input.value = "";
+          // Close search panel
+          document.getElementById("searchPanel")?.classList.remove("open");
+          document.getElementById("overlay")?.classList.remove("open");
           window.location.hash = `product?id=${id}`;
         };
       });
@@ -57,19 +57,16 @@ class SearchEngine {
 
     input.addEventListener("input", handleSearch);
 
-    if (goBtn) {
-      goBtn.onclick = () => {
+    // Enter key to go to catalog search
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
         const q = input.value.trim();
         if (q) {
-          popover.classList.remove("show");
+          popover.innerHTML = "";
+          document.getElementById("searchPanel")?.classList.remove("open");
+          document.getElementById("overlay")?.classList.remove("open");
           window.location.hash = `catalog?search=${encodeURIComponent(q)}`;
         }
-      };
-    }
-
-    document.addEventListener("click", (e) => {
-      if (!input.contains(e.target) && !popover.contains(e.target)) {
-        popover.classList.remove("show");
       }
     });
   }

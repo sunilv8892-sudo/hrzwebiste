@@ -89,6 +89,21 @@ class ProductDetailView {
             <div class="trust-pill"><span class="icon">🔒</span> ${product.warranty || "12 Months Warranty"}</div>
           </div>
 
+          ${product.description ? `
+            <div class="product-description-box" style="margin-top:24px; color:var(--mute); font-size:14px; line-height:1.6;">
+              <p>${product.description}</p>
+            </div>
+          ` : ""}
+
+          ${product.sizes ? `
+            <div class="product-size-box" style="margin-top:20px;">
+              <label style="display:block; font-family:'Barlow Condensed'; font-size:18px; margin-bottom:8px; text-transform:uppercase;">Select Size</label>
+              <select class="size-select" style="width:100%; max-width:200px; padding:10px; background:#111; color:#fff; border:1px solid #333; outline:none; font-family: 'DM Sans', sans-serif;">
+                ${product.sizes.split(',').map(s => `<option value="${s.trim()}">${s.trim()}</option>`).join("")}
+              </select>
+            </div>
+          ` : ""}
+
           <div class="product-highlights-box">
             <h3>Key Features & Rider Specifications</h3>
             <ul>

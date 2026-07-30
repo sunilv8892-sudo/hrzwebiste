@@ -1,5 +1,6 @@
 /* =============================================
    HRz PITSTOP – Admin CMS & Control Center Module
+   Dashboard UI Redesign
    ============================================= */
 
 window.HRz = window.HRz || {};
@@ -21,49 +22,63 @@ class AdminCMS {
     const heroBanner = storage.getHeroBanner();
     const currentRole = storage.loadState().adminRole || "Admin";
 
+    const pendingReviews = reviews.filter(r => r.status === 'pending').length;
+
     container.innerHTML = `
-      <div class="admin-cms-header">
-        <div>
-          <p class="eyebrow">HRz Content Management System</p>
-          <h2>Admin CMS & Offer Control Center</h2>
-        </div>
-        <div class="admin-role-switch">
-          <label for="adminRoleSelect">Active Role:</label>
-          <select id="adminRoleSelect">
-            <option value="Admin" ${currentRole === "Admin" ? "selected" : ""}>Admin (Full Access)</option>
-            <option value="Catalog Manager" ${currentRole === "Catalog Manager" ? "selected" : ""}>Catalog Manager</option>
-            <option value="Moderator" ${currentRole === "Moderator" ? "selected" : ""}>Review Moderator</option>
-          </select>
-        </div>
-      </div>
+      <div class="admin-dashboard-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="admin-sidebar">
+          <div class="admin-sidebar-header">
+            <p class="eyebrow">HRz PITSTOP</p>
+            <h2>Admin Center</h2>
+          </div>
+          <div class="admin-tabs-list">
+            <button class="admin-tab-btn ${this.activeTab === "hero" ? "active" : ""}" data-tab="hero">
+              🎯 Hero Offer Banner
+            </button>
+            <button class="admin-tab-btn ${this.activeTab === "catalog" ? "active" : ""}" data-tab="catalog">
+              📦 Product Catalog <span class="badge">${products.length}</span>
+            </button>
+            <button class="admin-tab-btn ${this.activeTab === "compatibility" ? "active" : ""}" data-tab="compatibility">
+              🏍️ Compatibility Matrix <span class="badge">${compatibility.length}</span>
+            </button>
+            <button class="admin-tab-btn ${this.activeTab === "reviews" ? "active" : ""}" data-tab="reviews">
+              ⭐ Moderation Queue ${pendingReviews > 0 ? `<span class="badge" style="background:var(--gold);color:#000;">${pendingReviews}</span>` : ""}
+            </button>
+            <button class="admin-tab-btn ${this.activeTab === "orders" ? "active" : ""}" data-tab="orders">
+              📜 Customer Orders <span class="badge">${orders.length}</span>
+            </button>
+            <button class="admin-tab-btn ${this.activeTab === "csv" ? "active" : ""}" data-tab="csv">
+              📊 CSV Import/Export
+            </button>
+            <button class="admin-tab-btn ${this.activeTab === "logs" ? "active" : ""}" data-tab="logs">
+              ⏱️ Audit Logs
+            </button>
+          </div>
+        </aside>
 
-      <!-- Admin Tabs Navigation -->
-      <div class="admin-tabs-bar">
-        <button class="admin-tab-btn ${this.activeTab === "hero" ? "active" : ""}" data-tab="hero">
-          🎯 Hero Offer Banner
-        </button>
-        <button class="admin-tab-btn ${this.activeTab === "catalog" ? "active" : ""}" data-tab="catalog">
-          📦 Product Catalog (${products.length})
-        </button>
-        <button class="admin-tab-btn ${this.activeTab === "compatibility" ? "active" : ""}" data-tab="compatibility">
-          🏍️ Compatibility Matrix (${compatibility.length})
-        </button>
-        <button class="admin-tab-btn ${this.activeTab === "reviews" ? "active" : ""}" data-tab="reviews">
-          ⭐ Moderation Queue (${reviews.filter(r=>r.status==='pending').length} Pending)
-        </button>
-        <button class="admin-tab-btn ${this.activeTab === "orders" ? "active" : ""}" data-tab="orders">
-          📜 Orders (${orders.length})
-        </button>
-        <button class="admin-tab-btn ${this.activeTab === "csv" ? "active" : ""}" data-tab="csv">
-          📊 CSV Import/Export
-        </button>
-        <button class="admin-tab-btn ${this.activeTab === "logs" ? "active" : ""}" data-tab="logs">
-          ⏱️ Audit Logs
-        </button>
-      </div>
+        <!-- Main Content Area -->
+        <main class="admin-main">
+          <!-- Topbar -->
+          <div class="admin-topbar">
+            <div class="admin-page-title">
+              <h1>${this.getPageTitle(this.activeTab)}</h1>
+            </div>
+            <div class="admin-role-switch">
+              <label for="adminRoleSelect">Active Role:</label>
+              <select id="adminRoleSelect">
+                <option value="Admin" ${currentRole === "Admin" ? "selected" : ""}>Admin (Full Access)</option>
+                <option value="Catalog Manager" ${currentRole === "Catalog Manager" ? "selected" : ""}>Catalog Manager</option>
+                <option value="Moderator" ${currentRole === "Moderator" ? "selected" : ""}>Review Moderator</option>
+              </select>
+            </div>
+          </div>
 
-      <div class="admin-tab-content">
-        ${this.renderTabContent(this.activeTab, { products, compatibility, bikes, reviews, orders, auditLogs, heroBanner })}
+          <!-- Tab Content -->
+          <div class="admin-tab-content">
+            ${this.renderTabContent(this.activeTab, { products, compatibility, bikes, reviews, orders, auditLogs, heroBanner })}
+          </div>
+        </main>
       </div>
     `;
 
@@ -88,6 +103,19 @@ class AdminCMS {
     this.bindTabEvents(container);
   }
 
+  static getPageTitle(tab) {
+    const titles = {
+      hero: "Hero Promotional Banner",
+      catalog: "Product Catalog Management",
+      compatibility: "Bike Compatibility Matrix",
+      reviews: "Review Moderation Queue",
+      orders: "Customer Orders",
+      csv: "Bulk Data Tools",
+      logs: "System Audit Logs"
+    };
+    return titles[tab] || "Dashboard";
+  }
+
   static renderTabContent(tab, data) {
     const utils = window.HRz.Utils;
     const db = window.HRz.DB;
@@ -95,17 +123,17 @@ class AdminCMS {
     if (tab === "hero") {
       const hero = data.heroBanner;
       return `
-        <div class="hero-cms-card">
+        <div class="admin-panel-card">
           <div class="cms-toolbar">
             <div>
-              <h3>Customize Hero Promo Banner & Offer Ads</h3>
-              <p style="color:var(--color-ink-muted); font-size:13px;">Change the hero headline, promotional offer badge, call-to-action, and background banner image displayed on the homepage.</p>
+              <h3>Customize Homepage Hero</h3>
+              <p>Change the main headline, promotional offer badge, and background banner image.</p>
             </div>
           </div>
 
-          <form id="heroCmsForm" class="hero-cms-form">
+          <form id="heroCmsForm" class="admin-form-grid">
             <div class="form-group">
-              <label for="heroBadgeInput">Promotional Offer Badge Tag *</label>
+              <label for="heroBadgeInput">Promotional Offer Badge *</label>
               <input type="text" id="heroBadgeInput" value="${hero.badge || ''}" required placeholder="e.g. MONSOON MEGA SALE · FLAT 20% OFF" />
             </div>
 
@@ -114,32 +142,30 @@ class AdminCMS {
               <input type="text" id="heroTitleInput" value="${hero.title || ''}" required placeholder="e.g. Guaranteed Fitment for Your Motorcycle" />
             </div>
 
-            <div class="form-group">
-              <label for="heroSubheadInput">Subhead Explanation text</label>
-              <textarea id="heroSubheadInput" rows="3" required>${hero.subtitle || ''}</textarea>
+            <div class="form-group admin-form-full">
+              <label for="heroSubheadInput">Subhead Explanation</label>
+              <textarea id="heroSubheadInput" rows="2" required>${hero.subtitle || ''}</textarea>
             </div>
 
-            <div class="form-group">
+            <div class="form-group admin-form-full">
               <label for="heroBgImageInput">Hero Background Image URL or Path *</label>
               <input type="text" id="heroBgImageInput" value="${hero.bgImage || 'images/hero_banner.jpg'}" required />
               
               <div class="image-preset-picker">
-                <span class="label">Quick Presets:</span>
+                <button type="button" class="preset-img-btn" data-url="images/hero-rider.png">Default Rider PNG</button>
                 <button type="button" class="preset-img-btn" data-url="images/hero_banner.jpg">Hero Banner JPG</button>
-                <button type="button" class="preset-img-btn" data-url="images/hero_banner.png">Hero Banner PNG</button>
                 <button type="button" class="preset-img-btn" data-url="images/category_protection.png">Protection Banner</button>
-                <button type="button" class="preset-img-btn" data-url="images/category_lights.png">Lights Banner</button>
               </div>
 
               <div class="file-upload-row">
-                <label for="heroBgFileUpload" class="secondary-button" style="margin-top:8px; display:inline-block;">📤 Upload Custom Banner File</label>
+                <label for="heroBgFileUpload" class="small-action-btn" style="display:inline-block;">📤 Upload Custom Banner</label>
                 <input type="file" id="heroBgFileUpload" accept="image/*" style="display:none;" />
               </div>
             </div>
 
-            <div class="hero-preview-box">
-              <h4>Live Banner Preview:</h4>
-              <div class="rider-hero" style="background: linear-gradient(135deg, rgba(24, 27, 38, 0.85), rgba(10, 11, 14, 0.92)), url('${hero.bgImage}') center/cover no-repeat; margin-bottom:0;">
+            <div class="admin-form-full hero-preview-box">
+              <h4>Live Banner Preview</h4>
+              <div class="rider-hero" style="background: linear-gradient(135deg, rgba(9, 10, 12, 0.85), rgba(9, 10, 12, 0.95)), url('${hero.bgImage}') center/cover no-repeat;">
                 <div class="hero-content-box">
                   <span class="hero-badge" id="previewBadge">${hero.badge}</span>
                   <h1 class="hero-headline" id="previewTitle">${hero.title}</h1>
@@ -148,170 +174,211 @@ class AdminCMS {
               </div>
             </div>
 
-            <button type="submit" class="accent-button full-width-btn" style="margin-top:20px;">Save & Publish Hero Banner</button>
+            <div class="admin-form-full" style="margin-top:16px;">
+              <button type="submit" class="accent-button">Save & Publish Hero Banner</button>
+            </div>
           </form>
         </div>
       `;
     }
 
     if (tab === "catalog") {
+      const activeCategoryFilter = document.getElementById("app")?.dataset.catalogFilter || "All";
+      const categories = ["All", ...window.HRz.DB.getCategories()];
+      const filteredProducts = activeCategoryFilter === "All" ? data.products : data.products.filter(p => p.category === activeCategoryFilter);
+
       return `
-        <div class="cms-toolbar">
-          <h3>Manage Product Catalog</h3>
-          <button class="accent-button" id="addNewProductBtn">+ Add New Product</button>
+        <!-- Metrics Row -->
+        <div class="admin-metrics-row">
+          <div class="admin-metric-card">
+            <span class="title">Total Products</span>
+            <span class="value">${data.products.length}</span>
+          </div>
+          <div class="admin-metric-card">
+            <span class="title">Categories</span>
+            <span class="value">${categories.length - 1}</span>
+          </div>
+          <div class="admin-metric-card">
+            <span class="title">Low Stock Alerts</span>
+            <span class="value" style="color:var(--gold);">0</span>
+          </div>
         </div>
-        <div class="admin-table-wrapper">
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>Image</th>
-                <th>Name & SKU</th>
-                <th>Category</th>
-                <th>Price (INR)</th>
-                <th>Stock</th>
-                <th>Rating</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${data.products.map(p => `
+
+        <div class="admin-panel-card">
+          <div class="cms-toolbar">
+            <div>
+              <h3>Product Inventory</h3>
+            </div>
+            <button class="accent-button" id="addNewProductBtn">+ Add New Product</button>
+          </div>
+
+          <div class="category-filter-pills" style="margin-bottom: 24px; display: flex; gap: 8px; flex-wrap: wrap;">
+            ${categories.map(cat => `
+              <button class="filter-pill admin-cat-filter ${activeCategoryFilter === cat ? "active" : ""}" data-filter="${cat}" style="padding: 6px 14px; border: 1px solid #333; border-radius: 20px; background: ${activeCategoryFilter === cat ? 'var(--red)' : '#1a1c1e'}; color: white; cursor:pointer; font-size:12px;">${cat}</button>
+            `).join("")}
+          </div>
+
+          <div class="admin-table-wrapper">
+            <table class="admin-table">
+              <thead>
                 <tr>
-                  <td><img src="${p.image}" alt="${p.name}" width="40" height="40" style="object-fit:cover; border-radius:4px;" onerror="this.src='images/helmet_product.png'" /></td>
-                  <td><strong>${p.name}</strong><br/><small>SKU: ${p.sku}</small></td>
-                  <td><span class="cat-tag">${p.category}</span></td>
-                  <td>${utils.formatCurrency(p.price)}</td>
-                  <td>${p.inStock ? "<span class='stock-tag in'>In Stock</span>" : "<span class='stock-tag out'>Out of Stock</span>"}</td>
-                  <td>${p.rating}★ (${p.reviewCount})</td>
-                  <td>
-                    <button class="small-action-btn delete-prod-btn danger" data-id="${p.id}">Delete</button>
-                  </td>
+                  <th>Image</th>
+                  <th>Name & SKU</th>
+                  <th>Category</th>
+                  <th>Price (INR)</th>
+                  <th>Stock</th>
+                  <th>Actions</th>
                 </tr>
-              `).join("")}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                ${filteredProducts.map(p => `
+                  <tr>
+                    <td><img src="${p.image}" alt="${p.name}" width="44" height="44" style="object-fit:cover; border-radius:6px; border:1px solid #333;" onerror="this.src='images/helmet_product.png'" /></td>
+                    <td><strong>${p.name}</strong><br/><small style="color:#888;">SKU: ${p.sku}</small></td>
+                    <td><span class="cat-tag">${p.category}</span></td>
+                    <td>${utils.formatCurrency(p.price)}</td>
+                    <td>${p.inStock ? "<span class='stock-tag in'>In Stock</span>" : "<span class='stock-tag out'>Out of Stock</span>"}</td>
+                    <td>
+                      <button class="small-action-btn delete-prod-btn danger" data-id="${p.id}">Delete</button>
+                    </td>
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
         </div>
       `;
     }
 
     if (tab === "compatibility") {
       return `
-        <div class="cms-toolbar">
-          <h3>Compatibility Matrix (Product <-> Bike Fit Rules)</h3>
-          <button class="accent-button" id="addCompRuleBtn">+ Add Fitment Rule</button>
-        </div>
-        <div class="admin-table-wrapper">
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>Rule ID</th>
-                <th>Product</th>
-                <th>Compatible Bike</th>
-                <th>Fit Type</th>
-                <th>Notes</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${data.compatibility.map(c => {
-                const prod = db.getProductById(c.productId);
-                const bike = data.bikes.find(b => b.id === c.bikeId);
-                return `
-                  <tr>
-                    <td><code>${c.id}</code></td>
-                    <td>${prod ? prod.name : c.productId}</td>
-                    <td>${bike ? `${bike.brand} ${bike.model} (${bike.variant})` : "Universal / " + c.bikeId}</td>
-                    <td><span class="fit-type-tag">${c.fitType}</span></td>
-                    <td><small>${c.notes || "N/A"}</small></td>
-                    <td>
-                      <button class="small-action-btn delete-comp-btn danger" data-id="${c.id}">Delete</button>
-                    </td>
-                  </tr>
-                `;
-              }).join("")}
-            </tbody>
-          </table>
+        <div class="admin-panel-card">
+          <div class="cms-toolbar">
+            <div>
+              <h3>Fitment Rules</h3>
+              <p>Manage product compatibility with specific motorcycles.</p>
+            </div>
+            <button class="accent-button" id="addCompRuleBtn">+ Add Fitment Rule</button>
+          </div>
+          <div class="admin-table-wrapper">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Rule ID</th>
+                  <th>Product</th>
+                  <th>Compatible Bike</th>
+                  <th>Fit Type</th>
+                  <th>Notes</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${data.compatibility.map(c => {
+                  const prod = db.getProductById(c.productId);
+                  const bike = data.bikes.find(b => b.id === c.bikeId);
+                  return `
+                    <tr>
+                      <td><code style="color:#888;">${c.id}</code></td>
+                      <td><strong>${prod ? prod.name : c.productId}</strong></td>
+                      <td>${bike ? `${bike.brand} ${bike.model}` : "Universal"}</td>
+                      <td><span class="cat-tag">${c.fitType}</span></td>
+                      <td><small style="color:#888;">${c.notes || "N/A"}</small></td>
+                      <td>
+                        <button class="small-action-btn delete-comp-btn danger" data-id="${c.id}">Delete</button>
+                      </td>
+                    </tr>
+                  `;
+                }).join("")}
+              </tbody>
+            </table>
+          </div>
         </div>
       `;
     }
 
     if (tab === "reviews") {
       return `
-        <div class="cms-toolbar">
-          <h3>Customer Reviews & Photo Moderation Queue</h3>
-        </div>
-        <div class="reviews-moderation-grid">
-          ${data.reviews.map(r => `
-            <div class="moderation-card ${r.status}">
-              <div class="mod-header">
-                <strong>${r.reviewerName}</strong>
-                <span class="status-badge ${r.status}">${r.status.toUpperCase()}</span>
-              </div>
-              <p class="bike-info">Bike: ${r.bikeName}</p>
-              <h4 class="title">${r.title}</h4>
-              <p class="comment">"${r.comment}"</p>
-              <div class="mod-actions">
-                ${r.status !== "published" ? `<button class="small-action-btn approve-rev-btn" data-id="${r.id}">Approve</button>` : ""}
-                ${r.status !== "rejected" ? `<button class="small-action-btn danger reject-rev-btn" data-id="${r.id}">Reject</button>` : ""}
-              </div>
+        <div class="admin-panel-card">
+          <div class="cms-toolbar">
+            <div>
+              <h3>Customer Reviews Queue</h3>
+              <p>Approve or reject customer installation reviews before they appear on the storefront.</p>
             </div>
-          `).join("")}
+          </div>
+          <div class="reviews-moderation-grid">
+            ${data.reviews.map(r => `
+              <div class="moderation-card ${r.status}">
+                <div class="mod-header">
+                  <strong>${r.reviewerName}</strong>
+                  <span class="status-badge ${r.status}">${r.status.toUpperCase()}</span>
+                </div>
+                <p class="bike-info">Bike: ${r.bikeName}</p>
+                <h4 class="title">${r.title}</h4>
+                <p class="comment">"${r.comment}"</p>
+                <div class="mod-actions">
+                  ${r.status !== "published" ? `<button class="small-action-btn approve-rev-btn" data-id="${r.id}">Approve</button>` : ""}
+                  ${r.status !== "rejected" ? `<button class="small-action-btn danger reject-rev-btn" data-id="${r.id}">Reject</button>` : ""}
+                </div>
+              </div>
+            `).join("")}
+          </div>
         </div>
       `;
     }
 
     if (tab === "orders") {
       return `
-        <div class="cms-toolbar">
-          <h3>Customer Orders & Fitment Verification</h3>
-        </div>
-        <div class="admin-table-wrapper">
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>Date</th>
-                <th>Bike Fitment</th>
-                <th>Total</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${data.orders.map(o => `
+        <div class="admin-panel-card">
+          <div class="cms-toolbar">
+            <div>
+              <h3>Customer Orders</h3>
+              <p>Process orders and update tracking statuses.</p>
+            </div>
+          </div>
+          <div class="admin-table-wrapper">
+            <table class="admin-table">
+              <thead>
                 <tr>
-                  <td><strong>${o.id}</strong></td>
-                  <td>${o.date}</td>
-                  <td>${o.bike}</td>
-                  <td>${utils.formatCurrency(o.total)}</td>
-                  <td><span class="order-status-badge">${o.status}</span></td>
-                  <td>
-                    <select class="order-status-select" data-id="${o.id}">
-                      <option value="Processing & Fitment Checked" ${o.status === "Processing & Fitment Checked" ? "selected" : ""}>Processing</option>
-                      <option value="Shipped - In Transit" ${o.status.includes("Transit") ? "selected" : ""}>Shipped</option>
-                      <option value="Delivered" ${o.status === "Delivered" ? "selected" : ""}>Delivered</option>
-                    </select>
-                  </td>
+                  <th>Order ID</th>
+                  <th>Date</th>
+                  <th>Bike Fitment</th>
+                  <th>Total</th>
+                  <th>Status</th>
                 </tr>
-              `).join("")}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                ${data.orders.map(o => `
+                  <tr>
+                    <td><strong>${o.id}</strong></td>
+                    <td><small style="color:#888;">${o.date}</small></td>
+                    <td>${o.bike}</td>
+                    <td>${utils.formatCurrency(o.total)}</td>
+                    <td>
+                      <select class="order-status-select" data-id="${o.id}" style="background:#1a1c1e; color:#fff; border:1px solid #333; padding:6px; border-radius:4px;">
+                        <option value="Processing & Fitment Checked" ${o.status === "Processing & Fitment Checked" ? "selected" : ""}>Processing</option>
+                        <option value="Shipped - In Transit" ${o.status.includes("Transit") ? "selected" : ""}>Shipped</option>
+                        <option value="Delivered" ${o.status === "Delivered" ? "selected" : ""}>Delivered</option>
+                      </select>
+                    </td>
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
         </div>
       `;
     }
 
     if (tab === "csv") {
       return `
-        <div class="csv-tools-card">
-          <h3>CSV Import & Export for Compatibility Matrix</h3>
-          <p>Export the full relational compatibility table or bulk upload new fitment rules.</p>
+        <div class="admin-panel-card">
+          <h3>CSV Import & Export</h3>
+          <p style="color:var(--mute); font-size:14px; margin-bottom: 24px;">Export the full relational compatibility table or bulk upload new fitment rules via CSV.</p>
           
-          <div class="csv-actions-row">
+          <div style="display:flex; gap:16px;">
             <button class="accent-button" id="exportCsvBtn">📥 Download Compatibility CSV</button>
-            
-            <div class="upload-csv-box">
-              <label for="importCsvInput" class="secondary-button">📤 Upload Compatibility CSV</label>
-              <input type="file" id="importCsvInput" accept=".csv" style="display:none;" />
-            </div>
+            <label for="importCsvInput" class="small-action-btn" style="padding:10px 16px; font-size:14px; display:inline-flex; align-items:center;">📤 Upload Compatibility CSV</label>
+            <input type="file" id="importCsvInput" accept=".csv" style="display:none;" />
           </div>
         </div>
       `;
@@ -319,17 +386,19 @@ class AdminCMS {
 
     if (tab === "logs") {
       return `
-        <div class="audit-logs-card">
+        <div class="admin-panel-card">
           <h3>System Audit Logs</h3>
-          <ul class="audit-log-list">
+          <p style="color:var(--mute); font-size:14px; margin-bottom: 24px;">Track CMS changes and moderator actions.</p>
+          
+          <div class="audit-log-list">
             ${data.auditLogs.map(l => `
-              <li class="log-item">
+              <div class="log-item">
                 <span class="log-time">${new Date(l.timestamp).toLocaleTimeString()}</span>
                 <strong class="log-user">${l.user}:</strong>
                 <span class="log-text">${l.action}</span>
-              </li>
+              </div>
             `).join("")}
-          </ul>
+          </div>
         </div>
       `;
     }
@@ -339,6 +408,7 @@ class AdminCMS {
     const db = window.HRz.DB;
     const storage = window.HRz.Storage;
     const utils = window.HRz.Utils;
+    const appContainer = document.getElementById("app");
 
     // Hero CMS Events
     const heroForm = container.querySelector("#heroCmsForm");
@@ -347,9 +417,7 @@ class AdminCMS {
       const fileInput = container.querySelector("#heroBgFileUpload");
 
       container.querySelectorAll(".preset-img-btn").forEach(btn => {
-        btn.onclick = () => {
-          bgInput.value = btn.dataset.url;
-        };
+        btn.onclick = () => { bgInput.value = btn.dataset.url; };
       });
 
       if (fileInput) {
@@ -357,9 +425,7 @@ class AdminCMS {
           const file = e.target.files[0];
           if (file) {
             const reader = new FileReader();
-            reader.onload = (evt) => {
-              bgInput.value = evt.target.result;
-            };
+            reader.onload = (evt) => { bgInput.value = evt.target.result; };
             reader.readAsDataURL(file);
           }
         };
@@ -373,12 +439,19 @@ class AdminCMS {
         const bgImage = bgInput.value;
 
         storage.setHeroBanner({ badge, title, subtitle, bgImage });
-        utils.showToast("Hero Promo Banner updated!", "success");
+        utils.showToast("Hero Promo Banner updated! Check the storefront.", "success");
         this.render(container);
       };
     }
 
     // Catalog Events
+    container.querySelectorAll(".admin-cat-filter").forEach(btn => {
+      btn.onclick = () => {
+        if (appContainer) appContainer.dataset.catalogFilter = btn.dataset.filter;
+        this.render(container);
+      };
+    });
+
     const addProdBtn = container.querySelector("#addNewProductBtn");
     if (addProdBtn) {
       addProdBtn.onclick = () => this.openAddProductModal(container);
@@ -394,6 +467,7 @@ class AdminCMS {
       };
     });
 
+    // Fitment Rules
     container.querySelectorAll(".delete-comp-btn").forEach(btn => {
       btn.onclick = () => {
         db.deleteCompatibilityRule(btn.dataset.id);
@@ -403,10 +477,9 @@ class AdminCMS {
     });
 
     const addCompBtn = container.querySelector("#addCompRuleBtn");
-    if (addCompBtn) {
-      addCompBtn.onclick = () => this.openAddCompModal(container);
-    }
+    if (addCompBtn) addCompBtn.onclick = () => this.openAddCompModal(container);
 
+    // Reviews
     container.querySelectorAll(".approve-rev-btn").forEach(btn => {
       btn.onclick = () => {
         db.updateReviewStatus(btn.dataset.id, "published");
@@ -414,7 +487,6 @@ class AdminCMS {
         this.render(container);
       };
     });
-
     container.querySelectorAll(".reject-rev-btn").forEach(btn => {
       btn.onclick = () => {
         db.updateReviewStatus(btn.dataset.id, "rejected");
@@ -423,6 +495,7 @@ class AdminCMS {
       };
     });
 
+    // Orders
     container.querySelectorAll(".order-status-select").forEach(sel => {
       sel.onchange = () => {
         db.updateOrderStatus(sel.dataset.id, sel.value);
@@ -430,6 +503,7 @@ class AdminCMS {
       };
     });
 
+    // CSV
     const exportBtn = container.querySelector("#exportCsvBtn");
     if (exportBtn) {
       exportBtn.onclick = () => {
@@ -473,13 +547,13 @@ class AdminCMS {
     const categories = window.HRz.DB.getCategories();
 
     modal.innerHTML = `
-      <div class="modal-card">
+      <div class="modal-card" style="max-width: 700px;">
         <div class="modal-header">
           <h3>Add New Product to Catalog</h3>
           <button type="button" class="close-btn" id="closeAdminProdModal">✕</button>
         </div>
         <div class="modal-body">
-          <form id="adminAddProdForm">
+          <form id="adminAddProdForm" class="admin-form-grid">
             <div class="form-group">
               <label>Product Name *</label>
               <input type="text" id="newProdName" required placeholder="e.g. HRz Carbon Slider" />
@@ -491,7 +565,7 @@ class AdminCMS {
                 ${categories.map(c => `<option value="${c}">${c}</option>`).join("")}
                 <option value="__CUSTOM__">+ Create Custom Category...</option>
               </select>
-              <input type="text" id="customCatInput" placeholder="Enter Custom Category Name" style="display:none; margin-top:6px;" />
+              <input type="text" id="customCatInput" placeholder="Enter Custom Category Name" style="display:none; margin-top:6px; background:#1c1e22; border:1px solid #333; color:#fff; padding:12px; border-radius:6px; width:100%;" />
             </div>
 
             <div class="form-group">
@@ -508,30 +582,30 @@ class AdminCMS {
               <label>SKU Code</label>
               <input type="text" id="newProdSku" placeholder="HRZ-SLD-01" />
             </div>
-
+            
             <div class="form-group">
-              <label>Product Image *</label>
+              <label>Sizes (Comma separated)</label>
+              <input type="text" id="newProdSizes" placeholder="e.g. S, M, L, XL" />
+            </div>
+
+            <div class="form-group admin-form-full">
+              <label>Full Description</label>
+              <textarea id="newProdDesc" rows="4" placeholder="Enter detailed product description..."></textarea>
+            </div>
+
+            <div class="form-group admin-form-full">
+              <label>Product Image URL *</label>
               <input type="text" id="newProdImgUrl" value="images/crash_guard_product.png" required placeholder="Image Path or URL" />
               
-              <div class="image-preset-picker" style="margin-top:8px;">
-                <span class="label">Choose Image Preset:</span>
-                <div class="preset-thumbs-row">
-                  <img src="images/crash_guard_product.png" class="thumb-pick-btn" data-url="images/crash_guard_product.png" alt="Crash Guard" />
-                  <img src="images/fog_lights_product.png" class="thumb-pick-btn" data-url="images/fog_lights_product.png" alt="Fog Lights" />
-                  <img src="images/helmet_product.png" class="thumb-pick-btn" data-url="images/helmet_product.png" alt="Helmet" />
-                  <img src="images/saddlebags_product.png" class="thumb-pick-btn" data-url="images/saddlebags_product.png" alt="Saddlebags" />
-                  <img src="images/bash_plate_product.png" class="thumb-pick-btn" data-url="images/bash_plate_product.png" alt="Bash Plate" />
-                  <img src="images/intercom_product.png" class="thumb-pick-btn" data-url="images/intercom_product.png" alt="Intercom" />
-                </div>
-              </div>
-
-              <div class="file-upload-row" style="margin-top:8px;">
-                <label for="prodImgFileUpload" class="secondary-button">Upload Image File</label>
+              <div style="margin-top:12px;">
+                <label for="prodImgFileUpload" class="small-action-btn" style="display:inline-block;">📤 Upload Image File</label>
                 <input type="file" id="prodImgFileUpload" accept="image/*" style="display:none;" />
               </div>
             </div>
 
-            <button type="submit" class="accent-button full-width-btn">Save & Publish Product</button>
+            <div class="admin-form-full" style="margin-top: 16px;">
+              <button type="submit" class="accent-button">Save & Publish Product</button>
+            </div>
           </form>
         </div>
       </div>
@@ -553,22 +627,14 @@ class AdminCMS {
       }
     };
 
-    const imgUrlInput = document.getElementById("newProdImgUrl");
-    modal.querySelectorAll(".thumb-pick-btn").forEach(img => {
-      img.onclick = () => {
-        imgUrlInput.value = img.dataset.url;
-      };
-    });
-
     const fileInput = document.getElementById("prodImgFileUpload");
+    const imgUrlInput = document.getElementById("newProdImgUrl");
     if (fileInput) {
       fileInput.onchange = (e) => {
         const file = e.target.files[0];
         if (file) {
           const reader = new FileReader();
-          reader.onload = (evt) => {
-            imgUrlInput.value = evt.target.result;
-          };
+          reader.onload = (evt) => { imgUrlInput.value = evt.target.result; };
           reader.readAsDataURL(file);
         }
       };
@@ -578,28 +644,22 @@ class AdminCMS {
       e.preventDefault();
       const name = document.getElementById("newProdName").value;
       let category = catSel.value;
-      if (category === "__CUSTOM__") {
-        category = customCatInput.value.trim() || "General";
-      }
+      if (category === "__CUSTOM__") category = customCatInput.value.trim() || "General";
 
       const price = parseFloat(document.getElementById("newProdPrice").value);
       const originalPrice = parseFloat(document.getElementById("newProdOrigPrice").value) || price + 500;
       const sku = document.getElementById("newProdSku").value || `HRZ-${Date.now().toString().slice(-4)}`;
+      const description = document.getElementById("newProdDesc").value.trim();
+      const sizes = document.getElementById("newProdSizes").value.trim();
       const image = imgUrlInput.value || "images/crash_guard_product.png";
 
       window.HRz.DB.addProduct({
-        name,
-        category,
-        price,
-        originalPrice,
-        sku,
-        image,
-        badge: "NEW ARRIVAL",
-        highlights: ["High tensile build", "Guaranteed fitment"]
+        name, category, price, originalPrice, sku, description, sizes, image,
+        badge: "NEW ARRIVAL", highlights: ["High tensile build", "Guaranteed fitment"]
       });
 
       modal.classList.remove("show");
-      window.HRz.Utils.showToast(`Product "${name}" added under category "${category}"`, "success");
+      window.HRz.Utils.showToast(`Product "${name}" added to catalog`, "success");
       this.render(container);
     };
   }
@@ -623,20 +683,20 @@ class AdminCMS {
           <button type="button" class="close-btn" id="closeAdminCompModal">✕</button>
         </div>
         <div class="modal-body">
-          <form id="adminAddCompForm">
-            <div class="form-group">
+          <form id="adminAddCompForm" class="admin-form-grid">
+            <div class="form-group admin-form-full">
               <label>Select Product *</label>
               <select id="compSelectProduct" required>
                 ${prods.map(p => `<option value="${p.id}">${p.name} (${p.sku})</option>`).join("")}
               </select>
             </div>
-            <div class="form-group">
+            <div class="form-group admin-form-full">
               <label>Select Motorcycle *</label>
               <select id="compSelectBike" required>
                 ${bikes.map(b => `<option value="${b.id}">${b.brand} ${b.model} (${b.variant})</option>`).join("")}
               </select>
             </div>
-            <div class="form-group">
+            <div class="form-group admin-form-full">
               <label>Fit Type *</label>
               <select id="compFitType" required>
                 <option value="OEM Fit">OEM Fit (Direct Mount)</option>
@@ -644,11 +704,13 @@ class AdminCMS {
                 <option value="Requires Adapter">Requires Adapter Bracket</option>
               </select>
             </div>
-            <div class="form-group">
+            <div class="form-group admin-form-full">
               <label>Fitment Notes</label>
               <input type="text" id="compNotes" placeholder="e.g. Mounts using stock chassis bolts" />
             </div>
-            <button type="submit" class="accent-button full-width-btn">Link Compatibility</button>
+            <div class="admin-form-full" style="margin-top:16px;">
+              <button type="submit" class="accent-button full-width-btn">Link Compatibility</button>
+            </div>
           </form>
         </div>
       </div>

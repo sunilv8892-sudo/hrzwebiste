@@ -1,5 +1,6 @@
 /* =============================================
    HRz PITSTOP – Shopping Cart Drawer & Shipping Progress Module
+   Adapted for editorial design drawer
    ============================================= */
 
 window.HRz = window.HRz || {};
@@ -15,15 +16,10 @@ class CartDrawer {
   static bindEvents() {
     const openBtn = document.getElementById("openCartBtn");
     const closeBtn = document.getElementById("closeCartBtn");
-    const drawer = document.getElementById("cartDrawer");
+    const overlay = document.getElementById("overlay");
 
     if (openBtn) openBtn.onclick = () => this.openCart();
     if (closeBtn) closeBtn.onclick = () => this.closeCart();
-    if (drawer) {
-      drawer.onclick = (e) => {
-        if (e.target === drawer) this.closeCart();
-      };
-    }
 
     window.addEventListener("hrz:add-to-cart", (e) => {
       const product = e.detail.product;
@@ -33,16 +29,19 @@ class CartDrawer {
 
   static openCart() {
     const drawer = document.getElementById("cartDrawer");
+    const overlay = document.getElementById("overlay");
     if (drawer) {
-      drawer.classList.add("show");
+      drawer.classList.add("open");
+      if (overlay) overlay.classList.add("open");
       this.renderCartItems();
-      window.HRz.Utils.setupModalAccessibility(drawer, () => this.closeCart());
     }
   }
 
   static closeCart() {
     const drawer = document.getElementById("cartDrawer");
-    if (drawer) drawer.classList.remove("show");
+    const overlay = document.getElementById("overlay");
+    if (drawer) drawer.classList.remove("open");
+    if (overlay) overlay.classList.remove("open");
   }
 
   static addItem(product) {
@@ -87,8 +86,16 @@ class CartDrawer {
   static updateCartBadge() {
     const cart = window.HRz.Storage.getCart();
     const totalCount = cart.reduce((sum, i) => sum + i.quantity, 0);
+
+    // Update all badge locations
     const badge = document.getElementById("cartCountBadge");
     if (badge) badge.textContent = totalCount;
+
+    const drawerCount = document.getElementById("drawerCount");
+    if (drawerCount) drawerCount.textContent = totalCount;
+
+    const mobileCount = document.getElementById("mobileCartCount");
+    if (mobileCount) mobileCount.textContent = totalCount;
   }
 
   static renderCartItems() {
@@ -115,28 +122,22 @@ class CartDrawer {
     if (!container) return;
 
     if (cart.length === 0) {
-      container.innerHTML = `
-        <div class="empty-state-card">
-          <div class="empty-icon">🛍️</div>
-          <h3>Your Bag is Empty</h3>
-          <p>Add guaranteed fitment motorcycle gear and accessories to continue.</p>
-        </div>
-      `;
+      container.innerHTML = `<p class="empty-state">Your bag is ready when you are.</p>`;
     } else {
       container.innerHTML = cart.map(item => `
         <div class="cart-item-row">
           <img src="${item.image}" alt="${item.name}" loading="lazy" onerror="this.src='images/helmet_product.png'" />
           <div class="cart-item-info">
+            <small class="cart-item-sku">${item.sku || "Accessory"}</small>
             <h4 class="cart-item-title">${item.name}</h4>
-            <span class="cart-item-sku">SKU: ${item.sku}</span>
-            <div class="cart-item-price">${utils.formatCurrency(item.price)}</div>
+            <b class="cart-item-price">${utils.formatCurrency(item.price)}</b>
             <div class="cart-qty-controls">
-              <button class="qty-btn minus-qty" data-id="${item.id}">-</button>
+              <button class="qty-btn minus-qty" data-id="${item.id}">−</button>
               <span class="qty-num">${item.quantity}</span>
               <button class="qty-btn plus-qty" data-id="${item.id}">+</button>
             </div>
           </div>
-          <button class="remove-cart-item-btn" data-id="${item.id}" title="Remove item">✕</button>
+          <button class="remove-cart-item-btn" data-id="${item.id}" aria-label="Remove">×</button>
         </div>
       `).join("");
     }

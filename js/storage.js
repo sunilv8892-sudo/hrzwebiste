@@ -4,35 +4,11 @@
 
 window.HRz = window.HRz || {};
 
-const STORAGE_KEY = "hrz_pitstop_app_state_v8";
+const STORAGE_KEY = "hrz_pitstop_app_state_v10";
 
 const defaultState = {
-  activeBike: {
-    nickname: "Expedition Himalayan 450",
-    brand: "Royal Enfield",
-    model: "Himalayan",
-    year: 2024,
-    variant: "450 Adventure",
-    bikeId: "bike-re-him-450-adv"
-  },
-  garage: [
-    {
-      nickname: "Expedition Himalayan 450",
-      brand: "Royal Enfield",
-      model: "Himalayan",
-      year: 2024,
-      variant: "450 Adventure",
-      bikeId: "bike-re-him-450-adv"
-    },
-    {
-      nickname: "Track Duke 390",
-      brand: "KTM",
-      model: "Duke",
-      year: 2024,
-      variant: "390 Gen-3",
-      bikeId: "bike-ktm-duke-390-g3"
-    }
-  ],
+  activeBike: null,
+  garage: [],
   cart: [],
   wishlist: [],
   appliedCoupon: null,
@@ -42,7 +18,7 @@ const defaultState = {
     badge: "MONSOON RIDER OFFER · FLAT ₹500 OFF",
     title: "Guaranteed Fitment & Heavy Protection Parts",
     subtitle: "Select your bike model to automatically filter crash guards, LED lights, helmets, and touring gear engineered specifically for your ride.",
-    bgImage: "images/hero_banner.jpg",
+    bgImage: "images/hero-rider.png",
     buttonText: "Explore Offers & Parts",
     buttonTarget: "catalog"
   },
