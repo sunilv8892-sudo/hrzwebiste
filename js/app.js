@@ -202,9 +202,8 @@ class App {
           <p class="eyebrow">${heroBanner.badge || 'Built for every mile'}</p>
           <h1>${heroBanner.title || 'GEAR UP.<br /><em>GO FAR.</em>'}</h1>
           <p class="hero-text">${heroBanner.subtitle || 'Purpose-built protection and performance for riders who never take the easy road.'}</p>
-          <a class="button button-red" href="#shop">Shop the collection <span>→</span></a>
+          <a class="button button-red" href="#catalog">Shop the collection <span>→</span></a>
         </div>
-        <a class="scroll" href="#categories">SCROLL TO EXPLORE <span></span></a>
       </section>
 
       <!-- Benefits Strip -->
