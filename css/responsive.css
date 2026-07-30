@@ -152,14 +152,27 @@ html, body {
     place-items: center;
   }
 
-  /* ---- HERO SECTION MOBILE (100% Match with reference mobile.css) ---- */
+  /* ---- HERO SECTION MOBILE ---- */
   .hero {
-    min-height: 520px;
+    margin-top: -58px;
+    padding-top: 58px;
+    min-height: 460px;
+  }
+  .hero > img {
+    object-position: 82% center;
   }
   .hero-copy {
-    left: 6vw;
-    top: 51%;
-    transform: translateY(-32%);
+    left: 4vw;
+    right: 4vw;
+    top: 52%;
+    transform: translateY(-50%);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .hero-text {
+    text-align: center;
   }
   .scroll {
     display: none;
@@ -347,10 +360,10 @@ html, body {
 
 /* ---- Small Mobile (≤ 480px) ---- */
 @media (max-width: 480px) {
-  h1 { font-size: 64px; }
-  .hero { min-height: 500px; }
-  .hero-copy { left: 6vw; right: 6vw; }
-  .hero-text { max-width: 320px; }
+  h1 { font-size: 54px; }
+  .hero { min-height: 440px; }
+  .hero-copy { left: 4vw; right: 4vw; }
+  .hero-text { max-width: 320px; margin: 16px auto 24px; text-align: center; }
 
   .category-grid {
     grid-template-columns: 1fr 1fr;
