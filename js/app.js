@@ -79,6 +79,20 @@ class App {
 
     // Sync mobile cart count
     this.syncMobileCartCount();
+
+    // Scroll action for mobile dock
+    let lastScrollY = window.scrollY;
+    const dock = document.querySelector(".mobile-dock");
+    window.addEventListener("scroll", () => {
+      if (!dock) return;
+      const currentScrollY = window.scrollY;
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        dock.classList.add("hidden");
+      } else {
+        dock.classList.remove("hidden");
+      }
+      lastScrollY = currentScrollY;
+    }, { passive: true });
   }
 
   static openPanel(panel) {

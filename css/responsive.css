@@ -316,6 +316,12 @@ html, body {
     padding-bottom: env(safe-area-inset-bottom);
     box-sizing: border-box;
     overflow: hidden;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+  }
+  .mobile-dock.hidden {
+    transform: translateY(100%);
+    opacity: 0;
+    pointer-events: none;
   }
   .mobile-dock .dock-item {
     position: relative;
