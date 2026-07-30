@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Rogue Ride — premium motorcycle gear and accessories." />
+    <title>HRz Pitstop | Gear for the road ahead</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="enhancements.css" />
+    <link rel="stylesheet" href="mobile.css" />
+  </head>
+  <body>
+    <div class="topline"><span>FREE SHIPPING ON ORDERS OVER $99</span><span>RIDE HARD. STAY READY.</span></div>
+    <header class="nav-wrap">
+      <a class="brand" href="#top" aria-label="HRz Pitstop home"><span>HRz</span> <i>PITSTOP</i></a>
+      <nav aria-label="Main navigation">
+        <a href="shop.html">Shop</a><a href="collections.html">Collections</a><a href="#new">New drops</a><a href="journal.html">Journal</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="icon-button" id="search-button" aria-label="Search">⌕</button>
+        <button class="icon-button" id="account-button" aria-label="Account">♙</button>
+        <button class="bag" id="cart-button" aria-label="Shopping bag">Bag <b id="cart-count">0</b></button>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <img src="assets/hero-rider.png" alt="Motorcyclist and sport motorcycle in a dark garage" />
+        <div class="hero-shade"></div>
+        <div class="hero-copy">
+          <p class="eyebrow">Built for every mile</p>
+          <h1>GEAR UP.<br /><em>GO FAR.</em></h1>
+          <p class="hero-text">Purpose-built protection and performance for riders who never take the easy road.</p>
+          <a class="button button-red" href="#shop">Shop the collection <span>→</span></a>
+        </div>
+        <a class="scroll" href="#categories">SCROLL TO EXPLORE <span></span></a>
+      </section>
+
+      <section class="benefits" aria-label="Store benefits">
+        <div><b>✦</b><p><strong>Built to protect</strong><small>Tested where it matters</small></p></div>
+        <div><b>↗</b><p><strong>Fast, free delivery</strong><small>On orders above $99</small></p></div>
+        <div><b>↺</b><p><strong>Easy 30-day returns</strong><small>No questions asked</small></p></div>
+        <div><b>◉</b><p><strong>Rider support</strong><small>Real experts, real help</small></p></div>
+      </section>
+
+      <section class="categories section" id="categories">
+        <div class="section-head"><div><p class="eyebrow red">Find your essential</p><h2>SHOP BY <em>CATEGORY</em></h2></div><a href="#shop" class="text-link">View all gear <span>→</span></a></div>
+        <div class="category-grid">
+          <a href="category.html?category=helmets" class="category large"><img src="assets/helmet.png" alt="Matte black full-face motorcycle helmet" /><span><small>01</small> Helmets <b>→</b></span></a>
+          <a href="category.html?category=jackets" class="category"><img src="assets/jacket.png" alt="Black armored motorcycle jacket" /><span><small>02</small> Jackets <b>→</b></span></a>
+          <a href="category.html?category=gloves" class="category"><img src="assets/gloves.png" alt="Black motorcycle riding gloves" /><span><small>03</small> Gloves <b>→</b></span></a>
+          <a href="category.html?category=boots" class="category"><img src="assets/boot.png" alt="Black motorcycle riding boot" /><span><small>04</small> Boots <b>→</b></span></a>
+        </div>
+      </section>
+
+      <section class="products section" id="shop">
+        <div class="section-head"><div><p class="eyebrow red">Rider approved</p><h2>THE <em>BESTSELLERS</em></h2></div><div class="filters"><button class="active" data-filter="all">All gear</button><button data-filter="protection">Protection</button><button data-filter="performance">Performance</button></div></div>
+        <div class="shop-toolbar"><span id="product-count">8 products</span><div><button class="filter-trigger" id="filter-button">☷ Filters</button><label>Sort <select id="sort-select"><option value="featured">Featured</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option></select></label></div></div>
+        <div class="product-grid" id="product-grid"></div>
+        <button class="load-more" id="load-more">Load more gear <span>↓</span></button>
+      </section>
+
+      <section class="reviews section">
+        <div class="section-head"><div><p class="eyebrow red">The word on the street</p><h2>RIDER <em>REVIEWS</em></h2></div><div class="review-arrows"><button id="review-prev" aria-label="Previous review">←</button><button id="review-next" aria-label="Next review">→</button></div></div>
+        <div class="review-window"><div class="review-track" id="review-track"><article class="review-card"><div class="stars">★★★★★</div><blockquote>“Finally, gear that feels as good on the fifth hour as it does when you roll out.”</blockquote><div class="reviewer"><span>JM</span><p><b>Jai Malhotra</b><small>Verified rider · Pune</small></p></div></article><article class="review-card"><div class="stars">★★★★★</div><blockquote>“The fit guide was spot on. My new jacket has already handled two monsoons like a champ.”</blockquote><div class="reviewer"><span>AK</span><p><b>Amar Kapoor</b><small>Verified rider · Delhi</small></p></div></article><article class="review-card"><div class="stars">★★★★★</div><blockquote>“Clean site, serious kit, fast delivery. This is now my go-to for every upgrade.”</blockquote><div class="reviewer"><span>RS</span><p><b>Riya Shah</b><small>Verified rider · Mumbai</small></p></div></article></div></div>
+      </section>
+
+      <section class="fit-finder"><div><p class="eyebrow red">Need a hand?</p><h2>FIND YOUR<br /><em>PERFECT FIT.</em></h2><p>Answer three quick questions and we'll point you to the kit that matches your ride.</p><button class="button button-red" id="fit-button">Start fit finder <span>→</span></button></div><div class="fit-steps"><span>01<br /><b>Your ride</b></span><span>02<br /><b>Your style</b></span><span>03<br /><b>Your gear</b></span></div></section>
+
+      <section class="statement">
+        <div class="statement-image"><img src="assets/jacket.png" alt="Armored motorcycle jacket" /></div>
+        <div class="statement-copy"><p class="eyebrow red">The Rogue standard</p><h2>NOT JUST<br />A <em>RIDE.</em></h2><p>Every curve, every downpour, every mile past midnight. The right gear means you can focus on what brought you here: the road in front of you.</p><a href="#journal" class="button button-outline">Our story <span>→</span></a><div class="stat-row"><div><strong>12k+</strong><small>Riders equipped</small></div><div><strong>4.9/5</strong><small>Rider rating</small></div></div></div>
+      </section>
+
+      <section class="new section" id="new">
+        <div class="section-head"><div><p class="eyebrow red">Fresh off the truck</p><h2>NEW <em>DROPS</em></h2></div><a href="#shop" class="text-link">Shop new arrivals <span>→</span></a></div>
+        <div class="drop-grid">
+          <article class="drop-card"><img src="assets/helmet.png" alt="Velocity Carbon motorcycle helmet" /><div><span>NEW / HELMETS</span><h3>Velocity Carbon</h3><a href="category.html?category=helmets">Explore now →</a></div></article>
+          <article class="drop-card"><img src="assets/jacket.png" alt="Night Shift riding jacket" /><div><span>NEW / RIDING LAYERS</span><h3>Night Shift Series</h3><a href="category.html?category=jackets">Explore now →</a></div></article>
+        </div>
+      </section>
+
+      <section class="newsletter" id="journal"><p class="eyebrow red">Join the ride</p><h2>ROAD NOTES,<br /><em>DELIVERED.</em></h2><p>New gear, routes worth taking, and 10% off your first order.</p><form id="newsletter-form"><input type="email" required placeholder="Your email address" aria-label="Your email address" /><button class="button button-red">Sign me up <span>→</span></button></form><small id="form-message"></small></section>
+      <section class="service-strip"><div><b>✦</b><span><strong>Safe payments</strong><small>Cards · UPI · Wallets</small></span></div><div><b>⌂</b><span><strong>Track your order</strong><small>Live delivery updates</small></span></div><div><b>?</b><span><strong>Need help?</strong><small>Chat with a gear expert</small></span></div></section>
+      <section class="faq section"><p class="eyebrow red">Before you ride</p><h2>QUICK <em>ANSWERS.</em></h2><details><summary>How do I find my size?</summary><p>Use the fit guide on every product page, or message our support team for one-to-one help.</p></details><details><summary>How fast is delivery?</summary><p>Most in-stock orders leave within one business day. Tracking is sent immediately.</p></details><details><summary>Can I return gear?</summary><p>Yes. Unused gear can be returned within 30 days with a simple online return request.</p></details></section>
+      <section class="recent section"><div class="section-head"><div><p class="eyebrow red">Keep exploring</p><h2>RECENTLY <em>VIEWED</em></h2></div></div><div class="recent-grid"><a href="category.html?category=helmets"><img src="assets/helmet.png" alt="Helmet"><span>Rally Pro Helmet <b>$379</b></span></a><a href="category.html?category=gloves"><img src="assets/gloves.png" alt="Gloves"><span>Apex Leather Glove <b>$89</b></span></a><a href="category.html?category=boots"><img src="assets/boot.png" alt="Boot"><span>Obsidian Riding Boot <b>$219</b></span></a></div></section>
+    </main>
+    <footer><a class="brand" href="#top"><span>R</span>ROGUE <i>RIDE</i></a><div class="footer-links"><div><b>Shop</b><a href="#shop">Helmets</a><a href="#shop">Jackets</a><a href="#shop">Gloves</a></div><div><b>Help</b><a href="#top">Shipping</a><a href="#top">Returns</a><a href="#top">Size guide</a></div></div><p>© 2026 ROGUE RIDE.<br />MADE FOR THE ROAD.</p><div><a href="#top">Instagram</a><a href="#top">YouTube</a><a href="#top">Contact</a></div></footer>
+    <div class="toast" id="toast" role="status"></div>
+    <div class="overlay" id="overlay"></div>
+    <aside class="cart-drawer drawer" id="cart-drawer" aria-label="Shopping bag"><div class="drawer-head"><h3>Your bag <span id="drawer-count">0</span></h3><button class="close-drawer" aria-label="Close">×</button></div><div class="cart-items" id="cart-items"><p class="empty-state">Your bag is ready when you are.</p></div><div class="cart-summary"><div><span>Subtotal</span><b id="cart-total">$0.00</b></div><small>Shipping and taxes calculated at checkout.</small><button class="button button-red" id="checkout-button">Secure checkout <span>→</span></button></div></aside>
+    <section class="search-panel" id="search-panel" aria-label="Product search"><button class="close-search" aria-label="Close search">×</button><p class="eyebrow red">Find your next essential</p><label><span>⌕</span><input id="search-input" placeholder="Search helmets, jackets, gloves..." autocomplete="off" /></label><div id="search-results" class="search-results"></div></section>
+    <section class="quick-view" id="quick-view" aria-label="Product details"></section>
+    <nav class="mobile-dock" aria-label="Mobile navigation"><a href="#top">⌂<span>Home</span></a><button id="mobile-search">⌕<span>Search</span></button><a href="collections.html">▦<span>Shop</span></a><button id="mobile-cart">▣<i id="mobile-cart-count">0</i><span>Bag</span></button></nav>
+    <script src="script.js"></script><script src="mobile.js"></script>
+  </body>
+</html>
