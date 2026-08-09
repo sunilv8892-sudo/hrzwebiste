@@ -23,11 +23,11 @@ class CartDrawer {
 
     window.addEventListener("hrz:add-to-cart", (e) => {
       const product = e.detail.product;
-      const isPrompted = sessionStorage.getItem('hrz_add_to_bag_login_prompted') === 'true';
+      const isPrompted = CartDrawer.add_to_bag_login_prompted === true;
       const isLoggedIn = window.HRz.Auth && window.HRz.Auth.isLoggedIn();
 
       if (!isLoggedIn && !isPrompted) {
-        sessionStorage.setItem('hrz_add_to_bag_login_prompted', 'true');
+        CartDrawer.add_to_bag_login_prompted = true;
         window.HRz.Auth.showLoginPopup(
           () => {
             this.addItem(product);

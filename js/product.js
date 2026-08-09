@@ -474,7 +474,7 @@ class ProductDetailView {
         const isLoggedIn = window.HRz.Auth && window.HRz.Auth.isLoggedIn();
         if (!isLoggedIn) {
           window.HRz.Auth.showLoginPopup(() => {
-            sessionStorage.setItem('hrz_add_to_bag_login_prompted', 'true');
+            window.HRz.Cart.add_to_bag_login_prompted = true;
             window.HRz.Cart.addItem(product);
             setTimeout(() => { window.location.hash = "checkout"; }, 100);
           });
