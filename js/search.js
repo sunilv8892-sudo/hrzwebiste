@@ -9,6 +9,7 @@ class SearchEngine {
   static init() {
     const input = document.getElementById("globalSearch");
     const popover = document.getElementById("searchAutocomplete");
+    const escapeHTML = window.HRz.Utils.escapeHTML;
 
     if (!input || !popover) return;
 
@@ -32,11 +33,11 @@ class SearchEngine {
         popover.innerHTML = `<p style="padding:14px;color:#666;">No gear found. Try crash guard or helmet.</p>`;
       } else {
         popover.innerHTML = matches.map(p => `
-          <div class="autocomplete-item" data-id="${p.id}">
-            <img src="${p.image}" alt="${p.name}" loading="lazy" />
+          <div class="autocomplete-item" data-id="${escapeHTML(p.id)}">
+            <img src="${escapeHTML(p.image)}" alt="${escapeHTML(p.name)}" loading="lazy" />
             <div class="info">
-              <strong>${p.name}</strong>
-              <small>${p.category} · ${window.HRz.Utils.formatCurrency(p.price)}</small>
+              <strong>${escapeHTML(p.name)}</strong>
+              <small>${escapeHTML(p.category)} · ${window.HRz.Utils.formatCurrency(p.price)}</small>
             </div>
           </div>
         `).join("");
@@ -47,9 +48,13 @@ class SearchEngine {
           const id = item.dataset.id;
           popover.innerHTML = "";
           input.value = "";
-          // Close search panel
-          document.getElementById("searchPanel")?.classList.remove("open");
-          document.getElementById("overlay")?.classList.remove("open");
+          // Close search panel properly
+          if (window.HRz.App) {
+            window.HRz.App.closeAllPanels(false, true);
+          } else {
+            document.getElementById("searchPanel")?.classList.remove("open");
+            document.getElementById("overlay")?.classList.remove("open");
+          }
           window.location.hash = `product?id=${id}`;
         };
       });
@@ -63,8 +68,12 @@ class SearchEngine {
         const q = input.value.trim();
         if (q) {
           popover.innerHTML = "";
-          document.getElementById("searchPanel")?.classList.remove("open");
-          document.getElementById("overlay")?.classList.remove("open");
+          if (window.HRz.App) {
+            window.HRz.App.closeAllPanels(false, true);
+          } else {
+            document.getElementById("searchPanel")?.classList.remove("open");
+            document.getElementById("overlay")?.classList.remove("open");
+          }
           window.location.hash = `catalog?search=${encodeURIComponent(q)}`;
         }
       }

@@ -298,7 +298,8 @@
   background: #131417;
   border: 1px solid #232528;
   border-radius: 12px;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 .admin-table {
   width: 100%;
@@ -402,10 +403,23 @@
 @media (max-width: 900px) {
   .admin-dashboard-layout { grid-template-columns: 1fr; }
   .admin-sidebar { height: auto; position: relative; top: 0; padding: 16px; border-right: none; border-bottom: 1px solid #232528; }
-  .admin-tabs-list { flex-direction: row; flex-wrap: wrap; }
-  .admin-tab-btn { flex: 1 1 calc(50% - 8px); text-align: center; justify-content: center; }
+  .admin-sidebar-header { padding: 0 0 16px 0; margin-bottom: 16px; }
+  .admin-tabs-list { flex-direction: row; flex-wrap: wrap; padding: 0; }
+  .admin-tab-btn { flex: 1 1 calc(50% - 8px); text-align: center; justify-content: center; padding: 10px; font-size: 13px; }
   .admin-tab-btn .badge { display: none; }
   .admin-metrics-row { grid-template-columns: 1fr; }
   .admin-form-grid { grid-template-columns: 1fr; }
-  .admin-topbar { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .admin-topbar { flex-direction: column; align-items: flex-start; gap: 16px; padding: 16px; }
+  .admin-tab-content { padding: 16px; }
+  .cms-toolbar { flex-direction: column; align-items: flex-start; gap: 16px; }
+  
+  /* Make sure modals fit on screen */
+  .modal-card { max-width: 100% !important; margin: 16px; max-height: calc(100vh - 32px); overflow-y: auto; }
+  
+  /* Tables horizontally scrollable */
+  .admin-table th, .admin-table td { padding: 12px 8px; font-size: 13px; white-space: nowrap; }
+}
+
+@media (max-width: 480px) {
+  .admin-tab-btn { flex: 1 1 100%; }
 }

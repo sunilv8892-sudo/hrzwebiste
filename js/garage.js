@@ -14,12 +14,13 @@ class GarageManager {
   static updateActiveBikeUI() {
     const activeBike = window.HRz.Storage.getActiveBike();
     const chipInfo = document.getElementById("activeBikeChip");
+    const escapeHTML = window.HRz.Utils.escapeHTML;
     
     if (chipInfo) {
       if (activeBike) {
         chipInfo.innerHTML = `
-          <strong>${activeBike.brand} ${activeBike.model}</strong>
-          <small>${activeBike.variant || ""} (${activeBike.year || ""})</small>
+          <strong>${escapeHTML(activeBike.brand)} ${escapeHTML(activeBike.model)}</strong>
+          <small>${escapeHTML(activeBike.variant || "")} (${escapeHTML(activeBike.year || "")})</small>
         `;
       } else {
         chipInfo.innerHTML = `
@@ -56,6 +57,7 @@ class GarageManager {
     });
 
     const brands = Object.keys(brandsMap);
+    const escapeHTML = window.HRz.Utils.escapeHTML;
 
     modal.innerHTML = `
       <div class="modal-card bike-selector-card">
@@ -74,7 +76,7 @@ class GarageManager {
               <label for="selectBrand">1. Select Brand / Make</label>
               <select id="selectBrand" required>
                 <option value="">-- Choose Brand --</option>
-                ${brands.map(b => `<option value="${b}">${b}</option>`).join("")}
+                ${brands.map(b => `<option value="${escapeHTML(b)}">${escapeHTML(b)}</option>`).join("")}
               </select>
             </div>
             <div class="form-group">
@@ -98,19 +100,19 @@ class GarageManager {
           <div class="quick-presets-section">
             <p class="section-label">Or Pick Popular Presets:</p>
             <div class="presets-grid">
-              <button class="preset-chip" data-brand="Royal Enfield" data-model="Himalayan" data-variant="450 Adventure" data-year="2024">
+              <button type="button" class="preset-chip" data-brand="Royal Enfield" data-model="Himalayan" data-variant="450 Adventure" data-year="2024">
                 <strong>Royal Enfield</strong> Himalayan 450
               </button>
-              <button class="preset-chip" data-brand="KTM" data-model="Duke" data-variant="390 Gen-3" data-year="2024">
+              <button type="button" class="preset-chip" data-brand="KTM" data-model="Duke" data-variant="390 Gen-3" data-year="2024">
                 <strong>KTM</strong> Duke 390
               </button>
-              <button class="preset-chip" data-brand="Triumph" data-model="Speed" data-variant="400 Roadster" data-year="2024">
+              <button type="button" class="preset-chip" data-brand="Triumph" data-model="Speed" data-variant="400 Roadster" data-year="2024">
                 <strong>Triumph</strong> Speed 400
               </button>
-              <button class="preset-chip" data-brand="Yamaha" data-model="MT-15" data-variant="V2 Deluxe" data-year="2024">
+              <button type="button" class="preset-chip" data-brand="Yamaha" data-model="MT-15" data-variant="V2 Deluxe" data-year="2024">
                 <strong>Yamaha</strong> MT-15
               </button>
-              <button class="preset-chip" data-brand="BMW" data-model="G310" data-variant="GS Adventure" data-year="2024">
+              <button type="button" class="preset-chip" data-brand="BMW" data-model="G310" data-variant="GS Adventure" data-year="2024">
                 <strong>BMW</strong> G310 GS
               </button>
             </div>
@@ -140,7 +142,7 @@ class GarageManager {
       if (selectedBrand && brandsMap[selectedBrand]) {
         const models = Object.keys(brandsMap[selectedBrand]);
         models.forEach(m => {
-          modelSel.innerHTML += `<option value="${m}">${m}</option>`;
+          modelSel.innerHTML += `<option value="${escapeHTML(m)}">${escapeHTML(m)}</option>`;
         });
         modelSel.disabled = false;
       } else {
@@ -157,7 +159,7 @@ class GarageManager {
       if (selectedBrand && selectedModel && brandsMap[selectedBrand][selectedModel]) {
         const variantsList = brandsMap[selectedBrand][selectedModel];
         variantsList.forEach(v => {
-          variantSel.innerHTML += `<option value="${v.id}">${v.variant} (${v.year})</option>`;
+          variantSel.innerHTML += `<option value="${escapeHTML(v.id)}">${escapeHTML(v.variant)} (${escapeHTML(v.year)})</option>`;
         });
         variantSel.disabled = false;
       } else {
@@ -179,7 +181,8 @@ class GarageManager {
     };
 
     modal.querySelectorAll(".preset-chip").forEach(chip => {
-      chip.onclick = () => {
+      chip.onclick = (e) => {
+        e.preventDefault();
         const { brand, model, variant, year } = chip.dataset;
         const found = bikes.find(b => b.brand === brand && b.model === model && b.variant === variant);
         const targetBike = found || { nickname: `${brand} ${model}`, brand, model, variant, year: parseInt(year), bikeId: `bike-${brand.toLowerCase()}` };
@@ -195,12 +198,16 @@ class GarageManager {
       model: bikeObj.model,
       year: bikeObj.year || 2024,
       variant: bikeObj.variant,
-      bikeId: bikeObj.id || `bike-${Date.now()}`
+      bikeId: bikeObj.id || `bike-${Date.now()}`,
+      category: bikeObj.category || ""
     });
 
     this.updateActiveBikeUI();
     this.closeBikeModal();
-    window.HRz.Utils.showToast(`Active Bike updated to ${active.brand} ${active.model} (${active.variant})`, "success");
+    window.HRz.Utils.showToast(`Showing parts for ${active.brand} ${active.model} in Garage ↗`, "success");
+
+    // Navigate to garage so the bike selector and recommendations stay together
+    setTimeout(() => { window.location.hash = "garage"; }, 250);
 
     if (this.onBikeChanged) {
       this.onBikeChanged(active);
@@ -215,8 +222,12 @@ class GarageManager {
   }
 
   static renderGarageView(container) {
+    const db = window.HRz.DB;
+    const catalog = window.HRz.Catalog;
     const garage = window.HRz.Storage.getGarage();
     const activeBike = window.HRz.Storage.getActiveBike();
+    const recommendedProducts = db.getProductsForBike(activeBike).slice(0, 10);
+    const escapeHTML = window.HRz.Utils.escapeHTML;
 
     container.innerHTML = `
       <div class="view-header">
@@ -224,15 +235,51 @@ class GarageManager {
           <p class="eyebrow">My Fleet & Compatibility</p>
           <h2>My Garage</h2>
         </div>
-        <button class="accent-button" id="addNewBikeGarageBtn">+ Add Another Bike</button>
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <button class="accent-button" id="addNewBikeGarageBtn">Choose Your Bike</button>
+          <a class="secondary-button" href="#catalog">Browse All Products</a>
+        </div>
+      </div>
+
+      <section class="garage-selector-block" style="margin: 24px 0 32px; padding: 24px; border: 1px solid #222; border-radius: 18px; background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));">
+        <div class="section-head" style="margin-bottom: 16px;">
+          <div>
+            <p class="eyebrow red">Choose your ride</p>
+            <h2>${activeBike ? `${escapeHTML(activeBike.brand)} ${escapeHTML(activeBike.model)}` : "Pick a Bike"}</h2>
+          </div>
+          <p style="max-width: 620px; color: var(--mute);">Select a bike to refresh the recommendation shelf below. Saved garage bikes appear underneath so every control on this page has a purpose.</p>
+        </div>
+
+        <div class="garage-chip-row" style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin-bottom:16px;">
+          <div id="activeBikeChip" class="bike-chip" style="min-width: 240px;">
+            ${activeBike ? `
+              <strong>${escapeHTML(activeBike.brand)} ${escapeHTML(activeBike.model)}</strong>
+              <small>${escapeHTML(activeBike.variant || "")} (${escapeHTML(activeBike.year || "")})</small>
+            ` : `
+              <strong>Select Your Bike</strong>
+              <small>to filter the demo catalog</small>
+            `}
+          </div>
+          <button class="secondary-button" id="openBikeModalTopBtn">Open Bike Selector</button>
+        </div>
+
+        <div class="product-grid inner-section" id="garageRecommendationGrid">
+          ${recommendedProducts.length ? recommendedProducts.map(p => catalog.renderProductCard(p, activeBike, window.HRz.Storage.getWishlist())).join("") : `<div class="empty-state-card"><p>No matches yet. Pick a bike to see related demo products.</p></div>`}
+        </div>
+      </section>
+
+      <div class="section-head" style="margin-top: 12px;">
+        <div>
+          <p class="eyebrow red">Saved vehicles</p>
+          <h2>Garage List</h2>
+        </div>
       </div>
 
       ${garage.length === 0 ? `
         <div class="empty-state-card">
           <div class="empty-icon">🏍️</div>
-          <h3>Your Garage is Empty</h3>
-          <p>Add your motorcycle to filter crash guards, lights, luggage, and performance parts with guaranteed fitment.</p>
-          <button class="accent-button" id="emptyAddBikeBtn">Add Motorcycle Now</button>
+          <h3>No bikes saved yet</h3>
+          <p>Add a motorcycle above. The recommendation shelf already works without your saved garage list.</p>
         </div>
       ` : `
         <div class="garage-grid">
@@ -241,14 +288,14 @@ class GarageManager {
             return `
               <div class="garage-card ${isActive ? "active-garage-card" : ""}">
                 <div class="garage-card-header">
-                  <span class="bike-badge">${bike.brand}</span>
+                  <span class="bike-badge">${escapeHTML(bike.brand)}</span>
                   ${isActive ? `<span class="active-tag">Active Vehicle</span>` : ""}
                 </div>
-                <h3>${bike.brand} ${bike.model}</h3>
-                <p class="variant-text">${bike.variant} · Year ${bike.year}</p>
+                <h3>${escapeHTML(bike.brand)} ${escapeHTML(bike.model)}</h3>
+                <p class="variant-text">${escapeHTML(bike.variant)} · Year ${escapeHTML(bike.year)}</p>
                 <div class="garage-card-actions">
-                  ${!isActive ? `<button class="secondary-button activate-bike-btn" data-id="${bike.bikeId}">Set Active</button>` : `<span class="active-status-text">✓ Currently Filtering Catalog</span>`}
-                  <button class="icon-button remove-bike-btn" data-id="${bike.bikeId}" title="Remove from garage">🗑️</button>
+                  ${!isActive ? `<button class="secondary-button activate-bike-btn" data-id="${escapeHTML(bike.bikeId)}">Set Active</button>` : `<span class="active-status-text">✓ Currently Filtering Catalog</span>`}
+                  <button class="icon-button remove-bike-btn" data-id="${escapeHTML(bike.bikeId)}" title="Remove from garage">🗑️</button>
                 </div>
               </div>
             `;
@@ -257,14 +304,17 @@ class GarageManager {
       `}
     `;
 
-    const addBtn = container.querySelector("#addNewBikeGarageBtn") || container.querySelector("#emptyAddBikeBtn");
+    const addBtn = container.querySelector("#addNewBikeGarageBtn");
     if (addBtn) addBtn.onclick = () => this.openBikeModal();
+
+    const topOpenBtn = container.querySelector("#openBikeModalTopBtn");
+    if (topOpenBtn) topOpenBtn.onclick = () => this.openBikeModal();
 
     container.querySelectorAll(".activate-bike-btn").forEach(btn => {
       btn.onclick = () => {
         const id = btn.dataset.id;
         const target = garage.find(g => g.bikeId === id);
-        if (target) this.selectBike(target);
+        if (target) this.selectBike(target); // selectBike now navigates to catalog
       };
     });
 
@@ -277,6 +327,9 @@ class GarageManager {
         window.HRz.Utils.showToast("Bike removed from garage", "info");
       };
     });
+
+    // Bind events for the product cards in the garage view
+    catalog.bindCardEvents(container);
   }
 }
 

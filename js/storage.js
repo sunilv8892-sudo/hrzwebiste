@@ -29,6 +29,26 @@ const defaultState = {
 };
 
 class StorageService {
+  static cleanupLegacyKeys(keepKeys = []) {
+    try {
+      const protectedKeys = new Set([STORAGE_KEY, ...keepKeys]);
+      const keys = [];
+
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key) keys.push(key);
+      }
+
+      keys.forEach(key => {
+        if (/^hrz[_-]/i.test(key) && !protectedKeys.has(key)) {
+          localStorage.removeItem(key);
+        }
+      });
+    } catch (e) {
+      console.warn("Legacy storage cleanup skipped:", e);
+    }
+  }
+
   static loadState() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -49,6 +69,7 @@ class StorageService {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     } catch (e) {
       console.error("Failed to save state to local storage:", e);
+      window.HRz?.Utils?.showToast("Could not save your changes. Browser storage may be full.", "error");
     }
   }
 

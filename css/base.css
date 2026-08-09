@@ -4,9 +4,9 @@
    ============================================= */
 
 :root {
-  --ink: #0d0e10;
-  --charcoal: #17191c;
-  --steel: #272a2e;
+  --ink: #2e4148;
+  --charcoal: #40575d;
+  --steel: #506d75;
   --paper: #f0efea;
   --mute: #a5a6a6;
   --red: #e13b31;
@@ -148,7 +148,7 @@ h1 em, h2 em { font-style: normal; color: var(--red); }
 /* ---- Toast Notification ---- */
 .toast {
   position: fixed;
-  bottom: 22px;
+  bottom: 100px;
   right: 22px;
   background: var(--paper);
   color: #151619;
@@ -167,7 +167,7 @@ h1 em, h2 em { font-style: normal; color: var(--red); }
 /* Existing toast-container (for backward compat with utils.js) */
 .toast-container {
   position: fixed;
-  bottom: 24px;
+  bottom: 100px;
   right: 24px;
   z-index: 10000;
   display: flex;
@@ -203,3 +203,33 @@ h1 em, h2 em { font-style: normal; color: var(--red); }
 .star-icon.full { color: var(--gold); }
 .star-icon.half { color: var(--gold); opacity: .6; }
 .star-icon.empty { color: #555; }
+
+/* ---- WhatsApp Floating Button ---- */
+.floating-wa-btn {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  background: #25d366;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px 12px 14px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 14px;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+  z-index: 100;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+.floating-wa-btn:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 6px 16px rgba(37, 211, 102, 0.5);
+  background: #20bd5a;
+  color: #fff;
+}
+.wa-icon {
+  width: 24px;
+  height: 24px;
+}

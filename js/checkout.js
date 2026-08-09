@@ -9,6 +9,7 @@ class CheckoutView {
     const cart = window.HRz.Storage.getCart();
     const activeBike = window.HRz.Storage.getActiveBike();
     const utils = window.HRz.Utils;
+    const escapeHTML = utils.escapeHTML;
 
     if (cart.length === 0) {
       container.innerHTML = `
@@ -39,7 +40,7 @@ class CheckoutView {
             <div class="checkout-bike-banner">
               <span>🏍️</span>
               <div>
-                <strong>Active Motorcycle: ${activeBike ? activeBike.brand + " " + activeBike.model + " (" + activeBike.variant + ")" : "Universal"}</strong>
+                <strong>Active Motorcycle: ${activeBike ? escapeHTML(activeBike.brand) + " " + escapeHTML(activeBike.model) + " (" + escapeHTML(activeBike.variant) + ")" : "Universal"}</strong>
                 <p>All ${cart.length} items in your order are covered by our 7-Day Fitment Guarantee.</p>
               </div>
             </div>
@@ -112,9 +113,9 @@ class CheckoutView {
             <div class="summary-items-list">
               ${cart.map(item => `
                 <div class="summary-item-row">
-                  <img src="${item.image}" alt="${item.name}" loading="lazy" />
+                  <img src="${escapeHTML(item.image)}" alt="${escapeHTML(item.name)}" loading="lazy" />
                   <div class="info">
-                    <strong>${item.name}</strong>
+                    <strong>${escapeHTML(item.name)}</strong>
                     <small>Qty: ${item.quantity}</small>
                   </div>
                   <span class="price">${utils.formatCurrency(item.price * item.quantity)}</span>
@@ -147,14 +148,18 @@ class CheckoutView {
         e.preventDefault();
         const payMethod = form.querySelector("input[name='payMethod']:checked").value;
         const name = container.querySelector("#checkFullName").value;
+        const phone = container.querySelector("#checkPhone").value;
         const address = container.querySelector("#checkAddress").value;
         const city = container.querySelector("#checkCity").value;
+        const pincode = container.querySelector("#checkPincode").value;
+
+        const bikeStr = activeBike ? `${activeBike.brand} ${activeBike.model} (${activeBike.variant})` : "Universal";
 
         const newOrder = {
           id: "HRZ-ORD-" + Math.floor(10000 + Math.random() * 90000),
           date: new Date().toISOString().split("T")[0],
-          bike: activeBike ? `${activeBike.brand} ${activeBike.model} (${activeBike.variant})` : "Universal",
-          status: "Processing & Fitment Checked",
+          bike: bikeStr,
+          status: "Order Placed",
           trackingId: "DTDC-IN-" + Math.floor(100000 + Math.random() * 900000),
           items: cart,
           total: grandTotal,
@@ -162,24 +167,45 @@ class CheckoutView {
           shippingAddress: `${address}, ${city}`
         };
 
+        let waText = `Hello HRz PITSTOP! I would like to place an order.\n\n`;
+        waText += `*Customer:* ${name}\n`;
+        waText += `*Phone:* ${phone}\n`;
+        waText += `*Address:* ${address}, ${city} - ${pincode}\n`;
+        waText += `*Payment:* ${payMethod}\n`;
+        waText += `*Bike Fitment:* ${bikeStr}\n\n`;
+        waText += `*Order Details:*\n`;
+        cart.forEach((item, index) => {
+          waText += `${index + 1}. ${item.name} (Qty: ${item.quantity}) - ${utils.formatCurrency(item.price * item.quantity)}\n`;
+          if (item.sku) waText += `   SKU: ${item.sku}\n`;
+        });
+        waText += `\n*Grand Total:* ${utils.formatCurrency(grandTotal)}`;
+
+        const waUrl = `https://wa.me/7019348327?text=${encodeURIComponent(waText)}`;
+
         window.HRz.Storage.setCart([]);
+        if (window.HRz.Cart && typeof window.HRz.Cart.updateCartBadge === 'function') {
+          window.HRz.Cart.updateCartBadge();
+        }
         const db = window.HRz.DB;
         db.orders.unshift(newOrder);
         db._persist();
 
-        utils.showToast("Order Placed Successfully!", "success");
+        utils.showToast("Redirecting to WhatsApp to finalize your order...", "success");
+        window.open(waUrl, "_blank");
+
         this.renderSuccessView(container, newOrder);
       };
     }
   }
 
   static renderSuccessView(container, order) {
+    const escapeHTML = window.HRz.Utils.escapeHTML;
     container.innerHTML = `
       <div class="order-success-card">
         <div class="success-icon">🎉</div>
         <h2>Order Confirmed & Fitment Verified!</h2>
-        <p class="order-number">Order ID: <strong>${order.id}</strong> · Tracking ID: <strong>${order.trackingId}</strong></p>
-        <p>Thank you for shopping at HRz Pitstop. Our technicians have verified that all ordered parts fit your <strong>${order.bike}</strong>.</p>
+        <p class="order-number">Order ID: <strong>${escapeHTML(order.id)}</strong> · Tracking ID: <strong>${escapeHTML(order.trackingId)}</strong></p>
+        <p>Thank you for shopping at HRz Pitstop. Our technicians have verified that all ordered parts fit your <strong>${escapeHTML(order.bike)}</strong>.</p>
         
         <div class="success-actions">
           <button class="accent-button" onclick="window.location.hash='tracking'">Track Order Status</button>

@@ -127,27 +127,112 @@
   50% { transform: translateY(-8px); }
 }
 
-/* ---- Benefits Strip ---- */
-.benefits {
-  min-height: 100px;
-  background: #1e2023;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  padding: 0 4.5vw;
+/* ---- 3D Bike Selector ---- */
+.bike-selector-3d {
+  padding: 60px 0;
+  background: #0d0e10;
+  overflow: hidden;
 }
-.benefits > div {
+.bike-selector-3d .section-head {
+  padding: 0 7vw;
+  margin-bottom: 20px;
+}
+.bike-slider-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 50px 0;
+  box-sizing: border-box;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  cursor: grab;
+  user-select: none;
+}
+.bike-slider-container::-webkit-scrollbar {
+  display: none;
+}
+.bike-slider {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  padding: 0 calc(50% - 100px);
+}
+.bike-item {
+  scroll-snap-align: center;
+  flex: 0 0 200px;
+  width: 200px;
+  transition: transform 0.45s cubic-bezier(0.25, 0.1, 0.25, 1), filter 0.45s ease, opacity 0.45s ease, background 0.45s ease;
+  transform: scale(0.72) rotateY(18deg);
+  filter: brightness(0.6);
+  opacity: 0.6;
+  cursor: pointer;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 16px;
+  padding: 25px 15px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  will-change: transform, filter, opacity;
+  -webkit-transform: translateZ(0) scale(0.72) rotateY(18deg);
+}
+.bike-item.active {
+  transform: scale(1.12) rotateY(0deg);
+  filter: brightness(1);
+  opacity: 1;
+  background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.01));
+  border-color: rgba(255,255,255,0.15);
+  box-shadow: 0 20px 40px -10px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.1);
+  z-index: 2;
+  cursor: pointer;
+}
+.bike-img-wrap {
+  width: 100%;
+  height: 120px;
   display: flex;
   align-items: center;
-  gap: 13px;
-  border-right: 1px solid #ffffff18;
-  padding: 20px;
+  justify-content: center;
+  margin-bottom: 15px;
 }
-.benefits > div:first-child { padding-left: 0; }
-.benefits b { font-size: 22px; color: var(--red); }
-.benefits p { margin: 0; }
-.benefits strong, .benefits small { display: block; }
-.benefits strong { font-size: 12px; text-transform: uppercase; letter-spacing: .3px; }
-.benefits small { font-size: 11px; color: #aaa; margin-top: 3px; }
+.bike-img-wrap img {
+  max-width: 120%;
+  max-height: 120%;
+  object-fit: contain;
+  mix-blend-mode: screen; /* Removes black bg */
+  filter: drop-shadow(0 10px 10px rgba(0,0,0,0.9));
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transform: scale(0.9) translateY(0);
+}
+.bike-item.active .bike-img-wrap img {
+  transform: scale(1.05) translateY(-5px);
+  filter: drop-shadow(0 15px 15px rgba(0,0,0,0.8));
+}
+.bike-info {
+  text-align: center;
+  opacity: 0.45;
+  transition: opacity 0.4s ease 0.1s;
+}
+.bike-item.active .bike-info {
+  opacity: 1;
+}
+.bike-info h3 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 4px 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.bike-info p {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  color: var(--red);
+  margin: 0;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
 
 /* ---- Section Layout ---- */
 .section { padding: 110px 7vw; }
@@ -257,45 +342,6 @@
   font-size: 11px;
   text-transform: uppercase;
   color: #a1a29e;
-}
-
-/* ---- Fit Finder ---- */
-.fit-finder {
-  display: flex;
-  justify-content: space-between;
-  align-items: end;
-  padding: 100px 7vw;
-  background: #d92820;
-  color: #fff;
-  overflow: hidden;
-}
-.fit-finder h2 {
-  font-size: clamp(48px, 6vw, 82px);
-  letter-spacing: -1.5px;
-}
-.fit-finder h2 em { color: #101114; }
-.fit-finder > div > p:not(.eyebrow) {
-  max-width: 390px;
-  line-height: 1.6;
-  font-size: 14px;
-  margin: 22px 0 28px;
-}
-.fit-finder .button-red { background: #101114; }
-.fit-steps { display: flex; gap: 8px; }
-.fit-steps span {
-  display: block;
-  border: 1px solid #ffffff77;
-  width: 118px;
-  height: 118px;
-  padding: 16px;
-  font: 700 20px 'Barlow Condensed';
-  color: #161719;
-}
-.fit-steps b {
-  display: block;
-  color: white;
-  font-size: 16px;
-  margin-top: 34px;
 }
 
 /* ---- New Drops ---- */

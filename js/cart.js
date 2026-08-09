@@ -23,29 +23,62 @@ class CartDrawer {
 
     window.addEventListener("hrz:add-to-cart", (e) => {
       const product = e.detail.product;
-      this.addItem(product);
+      const isPrompted = sessionStorage.getItem('hrz_add_to_bag_login_prompted') === 'true';
+      const isLoggedIn = window.HRz.Auth && window.HRz.Auth.isLoggedIn();
+
+      if (!isLoggedIn && !isPrompted) {
+        sessionStorage.setItem('hrz_add_to_bag_login_prompted', 'true');
+        window.HRz.Auth.showLoginPopup(
+          () => {
+            this.addItem(product);
+          },
+          () => {
+            window.HRz.Utils.showToast("Sign in or guest mode required to add items", "info");
+          }
+        );
+      } else {
+        this.addItem(product);
+      }
     });
   }
 
   static openCart() {
+    this._openCartDrawer();
+  }
+
+  static _openCartDrawer() {
     const drawer = document.getElementById("cartDrawer");
     const overlay = document.getElementById("overlay");
     if (drawer) {
       drawer.classList.add("open");
       if (overlay) overlay.classList.add("open");
       this.renderCartItems();
+      
+      if (!window.history.state || !window.history.state.panelOpen) {
+        window.history.pushState({ panelOpen: true }, "");
+      }
     }
   }
 
-  static closeCart() {
+  static closeCart(isPopState = false, skipHistory = false) {
     const drawer = document.getElementById("cartDrawer");
     const overlay = document.getElementById("overlay");
+    const wasOpen = drawer && drawer.classList.contains("open");
     if (drawer) drawer.classList.remove("open");
     if (overlay) overlay.classList.remove("open");
+    
+    if (wasOpen && !isPopState && window.history.state && window.history.state.panelOpen) {
+      if (!skipHistory) {
+        window.history.back();
+      } else {
+        window.history.replaceState({}, "");
+      }
+    }
   }
 
   static addItem(product) {
     const cart = window.HRz.Storage.getCart();
+    const isFirstItem = cart.length === 0;
     const existing = cart.find(item => item.id === product.id);
 
     if (existing) {
@@ -63,7 +96,11 @@ class CartDrawer {
 
     window.HRz.Storage.setCart(cart);
     this.updateCartBadge();
-    this.openCart();
+    
+    if (isFirstItem) {
+      this.openCart();
+    }
+    
     window.HRz.Utils.showToast(`Added ${product.name} to bag`, "success");
   }
 
@@ -103,6 +140,7 @@ class CartDrawer {
     const container = document.getElementById("cartDrawerItems");
     const subtotal = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
     const utils = window.HRz.Utils;
+    const escapeHTML = utils.escapeHTML;
 
     const progressText = document.getElementById("shippingProgressText");
     const progressBar = document.getElementById("shippingProgressBar");
@@ -126,10 +164,10 @@ class CartDrawer {
     } else {
       container.innerHTML = cart.map(item => `
         <div class="cart-item-row">
-          <img src="${item.image}" alt="${item.name}" loading="lazy" onerror="this.src='images/helmet_product.png'" />
+          <img src="${escapeHTML(item.image)}" alt="${escapeHTML(item.name)}" loading="lazy" onerror="this.src='images/helmet_product.png'" />
           <div class="cart-item-info">
-            <small class="cart-item-sku">${item.sku || "Accessory"}</small>
-            <h4 class="cart-item-title">${item.name}</h4>
+            <small class="cart-item-sku">${escapeHTML(item.sku || "Accessory")}</small>
+            <h4 class="cart-item-title">${escapeHTML(item.name)}</h4>
             <b class="cart-item-price">${utils.formatCurrency(item.price)}</b>
             <div class="cart-qty-controls">
               <button class="qty-btn minus-qty" data-id="${item.id}">−</button>
@@ -161,8 +199,15 @@ class CartDrawer {
     if (checkoutBtn) {
       checkoutBtn.disabled = cart.length === 0;
       checkoutBtn.onclick = () => {
-        this.closeCart();
-        window.location.hash = "checkout";
+        if (window.HRz.Auth && !window.HRz.Auth.isLoggedIn()) {
+          window.HRz.Auth.showLoginPopup(() => {
+            this.closeCart(false, true);
+            window.location.hash = "checkout";
+          });
+        } else {
+          this.closeCart(false, true);
+          window.location.hash = "checkout";
+        }
       };
     }
   }

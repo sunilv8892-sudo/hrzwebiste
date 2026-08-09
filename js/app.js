@@ -10,10 +10,13 @@ class App {
     console.log("Initializing HRz Pitstop application...");
 
     await window.HRz.DB.init();
+    this.syncDataLoadBanner();
 
     window.HRz.Garage.init((activeBike) => this.onBikeChanged(activeBike));
     window.HRz.Cart.init();
     window.HRz.Search.init();
+    if (window.HRz.Auth) window.HRz.Auth.init();
+    if (window.HRz.Menu) window.HRz.Menu.init();
 
     window.addEventListener("hashchange", () => this.handleRoute());
     this.bindNavigation();
@@ -93,21 +96,65 @@ class App {
       }
       lastScrollY = currentScrollY;
     }, { passive: true });
+
+    // Handle mobile back button for panels
+    window.addEventListener("popstate", (e) => {
+      const overlay = document.getElementById("overlay");
+      if (overlay && overlay.classList.contains("open")) {
+        this.closeAllPanels(true); // true = called from popstate, don't trigger back() again
+      }
+      const viewer = document.getElementById("productGalleryViewer");
+      if (viewer && viewer.classList.contains("open")) {
+        if (window.HRz.Product && window.HRz.Product.closeViewer) {
+          window.HRz.Product.closeViewer(true);
+        } else {
+          viewer.classList.remove("open");
+          document.body.classList.remove("gallery-viewer-open");
+        }
+      }
+      const fitmentModal = document.getElementById("fitmentReportModal");
+      if (fitmentModal && fitmentModal.classList.contains("show")) {
+        fitmentModal.classList.remove("show");
+      }
+      const orderModal = document.getElementById("orderDetailsModal");
+      if (orderModal && orderModal.classList.contains("open")) {
+        this.closeOrderDetailsModal(true);
+      }
+    });
   }
 
   static openPanel(panel) {
     if (!panel) return;
     panel.classList.add("open");
     document.getElementById("overlay")?.classList.add("open");
+    
+    // Push state so Android back button works
+    if (!window.history.state || !window.history.state.panelOpen) {
+      window.history.pushState({ panelOpen: true }, "");
+    }
+    
     const input = panel.querySelector("input");
     if (input) setTimeout(() => input.focus(), 100);
   }
 
-  static closeAllPanels() {
+  static closeAllPanels(isPopState = false, skipHistory = false) {
+    const overlay = document.getElementById("overlay");
+    const wasOpen = overlay && overlay.classList.contains("open");
+
     document.getElementById("overlay")?.classList.remove("open");
     document.getElementById("searchPanel")?.classList.remove("open");
     document.getElementById("quickView")?.classList.remove("open");
     document.getElementById("cartDrawer")?.classList.remove("open");
+    if (window.HRz.Menu) window.HRz.Menu.closeAll(true);
+    
+    // If it was closed manually (not via back button), remove the history state
+    if (wasOpen && !isPopState && window.history.state && window.history.state.panelOpen) {
+      if (!skipHistory) {
+        window.history.back();
+      } else {
+        window.history.replaceState({}, "");
+      }
+    }
   }
 
   static syncMobileCartCount() {
@@ -120,7 +167,45 @@ class App {
     }
   }
 
+  static syncDataLoadBanner() {
+    const loadError = window.HRz.DB.loadError;
+    const existing = document.getElementById("dataLoadErrorBanner");
+
+    if (!loadError) {
+      if (existing) existing.remove();
+      return;
+    }
+
+    if (!existing) {
+      const banner = document.createElement("div");
+      banner.id = "dataLoadErrorBanner";
+      banner.style.cssText = [
+        "background:#8d1f18",
+        "color:#fff",
+        "padding:12px 16px",
+        "font-size:14px",
+        "line-height:1.4",
+        "position:relative",
+        "z-index:30"
+      ].join(";");
+      banner.innerHTML = `
+        <strong>Data load failed:</strong>
+        <span>${window.HRz.Utils.escapeHTML(loadError.message)}</span>
+      `;
+      const appRoot = document.getElementById("app");
+      if (appRoot && appRoot.parentElement) {
+        appRoot.parentElement.insertBefore(banner, appRoot);
+      }
+    } else {
+      existing.innerHTML = `
+        <strong>Data load failed:</strong>
+        <span>${window.HRz.Utils.escapeHTML(loadError.message)}</span>
+      `;
+    }
+  }
+
   static handleRoute() {
+    this.syncDataLoadBanner();
     const rawHash = window.location.hash.replace("#", "") || "home";
     const [route, queryString] = rawHash.split("?");
     const params = new URLSearchParams(queryString || "");
@@ -185,6 +270,12 @@ class App {
       case "help":
         this.renderHelpView(activeViewEl);
         break;
+      case "about":
+        if (window.HRz.Menu) window.HRz.Menu.renderAbout(activeViewEl);
+        break;
+      case "events":
+        if (window.HRz.Menu) window.HRz.Menu.renderEvents(activeViewEl, params.get("tab") || "upcoming");
+        break;
       default:
         this.renderHomeView(activeViewEl);
         break;
@@ -200,6 +291,7 @@ class App {
     const catalog = window.HRz.Catalog;
     const wishlist = window.HRz.Storage.getWishlist();
     const categories = db.getProducts();
+    const escapeHTML = utils.escapeHTML;
     const catImages = {
       Protection: "images/category_protection.png",
       Helmets: "images/category_helmets.png",
@@ -216,17 +308,106 @@ class App {
           <p class="eyebrow">Built for every mile</p>
           <h1>GEAR UP.<br /><em>GO FAR.</em></h1>
           <p class="hero-text">Purpose-built protection and performance for riders who never take the easy road.</p>
-          <a class="button button-red" href="#shop">Shop the collection <span>→</span></a>
+          <a class="button button-red" href="#catalog">Browse collection <span>→</span></a>
         </div>
-        <a class="scroll" href="#categories">SCROLL TO EXPLORE <span></span></a>
       </section>
 
-      <!-- Benefits Strip -->
-      <section class="benefits" aria-label="Store benefits">
-        <div><b>✦</b><p><strong>Built to protect</strong><small>Tested where it matters</small></p></div>
-        <div><b>↗</b><p><strong>Fast, free delivery</strong><small>On orders above ₹2,999</small></p></div>
-        <div><b>↺</b><p><strong>Easy 7-day returns</strong><small>Fitment guaranteed</small></p></div>
-        <div><b>◉</b><p><strong>Rider support</strong><small>Real experts, real help</small></p></div>
+      <!-- 3D Bike Selector -->
+      <section class="bike-selector-3d section" id="bikeSelector3D">
+        <div class="section-head">
+          <div><p class="eyebrow red">Select your machine</p><h2>CHOOSE YOUR <em>RIDE</em></h2></div>
+        </div>
+        <div class="bike-slider-container">
+          <div class="bike-slider">
+            <!-- Set 1 -->
+            <div class="bike-item" data-brand="Royal Enfield" data-model="Classic 350" data-variant="Reborn" data-year="2024">
+              <div class="bike-img-wrap"><img src="images/bike_t_1.png" alt="Classic 350" /></div>
+              <div class="bike-info"><h3>Royal Enfield</h3></div>
+            </div>
+            <div class="bike-item" data-brand="KTM" data-model="Duke" data-variant="390 Gen-3" data-year="2024">
+              <div class="bike-img-wrap"><img src="images/bike_t_2.png" alt="390 Duke" /></div>
+              <div class="bike-info"><h3>KTM</h3></div>
+            </div>
+            <div class="bike-item" data-brand="BMW" data-model="GS" data-variant="1250 Adventure" data-year="2024">
+              <div class="bike-img-wrap"><img src="images/bike_t_3.png" alt="R 1250 GS" /></div>
+              <div class="bike-info"><h3>BMW</h3></div>
+            </div>
+            <div class="bike-item" data-brand="Kawasaki" data-model="Ninja" data-variant="ZX-10R" data-year="2024">
+              <div class="bike-img-wrap"><img src="images/bike_t_4.png" alt="Ninja ZX-10R" /></div>
+              <div class="bike-info"><h3>Kawasaki</h3></div>
+            </div>
+            <div class="bike-item" data-brand="Yamaha" data-model="R15" data-variant="V4" data-year="2024">
+              <div class="bike-img-wrap"><img src="images/bike_t_5.png" alt="YZF R15" /></div>
+              <div class="bike-info"><h3>Yamaha</h3></div>
+            </div>
+            <div class="bike-item" data-brand="Ducati" data-model="Panigale" data-variant="V4" data-year="2024">
+              <div class="bike-img-wrap"><img src="images/bike_t_6.png" alt="Panigale V4" /></div>
+              <div class="bike-info"><h3>Ducati</h3></div>
+            </div>
+            <div class="bike-item" data-brand="Triumph" data-model="Tiger" data-variant="900 Rally Pro" data-year="2024">
+              <div class="bike-img-wrap"><img src="images/bike_t_7.png" alt="Tiger 900" /></div>
+              <div class="bike-info"><h3>Triumph</h3></div>
+            </div>
+            <!-- Set 2 (Middle, contains active by default) -->
+            <div class="bike-item" data-brand="Royal Enfield" data-model="Classic 350" data-variant="Reborn" data-year="2024">
+              <div class="bike-img-wrap"><img src="images/bike_t_1.png" alt="Classic 350" /></div>
+              <div class="bike-info"><h3>Royal Enfield</h3></div>
+            </div>
+            <div class="bike-item" data-brand="KTM" data-model="Duke" data-variant="390 Gen-3" data-year="2024">
+              <div class="bike-img-wrap"><img src="images/bike_t_2.png" alt="390 Duke" /></div>
+              <div class="bike-info"><h3>KTM</h3></div>
+            </div>
+            <div class="bike-item active" data-brand="BMW" data-model="GS" data-variant="1250 Adventure" data-year="2024">
+              <div class="bike-img-wrap"><img src="images/bike_t_3.png" alt="R 1250 GS" /></div>
+              <div class="bike-info"><h3>BMW</h3></div>
+            </div>
+            <div class="bike-item" data-brand="Kawasaki" data-model="Ninja" data-variant="ZX-10R" data-year="2024">
+              <div class="bike-img-wrap"><img src="images/bike_t_4.png" alt="Ninja ZX-10R" /></div>
+              <div class="bike-info"><h3>Kawasaki</h3></div>
+            </div>
+            <div class="bike-item" data-brand="Yamaha" data-model="R15" data-variant="V4" data-year="2024">
+              <div class="bike-img-wrap"><img src="images/bike_t_5.png" alt="YZF R15" /></div>
+              <div class="bike-info"><h3>Yamaha</h3></div>
+            </div>
+            <div class="bike-item" data-brand="Ducati" data-model="Panigale" data-variant="V4" data-year="2024">
+              <div class="bike-img-wrap"><img src="images/bike_t_6.png" alt="Panigale V4" /></div>
+              <div class="bike-info"><h3>Ducati</h3></div>
+            </div>
+            <div class="bike-item" data-brand="Triumph" data-model="Tiger" data-variant="900 Rally Pro" data-year="2024">
+              <div class="bike-img-wrap"><img src="images/bike_t_7.png" alt="Tiger 900" /></div>
+              <div class="bike-info"><h3>Triumph</h3></div>
+            </div>
+            <!-- Set 3 -->
+            <div class="bike-item" data-brand="Royal Enfield" data-model="Classic 350" data-variant="Reborn" data-year="2024">
+              <div class="bike-img-wrap"><img src="images/bike_t_1.png" alt="Classic 350" /></div>
+              <div class="bike-info"><h3>Royal Enfield</h3></div>
+            </div>
+            <div class="bike-item" data-brand="KTM" data-model="Duke" data-variant="390 Gen-3" data-year="2024">
+              <div class="bike-img-wrap"><img src="images/bike_t_2.png" alt="390 Duke" /></div>
+              <div class="bike-info"><h3>KTM</h3></div>
+            </div>
+            <div class="bike-item" data-brand="BMW" data-model="GS" data-variant="1250 Adventure" data-year="2024">
+              <div class="bike-img-wrap"><img src="images/bike_t_3.png" alt="R 1250 GS" /></div>
+              <div class="bike-info"><h3>BMW</h3></div>
+            </div>
+            <div class="bike-item" data-brand="Kawasaki" data-model="Ninja" data-variant="ZX-10R" data-year="2024">
+              <div class="bike-img-wrap"><img src="images/bike_t_4.png" alt="Ninja ZX-10R" /></div>
+              <div class="bike-info"><h3>Kawasaki</h3></div>
+            </div>
+            <div class="bike-item" data-brand="Yamaha" data-model="R15" data-variant="V4" data-year="2024">
+              <div class="bike-img-wrap"><img src="images/bike_t_5.png" alt="YZF R15" /></div>
+              <div class="bike-info"><h3>Yamaha</h3></div>
+            </div>
+            <div class="bike-item" data-brand="Ducati" data-model="Panigale" data-variant="V4" data-year="2024">
+              <div class="bike-img-wrap"><img src="images/bike_t_6.png" alt="Panigale V4" /></div>
+              <div class="bike-info"><h3>Ducati</h3></div>
+            </div>
+            <div class="bike-item" data-brand="Triumph" data-model="Tiger" data-variant="900 Rally Pro" data-year="2024">
+              <div class="bike-img-wrap"><img src="images/bike_t_7.png" alt="Tiger 900" /></div>
+              <div class="bike-info"><h3>Triumph</h3></div>
+            </div>
+          </div>
+        </div>
       </section>
 
       <!-- Categories -->
@@ -293,21 +474,6 @@ class App {
           <div class="review-track" id="review-track">
             ${this.getReviewCards()}
           </div>
-        </div>
-      </section>
-
-      <!-- Fit Finder -->
-      <section class="fit-finder">
-        <div>
-          <p class="eyebrow">Need a hand?</p>
-          <h2>FIND YOUR<br /><em>PERFECT FIT.</em></h2>
-          <p>Answer three quick questions and we'll point you to the kit that matches your ride.</p>
-          <button class="button button-red" id="fit-button">Start fit finder <span>→</span></button>
-        </div>
-        <div class="fit-steps">
-          <span>01<br /><b>Your ride</b></span>
-          <span>02<br /><b>Your style</b></span>
-          <span>03<br /><b>Your gear</b></span>
         </div>
       </section>
 
@@ -385,13 +551,8 @@ class App {
         <div class="section-head">
           <div><p class="eyebrow red">Keep exploring</p><h2>RECENTLY <em>VIEWED</em></h2></div>
         </div>
-        <div class="recent-grid">
-          ${featuredProducts.slice(0, 3).map(p => `
-            <a href="#product?id=${p.id}">
-              <img src="${p.image}" alt="${p.name}">
-              <span>${p.name} <b>${utils.formatCurrency(p.price)}</b></span>
-            </a>
-          `).join("")}
+        <div class="product-grid" id="recent-product-grid">
+          ${featuredProducts.slice(0, 4).map(p => catalog.renderProductCard(p, activeBike, wishlist)).join("")}
         </div>
       </section>
     `;
@@ -440,10 +601,6 @@ class App {
       reviewPrev.onclick = () => reviewTrack.prepend(reviewTrack.lastElementChild);
     }
 
-    // Fit finder
-    const fitBtn = container.querySelector("#fit-button");
-    if (fitBtn) fitBtn.onclick = () => utils.showToast("Fit finder is warming up — browse the catalog.", "info");
-
     // Newsletter
     const nlForm = container.querySelector("#newsletter-form");
     if (nlForm) {
@@ -455,18 +612,214 @@ class App {
         utils.showToast("Subscribed successfully!", "success");
       };
     }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  3D Bike Selector — Glitch-Free Native CSS Snap + Infinite Loop
+    // ═══════════════════════════════════════════════════════════════
+    const sliderContainer = container.querySelector(".bike-slider-container");
+    const bikeItems       = container.querySelectorAll(".bike-item");
+
+    if (sliderContainer && bikeItems.length > 0) {
+      const NUM_BIKES = 7;
+      let filterTimer = null;
+      let scrollStopTimer = null;
+      let lastActive = null;
+
+      const inferBikeCategory = (brand, model) => {
+        const brandKey = String(brand || "").toLowerCase();
+        const modelKey = String(model || "").toLowerCase();
+
+        if (modelKey.includes("classic")) return "Classic";
+        if (modelKey.includes("himalayan") || modelKey.includes("tiger") || modelKey.includes("gs")) return "Adventure";
+        if (modelKey.includes("duke") || modelKey.includes("mt-15")) return "Naked";
+        if (modelKey.includes("ninja") || modelKey.includes("r15") || modelKey.includes("panigale")) return "Supersport";
+        if (brandKey.includes("royal enfield") && modelKey.includes("hunter")) return "Roadster";
+        return "Tourer";
+      };
+
+      // ─── helpers ──────────────────────────────────────────────────
+      const getScrollCenter = () => sliderContainer.scrollLeft + sliderContainer.clientWidth / 2;
+      const getMid = (el) => el.offsetLeft + el.clientWidth / 2;
+
+      const getClosestItem = () => {
+        const center = getScrollCenter();
+        let best = null, bestDist = Infinity;
+        bikeItems.forEach(el => {
+          const dist = Math.abs(getMid(el) - center);
+          if (dist < bestDist) { bestDist = dist; best = el; }
+        });
+        return best;
+      };
+
+      const activateBike = (el) => {
+        if (el === lastActive) return;
+        lastActive = el;
+        bikeItems.forEach(i => i.classList.remove("active"));
+        el.classList.add("active");
+
+        const { brand, model, variant, year } = el.dataset;
+        if (!brand || !model) return;
+        const bikeObj = { brand, model, variant, year, category: inferBikeCategory(brand, model) };
+        window.HRz.Storage.setActiveBike(bikeObj);
+
+        clearTimeout(filterTimer);
+        filterTimer = setTimeout(() => {
+          const f = container.querySelector(".filters .active")?.dataset.filter || "all";
+          const items = f === "all"
+            ? db.getProductsForBike(bikeObj).slice(0, 8)
+            : db.getProductsForBike(bikeObj).filter(p => p.category === f);
+          const grid  = container.querySelector("#home-product-grid");
+          const count = container.querySelector("#product-count");
+          if (grid)  grid.innerHTML = items.map(p => catalog.renderProductCard(p, bikeObj, wishlist)).join("");
+          if (count) count.textContent = `${items.length} products`;
+          catalog.bindCardEvents(container);
+        }, 350);
+      };
+
+      // ─── native scroll handling ───────────────────────────────────
+      sliderContainer.addEventListener("scroll", () => {
+        if (sliderContainer.dataset.isAutoScrolling === "true") return;
+        
+        const closest = getClosestItem();
+        if (closest) activateBike(closest);
+
+        // When scrolling stops completely
+        clearTimeout(scrollStopTimer);
+        scrollStopTimer = setTimeout(() => {
+          const currentClosest = getClosestItem();
+          const idx = Array.from(bikeItems).indexOf(currentClosest);
+          
+          // If we settled outside the middle set, teleport invisibly to the middle set
+          if (idx !== -1 && (idx < NUM_BIKES || idx >= NUM_BIKES * 2)) {
+            const middleIdx = (idx % NUM_BIKES) + NUM_BIKES; // map to middle set (7-13)
+            const targetEl = bikeItems[middleIdx];
+            
+            // Disable snapping temporarily for the jump
+            sliderContainer.style.scrollSnapType = "none";
+            const targetPos = getMid(targetEl) - sliderContainer.clientWidth / 2;
+            sliderContainer.scrollTo({ left: targetPos, behavior: "instant" });
+            
+            // Re-enable snapping in next frame
+            requestAnimationFrame(() => {
+              sliderContainer.style.scrollSnapType = ""; // restores to CSS default
+            });
+          }
+        }, 150);
+      }, { passive: true });
+
+      // ─── desktop drag support ─────────────────────────────────────
+      let isDragging = false;
+      let startX = 0, scrollLeftStart = 0, hasMoved = false;
+
+      sliderContainer.addEventListener("mousedown", e => {
+        isDragging = true;
+        hasMoved = false;
+        startX = e.clientX;
+        scrollLeftStart = sliderContainer.scrollLeft;
+        sliderContainer.style.scrollSnapType = "none"; // Disable snap while dragging
+        sliderContainer.style.cursor = "grabbing";
+      });
+
+      window.addEventListener("mousemove", e => {
+        if (!isDragging) return;
+        e.preventDefault();
+        const walk = (e.clientX - startX) * 1.5;
+        if (Math.abs(walk) > 5) hasMoved = true;
+        sliderContainer.scrollLeft = scrollLeftStart - walk;
+      });
+
+      window.addEventListener("mouseup", e => {
+        if (!isDragging) return;
+        isDragging = false;
+        sliderContainer.style.cursor = "grab";
+        sliderContainer.style.scrollSnapType = ""; // Re-enable snap
+      });
+      
+      sliderContainer.addEventListener("click", e => {
+        if (hasMoved) {
+          e.preventDefault();
+          return; // It was a drag, ignore click
+        }
+        
+        const clicked = e.target.closest(".bike-item");
+        if (clicked) {
+          if (clicked.classList.contains("active")) {
+            // Already centered & active -> open garage recommendations
+            setTimeout(() => { window.location.hash = "garage"; }, 150);
+          } else {
+            // Not active -> smoothly scroll it to the center
+            const targetPos = getMid(clicked) - sliderContainer.clientWidth / 2;
+            sliderContainer.scrollTo({ left: targetPos, behavior: "smooth" });
+            setTimeout(() => { window.location.hash = "garage"; }, 450);
+          }
+        }
+      });
+      
+      sliderContainer.addEventListener("dragstart", e => e.preventDefault());
+
+      // ─── initial position & auto-scroll (BMW to Triumph) ────────
+      const startEl = bikeItems[NUM_BIKES + 2]; // BMW
+      const endEl = bikeItems[NUM_BIKES + 6];   // Triumph
+      
+      if (startEl && endEl) {
+        sliderContainer.dataset.isAutoScrolling = "true";
+        requestAnimationFrame(() => {
+          sliderContainer.scrollLeft = getMid(startEl) - sliderContainer.clientWidth / 2;
+          sliderContainer.dataset.isAutoScrolling = "false";
+        });
+        
+        const observer = new IntersectionObserver((entries) => {
+          if (entries[0].isIntersecting) {
+            observer.disconnect();
+            sliderContainer.dataset.isAutoScrolling = "true";
+            sliderContainer.style.scrollSnapType = "none";
+            sliderContainer.style.pointerEvents = "none";
+            
+            const duration = 2000;
+            const startTime = performance.now();
+            
+            const animateScroll = (time) => {
+              const elapsed = time - startTime;
+              const progress = Math.min(elapsed / duration, 1);
+              const easeProgress = progress < 0.5 
+                ? 4 * progress * progress * progress 
+                : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+              
+              const startPos = getMid(startEl) - sliderContainer.clientWidth / 2;
+              const endPos = getMid(endEl) - sliderContainer.clientWidth / 2;
+              
+              sliderContainer.scrollLeft = startPos + (endPos - startPos) * easeProgress;
+              
+              if (progress < 1) {
+                requestAnimationFrame(animateScroll);
+              } else {
+                sliderContainer.style.scrollSnapType = "";
+                sliderContainer.style.pointerEvents = "";
+                sliderContainer.dataset.isAutoScrolling = "false";
+                activateBike(endEl);
+              }
+            };
+            requestAnimationFrame(animateScroll);
+          }
+        }, { threshold: 0.3 });
+        
+        observer.observe(sliderContainer);
+      }
+    }
+    // ═══════════════════════════════════════════════════════════════
   }
 
   static getReviewCards() {
     const reviews = window.HRz.DB.getReviews ? window.HRz.DB.getReviews().filter(r => r.status === "published").slice(0, 6) : [];
+    const escapeHTML = window.HRz.Utils.escapeHTML;
     if (reviews.length > 0) {
       return reviews.map(r => `
         <article class="review-card">
           <div class="stars">★★★★★</div>
-          <blockquote>"${r.comment}"</blockquote>
+          <blockquote>"${escapeHTML(r.comment)}"</blockquote>
           <div class="reviewer">
-            <span>${r.reviewerName.split(" ").map(n => n[0]).join("")}</span>
-            <p><b>${r.reviewerName}</b><small>Verified rider · ${r.bikeName || "India"}</small></p>
+            <span>${escapeHTML(r.reviewerName.split(" ").map(n => n[0]).join(""))}</span>
+            <p><b>${escapeHTML(r.reviewerName)}</b><small>Verified rider · ${escapeHTML(r.bikeName || "India")}</small></p>
           </div>
         </article>
       `).join("");
@@ -523,9 +876,92 @@ class App {
     catalog.bindCardEvents(container);
   }
 
+  static getOrderStatusClass(status) {
+    if (!status) return "";
+    const lower = status.toLowerCase();
+    if (lower.includes("placed")) return "placed";
+    if (lower.includes("processing")) return "processing";
+    if (lower.includes("shipped") || lower.includes("transit")) return "shipped";
+    if (lower.includes("delivered")) return "delivered";
+    if (lower.includes("cancelled")) return "cancelled";
+    return "";
+  }
+
+  static getOrderTimelineHTML(status) {
+    const sClass = this.getOrderStatusClass(status);
+    let progress = 0;
+    
+    // Ordered is always complete unless cancelled before even ordered? No, cancelled is after ordered.
+    let procClass = "", shipClass = "", delivClass = "";
+    
+    if (sClass === "cancelled") {
+      return `
+        <div class="order-timeline-wrapper">
+          <div class="order-timeline" style="max-width: 300px;">
+            <div class="order-timeline-progress" style="width: 100%; background: #f44336;"></div>
+            
+            <div class="timeline-step completed">
+              <div class="step-icon">✓</div>
+              <div class="step-label">Ordered</div>
+            </div>
+            
+            <div class="timeline-step active" style="margin-left: auto;">
+              <div class="step-icon" style="background: #f44336; border-color: #f44336;">✕</div>
+              <div class="step-label" style="color: #f44336;">Cancelled</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    
+    if (sClass === "processing") {
+      progress = 33;
+      procClass = "active";
+    } else if (sClass === "shipped") {
+      progress = 66;
+      procClass = "completed";
+      shipClass = "active";
+    } else if (sClass === "delivered") {
+      progress = 100;
+      procClass = "completed";
+      shipClass = "completed";
+      delivClass = "active";
+    }
+    // if placed, progress = 0, no extra classes
+
+    return `
+      <div class="order-timeline-wrapper">
+        <div class="order-timeline">
+          <div class="order-timeline-progress" style="width: ${progress}%;"></div>
+          
+          <div class="timeline-step completed">
+            <div class="step-icon">✓</div>
+            <div class="step-label">Ordered</div>
+          </div>
+          
+          <div class="timeline-step ${procClass}">
+            <div class="step-icon">${procClass === 'completed' ? '✓' : '⚙'}</div>
+            <div class="step-label">Processing</div>
+          </div>
+          
+          <div class="timeline-step ${shipClass}">
+            <div class="step-icon">${shipClass === 'completed' ? '✓' : '🚚'}</div>
+            <div class="step-label">Shipped</div>
+          </div>
+          
+          <div class="timeline-step ${delivClass}">
+            <div class="step-icon">${delivClass === 'completed' || delivClass === 'active' ? '✓' : '📦'}</div>
+            <div class="step-label">Delivered</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
   static renderTrackingView(container) {
     const orders = window.HRz.DB.getOrders();
     const utils = window.HRz.Utils;
+    const escapeHTML = utils.escapeHTML;
 
     container.innerHTML = `
       <div class="breadcrumb-trail">
@@ -545,35 +981,284 @@ class App {
         </div>
       ` : `
         <div class="orders-history-list">
-          ${orders.map(o => `
-            <div class="order-card">
-              <div class="order-card-header">
-                <div>
-                  <strong>Order ID: ${o.id}</strong>
-                  <small> · Placed on ${o.date}</small>
+          ${orders.map(o => {
+            const firstItem = o.items[0];
+            const badgeClass = this.getOrderStatusClass(o.status);
+            
+            return `
+              <div class="order-card" onclick="window.HRz.App.openOrderDetailsModal('${escapeHTML(o.id)}')">
+                <div class="order-card-header">
+                  <div>
+                    <strong>Order ID: ${escapeHTML(o.id)}</strong>
+                    <small>Placed on ${escapeHTML(o.date)}</small>
+                  </div>
+                  <span class="order-status-badge ${badgeClass}">${escapeHTML(o.status)}</span>
                 </div>
-                <span class="order-status-badge">${o.status}</span>
+                
+                <div class="order-card-body">
+                  <div class="order-items-preview-row">
+                    ${o.items.map(i => `
+                      <img src="${escapeHTML(i.image || 'images/helmet_product.png')}" alt="${escapeHTML(i.name)}" class="order-item-thumb" onerror="this.src='images/helmet_product.png'" />
+                    `).join("")}
+                    <div class="order-item-details-compact">
+                      <strong>${escapeHTML(firstItem ? firstItem.name : "Accessories")}</strong>
+                      <small>${o.items.length > 1 ? `+ ${o.items.length - 1} more items` : "1 item"}</small>
+                    </div>
+                  </div>
+                  
+                  ${this.getOrderTimelineHTML(o.status)}
+                </div>
+                
+                <div class="order-card-footer">
+                  <span>Tracking: <code>${escapeHTML(o.trackingId)}</code></span>
+                  <strong>${utils.formatCurrency(o.total)} <small style="font-size:14px; font-weight:normal;">→</small></strong>
+                </div>
               </div>
-              <div class="order-bike-tag">
-                <span>🏍️</span> Bike: <strong>${o.bike}</strong>
-              </div>
-              <div class="order-items-preview">
-                ${o.items.map(i => `<p>• ${i.name} (x${i.quantity}) — ${utils.formatCurrency(i.price * i.quantity)}</p>`).join("")}
-              </div>
-              <div class="order-card-footer">
-                <span>Tracking: <code>${o.trackingId}</code></span>
-                <strong>Total: ${utils.formatCurrency(o.total)}</strong>
-              </div>
-            </div>
-          `).join("")}
+            `;
+          }).join("")}
         </div>
       `}
     `;
   }
 
+  static openOrderDetailsModal(orderId) {
+    const order = window.HRz.DB.getOrders().find(o => o.id === orderId);
+    if (!order) return;
+
+    let modal = document.getElementById("orderDetailsModal");
+    if (!modal) {
+      modal = document.createElement("div");
+      modal.id = "orderDetailsModal";
+      modal.className = "order-details-modal";
+      document.body.appendChild(modal);
+    }
+
+    const utils = window.HRz.Utils;
+    const escapeHTML = utils.escapeHTML;
+    
+    // Calculate progress for modal timeline
+    const sClass = this.getOrderStatusClass(order.status);
+    let progress = 0;
+    let procClass = "", shipClass = "", delivClass = "";
+    
+    let timelineHTML = "";
+
+    if (sClass === "cancelled") {
+      timelineHTML = `
+        <div class="modal-timeline-wrapper">
+          <div class="modal-timeline">
+            <div class="modal-timeline-progress" style="height: 100%; background: #f44336;"></div>
+            
+            <div class="modal-timeline-step completed">
+              <div class="step-icon">✓</div>
+              <div class="step-content">
+                <strong>Order Placed</strong>
+                <small>We received your order.</small>
+              </div>
+            </div>
+            
+            <div class="modal-timeline-step active">
+              <div class="step-icon" style="background: #f44336; border-color: #f44336;">✕</div>
+              <div class="step-content">
+                <strong style="color: #f44336;">Cancelled</strong>
+                <small>This order has been cancelled.</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    } else {
+      if (sClass === "processing") {
+        progress = 33;
+        procClass = "active";
+      } else if (sClass === "shipped") {
+        progress = 66;
+        procClass = "completed";
+        shipClass = "active";
+      } else if (sClass === "delivered") {
+        progress = 100;
+        procClass = "completed";
+        shipClass = "completed";
+        delivClass = "active";
+      }
+
+      timelineHTML = `
+        <div class="modal-timeline-wrapper">
+          <div class="modal-timeline">
+            <div class="modal-timeline-progress" style="height: ${progress}%;"></div>
+            
+            <div class="modal-timeline-step completed">
+              <div class="step-icon">✓</div>
+              <div class="step-content">
+                <strong>Order Placed</strong>
+                <small>We've received your order.</small>
+              </div>
+            </div>
+            
+            <div class="modal-timeline-step ${procClass}">
+              <div class="step-icon">${procClass === 'completed' ? '✓' : '⚙'}</div>
+              <div class="step-content">
+                <strong>Processing</strong>
+                <small>Verifying fitment & packing.</small>
+              </div>
+            </div>
+            
+            <div class="modal-timeline-step ${shipClass}">
+              <div class="step-icon">${shipClass === 'completed' ? '✓' : '🚚'}</div>
+              <div class="step-content">
+                <strong>Shipped</strong>
+                <small>Handed over to courier partner.</small>
+              </div>
+            </div>
+            
+            <div class="modal-timeline-step ${delivClass}">
+              <div class="step-icon">${delivClass === 'completed' || delivClass === 'active' ? '✓' : '📦'}</div>
+              <div class="step-content">
+                <strong>Delivered</strong>
+                <small>Enjoy the ride.</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    modal.innerHTML = `
+      <div class="order-details-header">
+        <h2>Order Details</h2>
+        <button class="order-details-close" id="closeOrderModalBtn" aria-label="Close modal">×</button>
+      </div>
+      
+      <div class="order-details-content">
+        <div class="order-details-main">
+          
+          <div class="order-section-card">
+            <h3>Items Ordered</h3>
+            <div class="full-order-items-list">
+              ${order.items.map(item => `
+                <div class="full-order-item">
+                  <img src="${escapeHTML(item.image || 'images/helmet_product.png')}" alt="${escapeHTML(item.name)}" onerror="this.src='images/helmet_product.png'" />
+                  <div class="full-order-item-info">
+                    <strong>${escapeHTML(item.name)}</strong>
+                    <small>Qty: ${item.quantity} · SKU: ${escapeHTML(item.sku || 'N/A')}</small>
+                  </div>
+                  <div class="full-order-item-price">
+                    ${utils.formatCurrency(item.price * item.quantity)}
+                  </div>
+                </div>
+              `).join("")}
+            </div>
+          </div>
+          
+          <div class="order-section-card">
+            <h3>Order Information</h3>
+            <div class="order-info-grid">
+              <div class="info-block">
+                <span>Order ID</span>
+                <strong>${escapeHTML(order.id)}</strong>
+              </div>
+              <div class="info-block">
+                <span>Order Date</span>
+                <strong>${escapeHTML(order.date)}</strong>
+              </div>
+              <div class="info-block">
+                <span>Payment Method</span>
+                <strong>${escapeHTML(order.paymentMethod || 'Prepaid')}</strong>
+              </div>
+              <div class="info-block">
+                <span>Shipping Address</span>
+                <strong>${escapeHTML(order.shippingAddress || 'Address details not available')}</strong>
+              </div>
+              <div class="info-block">
+                <span>Bike Fitment Verified</span>
+                <strong>${escapeHTML(order.bike)}</strong>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+        
+        <div class="order-details-sidebar">
+          
+          <div class="order-section-card">
+            <h3>Tracking & Status</h3>
+            <div class="info-block" style="margin-bottom:16px;">
+              <span>Waybill / Tracking ID</span>
+              <strong style="font-family:'DM Mono', monospace; font-size:16px; background:rgba(255,255,255,0.05); padding:8px; border-radius:4px; display:block;">${escapeHTML(order.trackingId)}</strong>
+            </div>
+            
+            ${timelineHTML}
+          </div>
+          
+          <div class="order-section-card">
+            <h3>Summary</h3>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+              <span style="color:var(--mute);">Subtotal</span>
+              <span>${utils.formatCurrency(order.total)}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid var(--border);">
+              <span style="color:var(--mute);">Shipping</span>
+              <span style="color:#81c784;">Free</span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+              <strong>Grand Total</strong>
+              <strong style="font-size:20px;">${utils.formatCurrency(order.total)}</strong>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    `;
+
+    // Add close events
+    const closeBtn = modal.querySelector("#closeOrderModalBtn");
+    if (closeBtn) {
+      closeBtn.onclick = () => this.closeOrderDetailsModal();
+    }
+    
+    // Add escape key support
+    this._orderModalKeyHandler = (e) => {
+      if (e.key === "Escape") this.closeOrderDetailsModal();
+    };
+    document.addEventListener("keydown", this._orderModalKeyHandler);
+
+    // Open animation
+    // Force reflow
+    void modal.offsetWidth; 
+    modal.classList.add("open");
+    document.body.style.overflow = "hidden"; // Prevent background scrolling
+    
+    if (!window.history.state || !window.history.state.orderModalOpen) {
+      window.history.pushState({ orderModalOpen: true }, "");
+    }
+  }
+
+  static closeOrderDetailsModal(isPopState = false, skipHistory = false) {
+    const modal = document.getElementById("orderDetailsModal");
+    if (!modal) return;
+    
+    const wasOpen = modal.classList.contains("open");
+    modal.classList.remove("open");
+    document.body.style.overflow = "";
+    
+    if (this._orderModalKeyHandler) {
+      document.removeEventListener("keydown", this._orderModalKeyHandler);
+      this._orderModalKeyHandler = null;
+    }
+
+    if (wasOpen && !isPopState && window.history.state && window.history.state.orderModalOpen) {
+      if (!skipHistory) {
+        window.history.back();
+      } else {
+        window.history.replaceState({}, "");
+      }
+    }
+  }
+
   static renderReviewsView(container) {
     const reviews = window.HRz.DB.getReviews().filter(r => r.status === "published");
     const utils = window.HRz.Utils;
+    const escapeHTML = utils.escapeHTML;
 
     container.innerHTML = `
       <div class="breadcrumb-trail">
@@ -589,13 +1274,13 @@ class App {
         ${reviews.map(r => `
           <div class="review-card">
             <div class="review-header">
-              <span class="reviewer-name"><b>${r.reviewerName}</b></span>
-              <span class="review-bike-tag">Verified ${r.bikeName}</span>
-              <span class="review-date">${r.date}</span>
+              <span class="reviewer-name"><b>${escapeHTML(r.reviewerName)}</b></span>
+              <span class="review-bike-tag">Verified ${escapeHTML(r.bikeName)}</span>
+              <span class="review-date">${escapeHTML(r.date)}</span>
             </div>
             <div class="review-rating">${utils.renderStarRating(r.rating)}</div>
-            <h4 class="review-title">${r.title}</h4>
-            <p class="review-comment" style="color:var(--mute); margin-top:8px;">${r.comment}</p>
+            <h4 class="review-title">${escapeHTML(r.title)}</h4>
+            <p class="review-comment" style="color:var(--mute); margin-top:8px;">${escapeHTML(r.comment)}</p>
           </div>
         `).join("")}
       </div>

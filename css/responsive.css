@@ -11,6 +11,9 @@ html, body {
   position: relative;
 }
 
+/* Default display states */
+.mobile-only { display: none; }
+
 /* ---- Search Panel Defaults ---- */
 .search-panel {
   position: fixed;
@@ -98,7 +101,7 @@ html, body {
 
 /* ---- Tablet & Below (≤ 800px) ---- */
 @media (max-width: 800px) {
-  body { padding-bottom: 66px; }
+  body { padding-bottom: calc(76px + env(safe-area-inset-bottom)); }
 
   .topline {
     font-size: 10px;
@@ -179,10 +182,24 @@ html, body {
   }
 
 
-  /* ---- Benefits Strip ---- */
-  .benefits { grid-template-columns: 1fr 1fr; padding: 10px 4vw; gap: 0; }
-  .benefits > div { padding: 8px 4px; border: 0; min-height: 55px; }
-
+  /* ---- 3D Bike Selector Mobile ---- */
+  .bike-slider-container {
+    padding: 40px 0;
+  }
+  .bike-slider {
+    padding: 0 calc(50% - 90px);
+  }
+  .bike-item {
+    flex: 0 0 180px;
+    width: 180px;
+    padding: 20px 10px 15px;
+  }
+  .bike-info h3 {
+    font-size: 18px;
+  }
+  .bike-img-wrap {
+    height: 100px;
+  }
   /* ---- Section Spacing ---- */
   .section { padding: 40px 4vw; }
   .section-head { margin-bottom: 20px; align-items: flex-start; flex-direction: column; gap: 8px; }
@@ -287,6 +304,40 @@ html, body {
 
   /* ---- Product Detail & Checkout Layout ---- */
   .product-detail-layout { grid-template-columns: 1fr; padding: 0 4vw 50px; }
+  .gallery-viewer-panel {
+    grid-template-columns: 1fr;
+    padding: 16px;
+  }
+  .gallery-viewer-stage img {
+    max-width: 92vw;
+    max-height: 72vh;
+  }
+  .gallery-viewer-close,
+  .gallery-viewer-nav {
+    width: 46px;
+    height: 46px;
+    font-size: 22px;
+  }
+  .gallery-viewer-nav.prev {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .gallery-viewer-nav.next {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .gallery-viewer-meta {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
   .checkout-layout { grid-template-columns: 1fr; padding: 0 4vw 50px; }
 
   /* ---- Statement, Drops, Reviews ---- */
@@ -298,13 +349,49 @@ html, body {
   .newsletter { padding: 40px 4vw; }
   .service-strip { grid-template-columns: 1fr; padding: 18px 4vw; gap: 14px; }
   .review-window { margin-right: 0; }
+  
+  .floating-wa-btn {
+    bottom: 100px;
+    left: 16px;
+    padding: 10px 14px 10px 10px;
+    font-size: 13px;
+  }
+  .floating-wa-btn .wa-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* ---- Product Image Carousel (Mobile) ---- */
+  .desktop-only { display: none !important; }
+  .mobile-only { display: block; }
+  
+  .mobile-swipe-carousel {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    gap: 16px;
+    background: #0e1017;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-xl);
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .mobile-swipe-carousel::-webkit-scrollbar { display: none; }
+  .mobile-swipe-carousel .carousel-image {
+    flex: 0 0 100%;
+    scroll-snap-align: center;
+    object-fit: contain;
+    height: 280px;
+  }
 
   /* ---- MOBILE BOTTOM DOCK (EXACTLY 5 EQUAL ITEMS) ---- */
   .mobile-dock {
     position: fixed;
     display: grid !important;
     grid-template-columns: repeat(5, 1fr) !important;
-    height: 60px;
+    height: calc(60px + env(safe-area-inset-bottom));
     bottom: 0; left: 0; right: 0;
     width: 100% !important;
     max-width: 100% !important;
@@ -385,8 +472,6 @@ html, body {
   .product-title { font-size: 13px; }
   
   .review-card { min-width: 100%; padding: 18px; }
-  .fit-steps { gap: 4px; }
-  .fit-steps span { width: 29vw; height: 80px; padding: 6px; font-size: 15px; }
 
   .newsletter form { display: flex; flex-direction: column; gap: 8px; }
   .newsletter input { width: 100%; border-right: 1px solid #55585a; }

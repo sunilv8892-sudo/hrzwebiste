@@ -40,8 +40,11 @@
   letter-spacing: -.4px;
   white-space: nowrap;
 }
-.brand span { color: var(--red); font-style: italic; }
-.brand i { font-style: normal; font-weight: 500; color: #c8c8c4; }
+.brand-img {
+  height: 48px;
+  width: auto;
+  display: block;
+}
 
 .main-nav {
   display: flex;

@@ -191,7 +191,7 @@ const DEFAULT_ORDERS = [
     "status": "In Transit",
     "trackingId": "DTDC-IN-889123",
     "items": [
-      { "productId": "crash-guard-steelmoto", "name": "HRz Expedition Heavy Engine Crash Guard", "price": 3899, "quantity": 1 }
+      { "productId": "crash-guard-steelmoto", "name": "HRz Expedition Heavy Engine Crash Guard", "price": 3899, "quantity": 1, "image": "images/crash_guard_product.png", "sku": "HRZ-CG-01" }
     ],
     "total": 3899,
     "paymentMethod": "UPI GPay",
@@ -222,6 +222,78 @@ const DEFAULT_BUNDLES = [
   }
 ];
 
+const DEMO_PRODUCT_GROUPS = [
+  {
+    category: "Helmets",
+    image: "images/category_helmets.png",
+    prefix: "Demo Helmet",
+    gallery: ["images/helmet_product.png", "images/intercom_product.png", "images/category_helmets.png"],
+    fitmentCategories: ["Adventure", "Roadster", "Classic", "Naked", "Supersport", "Tourer", "Cruiser", "Scrambler", "Twin", "Cafe Racer"]
+  },
+  {
+    category: "Protection",
+    image: "images/category_protection.png",
+    prefix: "Demo Protection",
+    gallery: ["images/crash_guard_product.png", "images/bash_plate_product.png", "images/category_protection.png"],
+    fitmentCategories: ["Adventure", "Roadster", "Classic", "Naked", "Supersport", "Tourer", "Cruiser", "Scrambler", "Twin", "Cafe Racer"]
+  },
+  {
+    category: "Lights",
+    image: "images/category_lights.png",
+    prefix: "Demo Light",
+    gallery: ["images/fog_lights_product.png", "images/phone_mount_product.png", "images/category_lights.png"],
+    fitmentCategories: ["Adventure", "Roadster", "Naked", "Tourer", "Cruiser", "Scrambler"]
+  },
+  {
+    category: "Luggage",
+    image: "images/category_luggage.png",
+    prefix: "Demo Luggage",
+    gallery: ["images/saddlebags_product.png", "images/phone_mount_product.png", "images/category_luggage.png"],
+    fitmentCategories: ["Adventure", "Tourer", "Cruiser", "Classic", "Roadster"]
+  },
+  {
+    category: "Touring",
+    image: "images/category_touring.png",
+    prefix: "Demo Touring",
+    gallery: ["images/intercom_product.png", "images/helmet_product.png", "images/category_touring.png"],
+    fitmentCategories: ["Adventure", "Tourer", "Cruiser", "Classic", "Roadster", "Naked"]
+  }
+];
+
+function buildDemoProducts() {
+  return DEMO_PRODUCT_GROUPS.flatMap(group => (
+    Array.from({ length: 5 }, (_, index) => {
+      const position = index + 1;
+      return {
+        id: `demo-${group.category.toLowerCase()}-${position}`,
+        name: `${group.prefix} ${String(position).padStart(2, "0")}`,
+        category: group.category,
+        price: 1499 + (index * 350),
+        originalPrice: 1999 + (index * 350),
+        image: group.image,
+        gallery: [group.image],
+        rating: 4.1 + (index * 0.1),
+        authenticity: "Demo Preview",
+        warranty: "Demo only",
+        reviewCount: 12 + index,
+        ridersInstalled: 20 + (index * 4),
+        badge: `DEMO ${position}`,
+        inStock: true,
+        sku: `DEMO-${group.category.slice(0, 3).toUpperCase()}-${String(position).padStart(2, "0")}`,
+        gallery: Array.from(new Set([group.image, ...group.gallery])),
+        highlights: [
+          `Demo ${group.category.toLowerCase()} product ${position} for UI wiring`,
+          "Uses temporary placeholder imagery",
+          "Available in the garage and catalog demo flows",
+          `Visible for ${group.fitmentCategories.length}+ bike categories`
+        ],
+        fitmentCategories: group.fitmentCategories,
+        demo: true
+      };
+    })
+  ));
+}
+
 class DBService {
   static bikes = [];
   static products = [];
@@ -230,11 +302,16 @@ class DBService {
   static orders = [];
   static bundles = [];
   static initialized = false;
+  static loadError = null;
 
   static async init() {
     if (this.initialized) return;
 
     try {
+      if (window.HRz.Storage?.cleanupLegacyKeys) {
+        window.HRz.Storage.cleanupLegacyKeys([...Object.values(CACHE_KEYS), "hrz-pitstop-state-v6"]);
+      }
+
       const cachedBikes = localStorage.getItem(CACHE_KEYS.BIKES);
       const cachedProducts = localStorage.getItem(CACHE_KEYS.PRODUCTS);
       const cachedComp = localStorage.getItem(CACHE_KEYS.COMPATIBILITY);
@@ -266,27 +343,41 @@ class DBService {
           this.reviews = rRes;
           this.orders = oRes;
           this.bundles = bdRes;
+          this.loadError = null;
         } catch (fetchErr) {
-          console.warn("Using embedded dataset fallback:", fetchErr);
-          this.bikes = DEFAULT_BIKES;
-          this.products = DEFAULT_PRODUCTS;
-          this.compatibility = DEFAULT_COMPATIBILITY;
-          this.reviews = DEFAULT_REVIEWS;
-          this.orders = DEFAULT_ORDERS;
-          this.bundles = DEFAULT_BUNDLES;
+          this.loadError = {
+            message: "Unable to load the dataset. Serve this site over http://localhost instead of opening index.html with file://.",
+            details: fetchErr
+          };
+          this.bikes = [];
+          this.products = [];
+          this.compatibility = [];
+          this.reviews = [];
+          this.orders = [];
+          this.bundles = [];
         }
-
-        this._persist();
       }
+
+      this.products = [...this.products, ...buildDemoProducts().filter(demo => !this.products.some(p => p.id === demo.id))];
+
+      if (!this.compatibility.length) {
+        this.compatibility = [];
+      }
+
+      this._persist();
       this.initialized = true;
     } catch (err) {
-      console.error("DB Init fallback:", err);
-      this.bikes = DEFAULT_BIKES;
-      this.products = DEFAULT_PRODUCTS;
-      this.compatibility = DEFAULT_COMPATIBILITY;
-      this.reviews = DEFAULT_REVIEWS;
-      this.orders = DEFAULT_ORDERS;
-      this.bundles = DEFAULT_BUNDLES;
+      console.error("DB Init error:", err);
+      this.loadError = {
+        message: "Database initialization failed. Check the browser console and run the site from a local HTTP server.",
+        details: err
+      };
+      this.bikes = [];
+      this.products = [];
+      this.compatibility = [];
+      this.reviews = [];
+      this.orders = [];
+      this.bundles = [];
       this.initialized = true;
     }
   }
@@ -301,6 +392,7 @@ class DBService {
       localStorage.setItem(CACHE_KEYS.BUNDLES, JSON.stringify(this.bundles));
     } catch (e) {
       console.warn("LocalStorage persist error:", e);
+      window.HRz?.Utils?.showToast("Could not save the database cache. The browser storage quota may be full.", "error");
     }
   }
 
@@ -320,6 +412,20 @@ class DBService {
 
   static checkFitment(productId, activeBike) {
     if (!activeBike) return null;
+
+    const product = this.getProductById(productId);
+    if (product?.fitmentCategories?.length && activeBike.category) {
+      const activeCategory = activeBike.category.toLowerCase();
+      const allowedCategories = product.fitmentCategories.map(c => c.toLowerCase());
+      if (allowedCategories.includes(activeCategory)) {
+        return {
+          isCompatible: true,
+          fitType: "Demo Fit",
+          notes: `${product.category} demo content shown for ${activeBike.category} bikes`,
+          sku: product.sku || "DEMO-FIT"
+        };
+      }
+    }
 
     const matchedBike = this.bikes.find(b =>
       b.brand.toLowerCase() === activeBike.brand.toLowerCase() &&
@@ -469,28 +575,49 @@ class DBService {
   }
 
   static importCompatibilityCSV(csvContent) {
-    const lines = csvContent.split("\n").map(l => l.trim()).filter(Boolean);
-    if (lines.length < 2) return 0;
-    
-    let importedCount = 0;
-    for (let i = 1; i < lines.length; i++) {
-      const parts = lines[i].split(",");
-      if (parts.length >= 4) {
-        const productId = parts[1].trim();
-        const bikeId = parts[3].trim();
-        const fitType = parts[6] ? parts[6].trim() : "OEM Fit";
-        const notes = parts[7] ? parts[7].trim().replace(/^"|"$/g, '') : "";
+    if (!window.Papa?.parse) {
+      throw new Error("PapaParse is required for CSV import.");
+    }
 
-        if (productId && bikeId) {
-          const ruleId = parts[0].startsWith("cmp-") ? parts[0] : "cmp-" + Date.now() + "-" + i;
-          const existing = this.compatibility.find(c => c.productId === productId && c.bikeId === bikeId);
-          if (!existing) {
-            this.compatibility.push({ id: ruleId, productId, bikeId, fitType, notes });
-            importedCount++;
+    const parsed = window.Papa.parse(csvContent, {
+      header: true,
+      skipEmptyLines: true,
+      transformHeader: header => header.trim()
+    });
+
+    if (parsed.errors?.length) {
+      console.warn("CSV parse warnings:", parsed.errors);
+    }
+
+    let importedCount = 0;
+    const rows = Array.isArray(parsed.data) ? parsed.data : [];
+
+    rows.forEach((row, index) => {
+      const getField = (...keys) => {
+        for (const key of keys) {
+          if (row[key] !== undefined && row[key] !== null) {
+            return String(row[key]).trim();
           }
         }
+        return "";
+      };
+
+      const productId = getField("ProductID", "productId");
+      const bikeId = getField("BikeID", "bikeId");
+      const fitType = getField("FitType", "fitType") || "OEM Fit";
+      const notes = getField("Notes", "notes");
+      const ruleIdValue = getField("RuleID", "ruleId");
+
+      if (productId && bikeId) {
+        const ruleId = ruleIdValue.startsWith("cmp-") ? ruleIdValue : `cmp-${Date.now()}-${index}`;
+        const existing = this.compatibility.find(c => c.productId === productId && c.bikeId === bikeId);
+        if (!existing) {
+          this.compatibility.push({ id: ruleId, productId, bikeId, fitType, notes });
+          importedCount++;
+        }
       }
-    }
+    });
+
     this._persist();
     if (window.HRz?.Storage) {
       window.HRz.Storage.addAuditLog(`Imported ${importedCount} compatibility rules via CSV`);

@@ -16,6 +16,7 @@ class CatalogView {
 
     const activeBike = window.HRz.Storage.getActiveBike();
     const wishlist = window.HRz.Storage.getWishlist();
+    const escapeHTML = window.HRz.Utils.escapeHTML;
 
     let products = window.HRz.DB.getProductsForBike(activeBike);
 
@@ -51,7 +52,7 @@ class CatalogView {
         <div>
           <p class="eyebrow red">Guaranteed Motorcycle Parts</p>
           <h2>PRODUCT <em>CATALOG</em></h2>
-          ${activeBike ? `<p class="active-bike-filter-note" style="margin-top:8px;">Showing parts compatible with <strong>${activeBike.brand} ${activeBike.model} (${activeBike.variant})</strong></p>` : ""}
+          ${activeBike ? `<p class="active-bike-filter-note" style="margin-top:8px;">Showing parts compatible with <strong>${escapeHTML(activeBike.brand)} ${escapeHTML(activeBike.model)} (${escapeHTML(activeBike.variant)})</strong></p>` : ""}
         </div>
         <div class="sort-wrapper">
           <label for="catalogSort">Sort By:</label>
@@ -76,16 +77,17 @@ class CatalogView {
         <div class="empty-state-card">
           <div class="empty-icon">🔍</div>
           <h3>No Compatible Parts Found</h3>
-          <p>We couldn't find any products in "${this.activeCategory}" matching your criteria for ${activeBike ? activeBike.brand + " " + activeBike.model : "this filter"}.</p>
+          <p>We couldn't find any products in "${escapeHTML(this.activeCategory)}" matching your criteria for ${activeBike ? escapeHTML(activeBike.brand) + " " + escapeHTML(activeBike.model) : "this filter"}.</p>
           <button class="accent-button" id="resetCatalogFiltersBtn">Reset All Filters</button>
         </div>
       ` : `
-        <div class="product-grid inner-section">
-          ${products.map(p => this.renderProductCard(p, activeBike, wishlist)).join("")}
+        <div class="product-grid inner-section" id="catalogProductGrid">
+          ${this.renderSkeletons(Math.min(products.length, 8))}
         </div>
       `}
     `;
 
+    // Bind events first (pills, sort, reset)
     const sortSelect = container.querySelector("#catalogSort");
     if (sortSelect) {
       sortSelect.onchange = (e) => {
@@ -110,45 +112,56 @@ class CatalogView {
       };
     }
 
-    this.bindCardEvents(container);
+    // Lazy-load real cards after a brief shimmer delay
+    const grid = container.querySelector("#catalogProductGrid");
+    if (grid && products.length > 0) {
+      setTimeout(() => {
+        grid.innerHTML = products.map(p => this.renderProductCard(p, activeBike, wishlist)).join("");
+        this.bindCardEvents(container);
+      }, 350);
+    }
+
+    return; // Skip the old bindCardEvents call below
+  }
+
+  static renderSkeletons(count = 6) {
+    return Array.from({ length: count }, () => `
+      <div class="product-card-skeleton">
+        <div class="skeleton skeleton-img"></div>
+        <div class="skeleton-body">
+          <div class="skeleton skeleton-line short"></div>
+          <div class="skeleton skeleton-line title"></div>
+          <div class="skeleton skeleton-line long"></div>
+          <div class="skeleton skeleton-line price"></div>
+        </div>
+      </div>
+    `).join("");
   }
 
   static renderProductCard(p, activeBike, wishlist) {
     const isWishlisted = wishlist ? wishlist.includes(p.id) : false;
     const fitment = window.HRz.DB.checkFitment(p.id, activeBike);
     const utils = window.HRz.Utils;
+    const escapeHTML = utils.escapeHTML;
     
     return `
-      <div class="product-card reveal" data-id="${p.id}" style="cursor:pointer;">
+      <div class="product-card reveal" data-id="${escapeHTML(p.id)}" style="cursor:pointer;">
         <div class="product-card-media">
-          ${p.badge ? `<span class="product-badge">${p.badge}</span>` : ""}
-          <button class="wishlist-toggle-btn ${isWishlisted ? "active" : ""}" data-id="${p.id}" aria-label="Toggle wishlist">
+          ${p.badge ? `<span class="product-badge">${escapeHTML(p.badge)}</span>` : ""}
+          <button class="wishlist-toggle-btn ${isWishlisted ? "active" : ""}" data-id="${escapeHTML(p.id)}" aria-label="Toggle wishlist">
             ${isWishlisted ? "❤️" : "🤍"}
           </button>
-          <img src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.src='images/helmet_product.png'" />
-          ${fitment ? `
-            <div class="fitment-confidence-tag verified">
-              <span class="fit-icon">✓</span> Fits ${activeBike.model} (${fitment.fitType})
-            </div>
-          ` : `
-            <div class="fitment-confidence-tag universal">
-              Universal Fit
-            </div>
-          `}
+          <img src="${escapeHTML(p.image)}" alt="${escapeHTML(p.name)}" loading="lazy" onerror="this.src='images/helmet_product.png'" />
         </div>
         <div class="product-card-content">
-          <div class="card-category-strip">${p.category} · SKU: ${p.sku}</div>
-          <h3 class="product-title">${p.name}</h3>
-          <div class="card-social-proof">
-            ${utils.renderStarRating(p.rating)}
-            <span class="riders-installed-count">Installed by <strong>${p.ridersInstalled || 120}+</strong> Riders</span>
-          </div>
+          <div class="card-category-strip">${escapeHTML(p.category)}</div>
+          <h3 class="product-title">${escapeHTML(p.name)}</h3>
           <div class="price-action-row">
             <div class="price-lockup">
               <span class="current-price">${utils.formatCurrency(p.price)}</span>
               ${p.originalPrice ? `<span class="original-price">${utils.formatCurrency(p.originalPrice)}</span>` : ""}
             </div>
-            <button class="accent-button add-to-cart-btn" data-id="${p.id}">
+            <button class="accent-button add-to-cart-btn" data-id="${escapeHTML(p.id)}">
               + Bag
             </button>
           </div>

@@ -12,6 +12,7 @@ class AdminCMS {
     const db = window.HRz.DB;
     const storage = window.HRz.Storage;
     const utils = window.HRz.Utils;
+    const escapeHTML = utils.escapeHTML;
 
     const products = db.getProducts();
     const compatibility = db.getCompatibility();
@@ -20,7 +21,6 @@ class AdminCMS {
     const orders = db.getOrders();
     const auditLogs = storage.getAuditLogs();
     const heroBanner = storage.getHeroBanner();
-    const currentRole = storage.loadState().adminRole || "Admin";
 
     const pendingReviews = reviews.filter(r => r.status === 'pending').length;
 
@@ -64,14 +64,6 @@ class AdminCMS {
             <div class="admin-page-title">
               <h1>${this.getPageTitle(this.activeTab)}</h1>
             </div>
-            <div class="admin-role-switch">
-              <label for="adminRoleSelect">Active Role:</label>
-              <select id="adminRoleSelect">
-                <option value="Admin" ${currentRole === "Admin" ? "selected" : ""}>Admin (Full Access)</option>
-                <option value="Catalog Manager" ${currentRole === "Catalog Manager" ? "selected" : ""}>Catalog Manager</option>
-                <option value="Moderator" ${currentRole === "Moderator" ? "selected" : ""}>Review Moderator</option>
-              </select>
-            </div>
           </div>
 
           <!-- Tab Content -->
@@ -81,17 +73,6 @@ class AdminCMS {
         </main>
       </div>
     `;
-
-    const roleSel = container.querySelector("#adminRoleSelect");
-    if (roleSel) {
-      roleSel.onchange = (e) => {
-        const state = storage.loadState();
-        state.adminRole = e.target.value;
-        storage.saveState(state);
-        utils.showToast(`Role changed to ${e.target.value}`, "info");
-        this.render(container);
-      };
-    }
 
     container.querySelectorAll(".admin-tab-btn").forEach(btn => {
       btn.onclick = () => {
@@ -119,6 +100,7 @@ class AdminCMS {
   static renderTabContent(tab, data) {
     const utils = window.HRz.Utils;
     const db = window.HRz.DB;
+    const escapeHTML = utils.escapeHTML;
 
     if (tab === "hero") {
       const hero = data.heroBanner;
@@ -134,22 +116,22 @@ class AdminCMS {
           <form id="heroCmsForm" class="admin-form-grid">
             <div class="form-group">
               <label for="heroBadgeInput">Promotional Offer Badge *</label>
-              <input type="text" id="heroBadgeInput" value="${hero.badge || ''}" required placeholder="e.g. MONSOON MEGA SALE · FLAT 20% OFF" />
+              <input type="text" id="heroBadgeInput" value="${escapeHTML(hero.badge || '')}" required placeholder="e.g. MONSOON MEGA SALE · FLAT 20% OFF" />
             </div>
 
             <div class="form-group">
               <label for="heroTitleInput">Main Hero Headline *</label>
-              <input type="text" id="heroTitleInput" value="${hero.title || ''}" required placeholder="e.g. Guaranteed Fitment for Your Motorcycle" />
+              <input type="text" id="heroTitleInput" value="${escapeHTML(hero.title || '')}" required placeholder="e.g. Guaranteed Fitment for Your Motorcycle" />
             </div>
 
             <div class="form-group admin-form-full">
               <label for="heroSubheadInput">Subhead Explanation</label>
-              <textarea id="heroSubheadInput" rows="2" required>${hero.subtitle || ''}</textarea>
+              <textarea id="heroSubheadInput" rows="2" required>${escapeHTML(hero.subtitle || '')}</textarea>
             </div>
 
             <div class="form-group admin-form-full">
               <label for="heroBgImageInput">Hero Background Image URL or Path *</label>
-              <input type="text" id="heroBgImageInput" value="${hero.bgImage || 'images/hero_banner.jpg'}" required />
+              <input type="text" id="heroBgImageInput" value="${escapeHTML(hero.bgImage || 'images/hero_banner.jpg')}" required />
               
               <div class="image-preset-picker">
                 <button type="button" class="preset-img-btn" data-url="images/hero-rider.png">Default Rider PNG</button>
@@ -165,11 +147,11 @@ class AdminCMS {
 
             <div class="admin-form-full hero-preview-box">
               <h4>Live Banner Preview</h4>
-              <div class="rider-hero" style="background: linear-gradient(135deg, rgba(9, 10, 12, 0.85), rgba(9, 10, 12, 0.95)), url('${hero.bgImage}') center/cover no-repeat;">
+              <div class="rider-hero" style="background: linear-gradient(135deg, rgba(9, 10, 12, 0.85), rgba(9, 10, 12, 0.95)), url('${escapeHTML(hero.bgImage)}') center/cover no-repeat;">
                 <div class="hero-content-box">
-                  <span class="hero-badge" id="previewBadge">${hero.badge}</span>
-                  <h1 class="hero-headline" id="previewTitle">${hero.title}</h1>
-                  <p class="hero-subhead" id="previewSubhead">${hero.subtitle}</p>
+                  <span class="hero-badge" id="previewBadge">${escapeHTML(hero.badge)}</span>
+                  <h1 class="hero-headline" id="previewTitle">${escapeHTML(hero.title)}</h1>
+                  <p class="hero-subhead" id="previewSubhead">${escapeHTML(hero.subtitle)}</p>
                 </div>
               </div>
             </div>
@@ -214,7 +196,7 @@ class AdminCMS {
 
           <div class="category-filter-pills" style="margin-bottom: 24px; display: flex; gap: 8px; flex-wrap: wrap;">
             ${categories.map(cat => `
-              <button class="filter-pill admin-cat-filter ${activeCategoryFilter === cat ? "active" : ""}" data-filter="${cat}" style="padding: 6px 14px; border: 1px solid #333; border-radius: 20px; background: ${activeCategoryFilter === cat ? 'var(--red)' : '#1a1c1e'}; color: white; cursor:pointer; font-size:12px;">${cat}</button>
+              <button class="filter-pill admin-cat-filter ${activeCategoryFilter === cat ? "active" : ""}" data-filter="${escapeHTML(cat)}" style="padding: 6px 14px; border: 1px solid #333; border-radius: 20px; background: ${activeCategoryFilter === cat ? 'var(--red)' : '#1a1c1e'}; color: white; cursor:pointer; font-size:12px;">${escapeHTML(cat)}</button>
             `).join("")}
           </div>
 
@@ -233,13 +215,14 @@ class AdminCMS {
               <tbody>
                 ${filteredProducts.map(p => `
                   <tr>
-                    <td><img src="${p.image}" alt="${p.name}" width="44" height="44" style="object-fit:cover; border-radius:6px; border:1px solid #333;" onerror="this.src='images/helmet_product.png'" /></td>
-                    <td><strong>${p.name}</strong><br/><small style="color:#888;">SKU: ${p.sku}</small></td>
-                    <td><span class="cat-tag">${p.category}</span></td>
+                    <td><img src="${escapeHTML(p.image)}" alt="${escapeHTML(p.name)}" width="44" height="44" style="object-fit:cover; border-radius:6px; border:1px solid #333;" onerror="this.src='images/helmet_product.png'" /></td>
+                    <td><strong>${escapeHTML(p.name)}</strong><br/><small style="color:#888;">SKU: ${escapeHTML(p.sku)}</small></td>
+                    <td><span class="cat-tag">${escapeHTML(p.category)}</span></td>
                     <td>${utils.formatCurrency(p.price)}</td>
                     <td>${p.inStock ? "<span class='stock-tag in'>In Stock</span>" : "<span class='stock-tag out'>Out of Stock</span>"}</td>
                     <td>
-                      <button class="small-action-btn delete-prod-btn danger" data-id="${p.id}">Delete</button>
+                      <button class="small-action-btn edit-prod-btn" data-id="${escapeHTML(p.id)}">Edit</button>
+                      <button class="small-action-btn delete-prod-btn danger" data-id="${escapeHTML(p.id)}">Delete</button>
                     </td>
                   </tr>
                 `).join("")}
@@ -279,12 +262,12 @@ class AdminCMS {
                   return `
                     <tr>
                       <td><code style="color:#888;">${c.id}</code></td>
-                      <td><strong>${prod ? prod.name : c.productId}</strong></td>
-                      <td>${bike ? `${bike.brand} ${bike.model}` : "Universal"}</td>
-                      <td><span class="cat-tag">${c.fitType}</span></td>
-                      <td><small style="color:#888;">${c.notes || "N/A"}</small></td>
+                      <td><strong>${prod ? escapeHTML(prod.name) : escapeHTML(c.productId)}</strong></td>
+                      <td>${bike ? `${escapeHTML(bike.brand)} ${escapeHTML(bike.model)}` : "Universal"}</td>
+                      <td><span class="cat-tag">${escapeHTML(c.fitType)}</span></td>
+                      <td><small style="color:#888;">${escapeHTML(c.notes || "N/A")}</small></td>
                       <td>
-                        <button class="small-action-btn delete-comp-btn danger" data-id="${c.id}">Delete</button>
+                        <button class="small-action-btn delete-comp-btn danger" data-id="${escapeHTML(c.id)}">Delete</button>
                       </td>
                     </tr>
                   `;
@@ -309,15 +292,15 @@ class AdminCMS {
             ${data.reviews.map(r => `
               <div class="moderation-card ${r.status}">
                 <div class="mod-header">
-                  <strong>${r.reviewerName}</strong>
-                  <span class="status-badge ${r.status}">${r.status.toUpperCase()}</span>
+                  <strong>${escapeHTML(r.reviewerName)}</strong>
+                  <span class="status-badge ${r.status}">${escapeHTML(r.status.toUpperCase())}</span>
                 </div>
-                <p class="bike-info">Bike: ${r.bikeName}</p>
-                <h4 class="title">${r.title}</h4>
-                <p class="comment">"${r.comment}"</p>
+                <p class="bike-info">Bike: ${escapeHTML(r.bikeName)}</p>
+                <h4 class="title">${escapeHTML(r.title)}</h4>
+                <p class="comment">"${escapeHTML(r.comment)}"</p>
                 <div class="mod-actions">
-                  ${r.status !== "published" ? `<button class="small-action-btn approve-rev-btn" data-id="${r.id}">Approve</button>` : ""}
-                  ${r.status !== "rejected" ? `<button class="small-action-btn danger reject-rev-btn" data-id="${r.id}">Reject</button>` : ""}
+                  ${r.status !== "published" ? `<button class="small-action-btn approve-rev-btn" data-id="${escapeHTML(r.id)}">Approve</button>` : ""}
+                  ${r.status !== "rejected" ? `<button class="small-action-btn danger reject-rev-btn" data-id="${escapeHTML(r.id)}">Reject</button>` : ""}
                 </div>
               </div>
             `).join("")}
@@ -349,15 +332,17 @@ class AdminCMS {
               <tbody>
                 ${data.orders.map(o => `
                   <tr>
-                    <td><strong>${o.id}</strong></td>
-                    <td><small style="color:#888;">${o.date}</small></td>
-                    <td>${o.bike}</td>
+                    <td><strong>${escapeHTML(o.id)}</strong></td>
+                    <td><small style="color:#888;">${escapeHTML(o.date)}</small></td>
+                    <td>${escapeHTML(o.bike)}</td>
                     <td>${utils.formatCurrency(o.total)}</td>
                     <td>
-                      <select class="order-status-select" data-id="${o.id}" style="background:#1a1c1e; color:#fff; border:1px solid #333; padding:6px; border-radius:4px;">
-                        <option value="Processing & Fitment Checked" ${o.status === "Processing & Fitment Checked" ? "selected" : ""}>Processing</option>
-                        <option value="Shipped - In Transit" ${o.status.includes("Transit") ? "selected" : ""}>Shipped</option>
-                        <option value="Delivered" ${o.status === "Delivered" ? "selected" : ""}>Delivered</option>
+                      <select class="order-status-select" data-id="${escapeHTML(o.id)}" style="background:#1a1c1e; color:#fff; border:1px solid #333; padding:6px; border-radius:4px;">
+                        <option value="Order Placed" ${o.status === "Order Placed" || o.status.includes("Placed") ? "selected" : ""}>Order Placed</option>
+                        <option value="Processing & Fitment Checked" ${o.status.includes("Processing") ? "selected" : ""}>Processing</option>
+                        <option value="Shipped - In Transit" ${o.status.includes("Transit") || o.status.includes("Shipped") ? "selected" : ""}>Shipped</option>
+                        <option value="Delivered" ${o.status.includes("Delivered") ? "selected" : ""}>Delivered</option>
+                        <option value="Cancelled" ${o.status.includes("Cancelled") ? "selected" : ""}>Cancelled</option>
                       </select>
                     </td>
                   </tr>
@@ -393,9 +378,9 @@ class AdminCMS {
           <div class="audit-log-list">
             ${data.auditLogs.map(l => `
               <div class="log-item">
-                <span class="log-time">${new Date(l.timestamp).toLocaleTimeString()}</span>
-                <strong class="log-user">${l.user}:</strong>
-                <span class="log-text">${l.action}</span>
+                <span class="log-time">${escapeHTML(new Date(l.timestamp).toLocaleTimeString())}</span>
+                <strong class="log-user">${escapeHTML(l.user)}:</strong>
+                <span class="log-text">${escapeHTML(l.action)}</span>
               </div>
             `).join("")}
           </div>
@@ -456,6 +441,10 @@ class AdminCMS {
     if (addProdBtn) {
       addProdBtn.onclick = () => this.openAddProductModal(container);
     }
+
+    container.querySelectorAll(".edit-prod-btn").forEach(btn => {
+      btn.onclick = () => this.openEditProductModal(container, btn.dataset.id);
+    });
 
     container.querySelectorAll(".delete-prod-btn").forEach(btn => {
       btn.onclick = () => {
@@ -545,6 +534,7 @@ class AdminCMS {
     }
 
     const categories = window.HRz.DB.getCategories();
+    const escapeHTML = window.HRz.Utils.escapeHTML;
 
     modal.innerHTML = `
       <div class="modal-card" style="max-width: 700px;">
@@ -562,7 +552,7 @@ class AdminCMS {
             <div class="form-group">
               <label>Category *</label>
               <select id="newProdCat" required>
-                ${categories.map(c => `<option value="${c}">${c}</option>`).join("")}
+                ${categories.map(c => `<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join("")}
                 <option value="__CUSTOM__">+ Create Custom Category...</option>
               </select>
               <input type="text" id="customCatInput" placeholder="Enter Custom Category Name" style="display:none; margin-top:6px; background:#1c1e22; border:1px solid #333; color:#fff; padding:12px; border-radius:6px; width:100%;" />
@@ -664,6 +654,147 @@ class AdminCMS {
     };
   }
 
+  static openEditProductModal(container, productId) {
+    const product = window.HRz.DB.getProductById(productId);
+    if (!product) return;
+
+    let modal = document.getElementById("adminProductModal");
+    if (!modal) {
+      modal = document.createElement("div");
+      modal.id = "adminProductModal";
+      modal.className = "modal-overlay";
+      document.body.appendChild(modal);
+    }
+
+    const categories = window.HRz.DB.getCategories();
+    const escapeHTML = window.HRz.Utils.escapeHTML;
+
+    modal.innerHTML = `
+      <div class="modal-card" style="max-width: 700px;">
+        <div class="modal-header">
+          <h3>Edit Product</h3>
+          <button type="button" class="close-btn" id="closeAdminProdModal">✕</button>
+        </div>
+        <div class="modal-body">
+          <form id="adminEditProdForm" class="admin-form-grid">
+            <div class="form-group">
+              <label>Product Name *</label>
+              <input type="text" id="editProdName" required value="${escapeHTML(product.name)}" />
+            </div>
+
+            <div class="form-group">
+              <label>Category *</label>
+              <select id="editProdCat" required>
+                ${categories.map(c => `<option value="${escapeHTML(c)}" ${product.category === c ? 'selected' : ''}>${escapeHTML(c)}</option>`).join("")}
+                <option value="__CUSTOM__">+ Create Custom Category...</option>
+              </select>
+              <input type="text" id="editCustomCatInput" placeholder="Enter Custom Category Name" style="display:none; margin-top:6px; background:#1c1e22; border:1px solid #333; color:#fff; padding:12px; border-radius:6px; width:100%;" />
+            </div>
+
+            <div class="form-group">
+              <label>Price (INR) *</label>
+              <input type="number" id="editProdPrice" required value="${product.price}" />
+            </div>
+
+            <div class="form-group">
+              <label>Original Price (INR)</label>
+              <input type="number" id="editProdOrigPrice" value="${product.originalPrice || ''}" />
+            </div>
+
+            <div class="form-group">
+              <label>SKU Code</label>
+              <input type="text" id="editProdSku" value="${escapeHTML(product.sku || '')}" />
+            </div>
+            
+            <div class="form-group">
+              <label>Sizes (Comma separated)</label>
+              <input type="text" id="editProdSizes" value="${escapeHTML(product.sizes || '')}" />
+            </div>
+            
+            <div class="form-group">
+              <label>In Stock</label>
+              <select id="editProdInStock">
+                <option value="true" ${product.inStock ? 'selected' : ''}>Yes</option>
+                <option value="false" ${!product.inStock ? 'selected' : ''}>No</option>
+              </select>
+            </div>
+
+            <div class="form-group admin-form-full">
+              <label>Full Description</label>
+              <textarea id="editProdDesc" rows="4">${escapeHTML(product.description || '')}</textarea>
+            </div>
+
+            <div class="form-group admin-form-full">
+              <label>Product Image URL *</label>
+              <input type="text" id="editProdImgUrl" required value="${escapeHTML(product.image || '')}" />
+              
+              <div style="margin-top:12px;">
+                <label for="editProdImgFileUpload" class="small-action-btn" style="display:inline-block;">📤 Upload Image File</label>
+                <input type="file" id="editProdImgFileUpload" accept="image/*" style="display:none;" />
+              </div>
+            </div>
+
+            <div class="admin-form-full" style="margin-top: 16px;">
+              <button type="submit" class="accent-button">Save Changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    `;
+
+    modal.classList.add("show");
+    window.HRz.Utils.setupModalAccessibility(modal, () => modal.classList.remove("show"));
+    document.getElementById("closeAdminProdModal").onclick = () => modal.classList.remove("show");
+
+    const catSel = document.getElementById("editProdCat");
+    const customCatInput = document.getElementById("editCustomCatInput");
+    catSel.onchange = () => {
+      if (catSel.value === "__CUSTOM__") {
+        customCatInput.style.display = "block";
+        customCatInput.required = true;
+      } else {
+        customCatInput.style.display = "none";
+        customCatInput.required = false;
+      }
+    };
+
+    const fileInput = document.getElementById("editProdImgFileUpload");
+    const imgUrlInput = document.getElementById("editProdImgUrl");
+    if (fileInput) {
+      fileInput.onchange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (evt) => { imgUrlInput.value = evt.target.result; };
+          reader.readAsDataURL(file);
+        }
+      };
+    }
+
+    document.getElementById("adminEditProdForm").onsubmit = (e) => {
+      e.preventDefault();
+      const name = document.getElementById("editProdName").value;
+      let category = catSel.value;
+      if (category === "__CUSTOM__") category = customCatInput.value.trim() || "General";
+
+      const price = parseFloat(document.getElementById("editProdPrice").value);
+      const originalPrice = parseFloat(document.getElementById("editProdOrigPrice").value) || price + 500;
+      const sku = document.getElementById("editProdSku").value || product.sku;
+      const description = document.getElementById("editProdDesc").value.trim();
+      const sizes = document.getElementById("editProdSizes").value.trim();
+      const image = imgUrlInput.value || product.image;
+      const inStock = document.getElementById("editProdInStock").value === "true";
+
+      window.HRz.DB.updateProduct(productId, {
+        name, category, price, originalPrice, sku, description, sizes, image, inStock
+      });
+
+      modal.classList.remove("show");
+      window.HRz.Utils.showToast(`Product "${name}" updated successfully`, "success");
+      this.render(container);
+    };
+  }
+
   static openAddCompModal(container) {
     let modal = document.getElementById("adminCompModal");
     if (!modal) {
@@ -675,6 +806,7 @@ class AdminCMS {
 
     const prods = window.HRz.DB.getProducts();
     const bikes = window.HRz.DB.getBikes();
+    const escapeHTML = window.HRz.Utils.escapeHTML;
 
     modal.innerHTML = `
       <div class="modal-card">
@@ -687,13 +819,13 @@ class AdminCMS {
             <div class="form-group admin-form-full">
               <label>Select Product *</label>
               <select id="compSelectProduct" required>
-                ${prods.map(p => `<option value="${p.id}">${p.name} (${p.sku})</option>`).join("")}
+                ${prods.map(p => `<option value="${escapeHTML(p.id)}">${escapeHTML(p.name)} (${escapeHTML(p.sku)})</option>`).join("")}
               </select>
             </div>
             <div class="form-group admin-form-full">
               <label>Select Motorcycle *</label>
               <select id="compSelectBike" required>
-                ${bikes.map(b => `<option value="${b.id}">${b.brand} ${b.model} (${b.variant})</option>`).join("")}
+                ${bikes.map(b => `<option value="${escapeHTML(b.id)}">${escapeHTML(b.brand)} ${escapeHTML(b.model)} (${escapeHTML(b.variant)})</option>`).join("")}
               </select>
             </div>
             <div class="form-group admin-form-full">

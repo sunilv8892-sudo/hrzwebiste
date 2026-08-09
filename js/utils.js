@@ -40,9 +40,10 @@ function showToast(message, type = "info") {
 
   const toast = document.createElement("div");
   toast.className = `toast-message toast-${type}`;
+  const safeMessage = escapeHTML(String(message));
   toast.innerHTML = `
     <span class="toast-icon">${type === "success" ? "✓" : type === "error" ? "✕" : "ℹ"}</span>
-    <span class="toast-text">${message}</span>
+    <span class="toast-text">${safeMessage}</span>
   `;
 
   toastContainer.appendChild(toast);
@@ -107,7 +108,7 @@ function debounce(func, wait) {
 
 function escapeHTML(str) {
   if (!str) return "";
-  return str.replace(/[&<>'"]/g, 
+  return String(str).replace(/[&<>'"]/g, 
     tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
   );
 }
