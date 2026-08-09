@@ -553,6 +553,9 @@
 .categories.section .section-head h2 {
   color: #ffffff;
 }
+.categories.section .section-head h2 em {
+  color: #ffffff !important;
+}
 .categories.section .section-head .eyebrow {
   color: #ffffff !important;
   opacity: 0.9;
