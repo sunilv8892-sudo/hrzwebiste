@@ -127,11 +127,14 @@
   50% { transform: translateY(-8px); }
 }
 
-/* ---- 3D Bike Selector ---- */
+/* ---- 3D Bike Selector (Light Theme) ---- */
 .bike-selector-3d {
   padding: 60px 0;
-  background: #0d0e10;
+  background: #ffffff; /* White background */
   overflow: hidden;
+}
+.bike-selector-3d .section-head h2 {
+  color: #111215;
 }
 .bike-selector-3d .section-head {
   padding: 0 7vw;
@@ -163,11 +166,11 @@
   width: 200px;
   transition: transform 0.45s cubic-bezier(0.25, 0.1, 0.25, 1), filter 0.45s ease, opacity 0.45s ease, background 0.45s ease;
   transform: scale(0.72) rotateY(18deg);
-  filter: brightness(0.6);
+  filter: brightness(0.9);
   opacity: 0.6;
   cursor: pointer;
-  background: rgba(255,255,255,0.02);
-  border: 1px solid rgba(255,255,255,0.05);
+  background: #f4f4f6; /* Light gray cards */
+  border: 1px solid #e2e2e6;
   border-radius: 16px;
   padding: 25px 15px 20px;
   display: flex;
@@ -180,9 +183,9 @@
   transform: scale(1.12) rotateY(0deg);
   filter: brightness(1);
   opacity: 1;
-  background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.01));
-  border-color: rgba(255,255,255,0.15);
-  box-shadow: 0 20px 40px -10px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.1);
+  background: #ffffff; /* White card for active bike */
+  border-color: #c5c5c9;
+  box-shadow: 0 16px 36px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,1);
   z-index: 2;
   cursor: pointer;
 }
@@ -198,14 +201,14 @@
   max-width: 120%;
   max-height: 120%;
   object-fit: contain;
-  mix-blend-mode: screen; /* Removes black bg */
-  filter: drop-shadow(0 10px 10px rgba(0,0,0,0.9));
+  mix-blend-mode: normal; /* Normal mode to render correctly on white background */
+  filter: drop-shadow(0 6px 12px rgba(0,0,0,0.12));
   transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
   transform: scale(0.9) translateY(0);
 }
 .bike-item.active .bike-img-wrap img {
   transform: scale(1.05) translateY(-5px);
-  filter: drop-shadow(0 15px 15px rgba(0,0,0,0.8));
+  filter: drop-shadow(0 10px 18px rgba(0,0,0,0.15));
 }
 .bike-info {
   text-align: center;
@@ -219,7 +222,7 @@
   font-family: 'Barlow Condensed', sans-serif;
   font-size: 20px;
   font-weight: 700;
-  color: #fff;
+  color: #111215;
   margin: 0 0 4px 0;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -247,40 +250,42 @@
   letter-spacing: -1.5px;
 }
 
-/* ---- Category Grid ---- */
+/* ---- Category Grid (Stacked Layout) ---- */
 .category-grid {
-  display: grid;
-  grid-template-columns: 1.35fr 1fr 1fr;
-  grid-template-rows: 220px 220px;
-  gap: 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 .category {
   position: relative;
   overflow: hidden;
   background: #242629;
-  min-height: 160px;
+  height: 180px; /* Uniform height for stacked layout */
   cursor: pointer;
+  border-radius: 12px;
 }
-.category.large { grid-row: span 2; }
+.category.large {
+  height: 180px; /* Reset span height */
+}
 .category img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: brightness(.7);
+  filter: brightness(.65); /* Darker backdrop for higher text contrast */
   transition: transform .5s;
 }
-.category:hover img { transform: scale(1.06); }
+.category:hover img { transform: scale(1.04); }
 .category:after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(transparent 40%, #000b);
+  background: linear-gradient(transparent 20%, #000a);
 }
 .category span {
   position: absolute;
-  bottom: 18px;
-  left: 20px;
-  right: 20px;
+  bottom: 24px;
+  left: 28px;
+  right: 28px;
   z-index: 1;
   font-family: 'Barlow Condensed';
   font-size: 32px;
@@ -288,16 +293,17 @@
   text-transform: uppercase;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  color: #ffffff !important; /* Ensure white text */
 }
 .category small {
-  font: 700 12px 'DM Sans';
-  color: #d2d2ce;
+  font: 700 13px 'DM Sans';
+  color: rgba(255, 255, 255, 0.7);
 }
 .category b {
   margin-left: auto;
-  color: var(--red);
-  font-size: 25px;
+  color: #ffffff !important; /* Ensure white arrow for contrast */
+  font-size: 28px;
 }
 
 /* ---- Statement / Brand Section ---- */
@@ -538,3 +544,26 @@
 
 /* ---- Inner Page Section Wrappers ---- */
 .inner-section { padding: 40px 7vw 100px; }
+
+/* ---- Categories Section Red Background Overrides ---- */
+.categories.section {
+  background: var(--red, #e13b31);
+  color: #ffffff;
+}
+.categories.section .section-head h2 {
+  color: #ffffff;
+}
+.categories.section .section-head .eyebrow {
+  color: #ffffff !important;
+  opacity: 0.9;
+}
+.categories.section .section-head .text-link {
+  color: #ffffff !important;
+  border-bottom-color: rgba(255, 255, 255, 0.4);
+}
+.categories.section .section-head .text-link span {
+  color: #ffffff !important;
+}
+.categories.section .section-head .text-link:hover {
+  opacity: 0.85;
+}
