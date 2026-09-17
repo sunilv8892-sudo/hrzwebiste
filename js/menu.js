@@ -68,13 +68,13 @@ class Menu {
       sidebar: ["Rider Protection", "Casuals", "Rainwear & Visibility"],
       cards: [
         { name: "Helmet", image: "images/helmet.png", category: "Helmets" },
-        { name: "Jacket", image: "images/jacket.png", category: "Protection" },
-        { name: "Glove", image: "images/gloves.png", category: "Protection" },
-        { name: "Pants", image: "images/hero-rider.png", category: "Protection" },
-        { name: "Boot", image: "images/boot.png", category: "Protection" },
-        { name: "Shoe Protector", image: "images/category_protection.png", category: "Protection" },
-        { name: "Kneeguard", image: "images/crash_guard_product.png", category: "Protection" },
-        { name: "Elbow Guards", image: "images/bash_plate_product.png", category: "Protection" }
+        { name: "Jacket", image: "images/jacket.png", category: "Riding Gears" },
+        { name: "Glove", image: "images/gloves.png", category: "Riding Gears" },
+        { name: "Pants", image: "images/hero-rider.png", category: "Riding Gears" },
+        { name: "Boot", image: "images/boot.png", category: "Riding Gears" },
+        { name: "Shoe Protector", image: "images/category_protection.png", category: "Riding Gears" },
+        { name: "Kneeguard", image: "images/crash_guard_product.png", category: "Riding Gears" },
+        { name: "Elbow Guards", image: "images/bash_plate_product.png", category: "Riding Gears" }
       ]
     },
     luggageTouring: {
@@ -100,20 +100,9 @@ class Menu {
       ]
     },
     brands: [
-      "AGV", "GIVI", "GOLD FREN", "ALPINESTARS", "POWERTRONIC", "DID", "AIROH", "KYT", 
-      "EBC", "SENA", "KOMINIE", "CARDO", "DENALI", "SHOEI", "BELL", "SHARK", "SHIMA", 
-      "COKIMA", "ATLAS", "HANLEH", "MOTOURENN", "TRIPMACHINE", "ROLON", "NORIFUMI", 
-      "RAM MOUNTS", "JB RACING", "RCB", "NGAGE", "VIATERRA", "MOTO GARUDA", "ACERBIS", 
-      "AXOR", "MOTO TORQUE", "3M", "TROY LEE", "LEATT", "RAIDA", "BOBO", "FUELX", 
-      "STUDDS", "SMK", "SCOYCO", "REISE", "RYNOX", "RED ROOSTER PERFORMANCE", "PROTAPER", 
-      "MT Helmet", "LS2", "NGK", "BIZEN", "VEGA", "CASTROL", "WURTH", "THH", "GLOSIL", 
-      "STEELBIRD", "100%", "AXXIS", "BMC", "PRO SPEC", "CRAMSTER", "FUTURE EYES", 
-      "CARBONADO", "TVS", "GADSYLL", "GOPRO", "ADDINOL", "ONEAL", "SC PROJECT", 
-      "PUTOLINE", "ENGINE ICE", "QUBO", "SYS", "RACE DYNAMIC", "MOTOAGGRANDIZE", 
-      "KEWIG", "AKRAPOVIC", "KENNY", "TCX", "LEOVINCE", "FLY", "CRANK1", "SHAD", 
-      "PUIG", "EAZI GRIPS", "OINKER", "PROBIKER", "UMA", "TRYKA", "MOTOWING PERFORMANCE", 
-      "K3G", "GUARDIAN GEARS", "BREMBO", "NHK", "RENTHAL", "DEVIL EVOLUTION", "TIVRA", 
-      "FLEETTRACK", "RAHGEAR", "SS MOTOCORP", "MAISTO"
+      "100%", "Axor Helmets", "Cramster", "DSG", "KYT", "Legundary Customs", 
+      "Lone Ranger", "MotoTorque", "Motul", "Raida", "Royal Enfield", "Scala", 
+      "SMK", "Steelbird", "Studds", "Vega"
     ]
   };
 

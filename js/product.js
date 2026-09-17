@@ -318,6 +318,20 @@ class ProductDetailView {
           <div class="sku-category-badge">${escapeHTML(product.category)} · SKU: <strong>${escapeHTML(product.sku)}</strong></div>
           <h1 class="product-detail-title">${escapeHTML(product.name)}</h1>
 
+          ${product.variants && product.variants.length > 1 ? `
+            <div class="product-variants-section">
+              <h4>Select Color</h4>
+              <div class="color-selector-grid">
+                ${product.variants.map((v, idx) => `
+                  <button class="color-btn ${idx === 0 ? 'active' : ''}" data-index="${idx}" title="${escapeHTML(v.color)}">
+                    <img class="color-btn-img" src="${escapeHTML(v.image)}" alt="${escapeHTML(v.color)}" loading="lazy" onerror="this.src='images/helmet_product.png'" />
+                    <span class="color-btn-text">${escapeHTML(v.color)}</span>
+                  </button>
+                `).join("")}
+              </div>
+            </div>
+          ` : ""}
+
           <div class="product-detail-social">
             ${utils.renderStarRating(product.rating)}
             <span class="social-proof-text">(${reviews.length} Verified Rider Reviews · ${product.ridersInstalled}+ Installed)</span>
@@ -340,10 +354,10 @@ class ProductDetailView {
           </div>
 
           <div class="purchase-actions-row">
-            <button class="add-to-bag-hero-btn" id="addToBagHeroBtn">
-              Add to Bag
+            <button class="add-to-bag-hero-btn" id="addToBagHeroBtn" ${!product.inStock ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}>
+              ${product.inStock ? 'Add to Bag' : 'Out of Stock'}
             </button>
-            <button class="buy-now-btn" id="buyNowBtn">
+            <button class="buy-now-btn" id="buyNowBtn" ${!product.inStock ? 'disabled style="display: none;"' : ''}>
               Buy Now
             </button>
           </div>
@@ -361,8 +375,17 @@ class ProductDetailView {
           </div>
 
           ${product.description ? `
-            <div class="product-description-box" style="margin-top:24px; color:var(--mute); font-size:14px; line-height:1.6;">
-              <p>${escapeHTML(product.description)}</p>
+            <div class="product-description-box raw-content" style="margin-top:24px; color:var(--mute); font-size:14px; line-height:1.6;">
+              ${product.description}
+            </div>
+          ` : ""}
+
+          ${product.fitmentCategories && product.fitmentCategories.length ? `
+            <div class="product-compatibility-box" style="margin-top:24px;">
+              <h3 style="font-family:'Barlow Condensed', sans-serif; font-size:18px; margin-bottom:12px; text-transform:uppercase; color: var(--fg);">Bike Compatibility</h3>
+              <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                ${product.fitmentCategories.map(cat => `<span style="padding: 6px 12px; font-size: 13px; border: 1px solid #333; border-radius: 4px; background: #1a1a1a; color: #ccc;">${escapeHTML(cat)}</span>`).join("")}
+              </div>
             </div>
           ` : ""}
 
@@ -460,6 +483,8 @@ class ProductDetailView {
         }
       };
     }
+
+    this.bindVariantEvents(product);
 
     const addBtn = container.querySelector("#addToBagHeroBtn");
     if (addBtn) {
@@ -560,6 +585,65 @@ class ProductDetailView {
     if (wasOpen && !isPopState && window.history.state && window.history.state.panelOpen) {
       window.history.back();
     }
+  }
+
+  static bindVariantEvents(product) {
+    if (!product.variants || product.variants.length <= 1) return;
+    
+    const colorBtns = document.querySelectorAll(".color-btn");
+    const mainImg = document.getElementById("mainProductImage");
+    const thumbStrip = document.querySelector(".thumbnail-strip");
+    const carouselStrip = document.querySelector(".mobile-swipe-carousel");
+    const priceDisplay = document.querySelector(".detail-price");
+    const origPriceDisplay = document.querySelector(".detail-original-price");
+    const skuBadge = document.querySelector(".sku-category-badge strong");
+
+    colorBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        colorBtns.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        
+        const v = product.variants[btn.dataset.index];
+        
+        // Update price and sku
+        if (priceDisplay) priceDisplay.textContent = window.HRz.Utils.formatCurrency(v.price);
+        if (origPriceDisplay) origPriceDisplay.textContent = window.HRz.Utils.formatCurrency(Math.round(v.price * 1.15));
+        if (skuBadge) skuBadge.textContent = v.sku;
+        
+        // Update main image
+        if (mainImg) mainImg.src = v.image;
+        
+        // Update gallery (we reset to this variant's gallery)
+        if (thumbStrip && v.gallery) {
+           // We just need to re-render the thumbnails and bind events
+           thumbStrip.innerHTML = v.gallery.map((img, i) => `
+              <button class="thumb-btn ${i === 0 ? "active" : ""}" data-src="${window.HRz.Utils.escapeHTML(img)}">
+                <img src="${window.HRz.Utils.escapeHTML(img)}" alt="Thumbnail ${i+1}" loading="lazy" />
+              </button>
+           `).join("");
+           
+           if (carouselStrip) {
+              carouselStrip.innerHTML = v.gallery.map(img => `
+                <img src="${window.HRz.Utils.escapeHTML(img)}" alt="${window.HRz.Utils.escapeHTML(product.name)}" class="carousel-image" loading="lazy" onerror="this.src='images/helmet_product.png'" />
+              `).join("");
+           }
+           
+           // Re-bind click events for new thumbnails
+           const thumbs = document.querySelectorAll(".thumb-btn");
+           thumbs.forEach((thumbBtn, index) => {
+             thumbBtn.onclick = () => {
+               document.querySelectorAll(".thumb-btn").forEach(b => b.classList.remove("active"));
+               thumbBtn.classList.add("active");
+               if (mainImg) {
+                 mainImg.src = thumbBtn.dataset.src;
+                 mainImg.dataset.galleryIndex = index;
+               }
+               thumbBtn.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
+             };
+           });
+        }
+      });
+    });
   }
 }
 

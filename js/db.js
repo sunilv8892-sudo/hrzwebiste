@@ -6,12 +6,12 @@
 window.HRz = window.HRz || {};
 
 const CACHE_KEYS = {
-  BIKES: "hrz_db_bikes_v2",
-  PRODUCTS: "hrz_db_products_v2",
-  COMPATIBILITY: "hrz_db_compatibility_v2",
-  REVIEWS: "hrz_db_reviews_v2",
-  ORDERS: "hrz_db_orders_v2",
-  BUNDLES: "hrz_db_bundles_v2"
+  BIKES: "hrz_db_bikes_v6",
+  PRODUCTS: "hrz_db_products_v6",
+  COMPATIBILITY: "hrz_db_compatibility_v6",
+  REVIEWS: "hrz_db_reviews_v6",
+  ORDERS: "hrz_db_orders_v6",
+  BUNDLES: "hrz_db_bundles_v6"
 };
 
 const DEFAULT_BIKES = [
@@ -261,37 +261,7 @@ const DEMO_PRODUCT_GROUPS = [
 ];
 
 function buildDemoProducts() {
-  return DEMO_PRODUCT_GROUPS.flatMap(group => (
-    Array.from({ length: 5 }, (_, index) => {
-      const position = index + 1;
-      return {
-        id: `demo-${group.category.toLowerCase()}-${position}`,
-        name: `${group.prefix} ${String(position).padStart(2, "0")}`,
-        category: group.category,
-        price: 1499 + (index * 350),
-        originalPrice: 1999 + (index * 350),
-        image: group.image,
-        gallery: [group.image],
-        rating: 4.1 + (index * 0.1),
-        authenticity: "Demo Preview",
-        warranty: "Demo only",
-        reviewCount: 12 + index,
-        ridersInstalled: 20 + (index * 4),
-        badge: `DEMO ${position}`,
-        inStock: true,
-        sku: `DEMO-${group.category.slice(0, 3).toUpperCase()}-${String(position).padStart(2, "0")}`,
-        gallery: Array.from(new Set([group.image, ...group.gallery])),
-        highlights: [
-          `Demo ${group.category.toLowerCase()} product ${position} for UI wiring`,
-          "Uses temporary placeholder imagery",
-          "Available in the garage and catalog demo flows",
-          `Visible for ${group.fitmentCategories.length}+ bike categories`
-        ],
-        fitmentCategories: group.fitmentCategories,
-        demo: true
-      };
-    })
-  ));
+  return [];
 }
 
 class DBService {
@@ -349,6 +319,9 @@ class DBService {
             message: "Unable to load the dataset. Serve this site over http://localhost instead of opening index.html with file://.",
             details: fetchErr
           };
+          if (window.HRz && window.HRz.Utils && window.HRz.Utils.showToast) {
+            window.HRz.Utils.showToast("Failed to load product data! If you opened this via file://, you must use a local server instead.", "error");
+          }
           this.bikes = [];
           this.products = [];
           this.compatibility = [];
@@ -358,7 +331,7 @@ class DBService {
         }
       }
 
-      this.products = [...this.products, ...buildDemoProducts().filter(demo => !this.products.some(p => p.id === demo.id))];
+      // this.products = [...this.products, ...buildDemoProducts().filter(demo => !this.products.some(p => p.id === demo.id))];
 
       if (!this.compatibility.length) {
         this.compatibility = [];
@@ -385,7 +358,7 @@ class DBService {
   static _persist() {
     try {
       localStorage.setItem(CACHE_KEYS.BIKES, JSON.stringify(this.bikes));
-      localStorage.setItem(CACHE_KEYS.PRODUCTS, JSON.stringify(this.products));
+      // PRODUCTS array is too large (~11MB), do not save to localStorage
       localStorage.setItem(CACHE_KEYS.COMPATIBILITY, JSON.stringify(this.compatibility));
       localStorage.setItem(CACHE_KEYS.REVIEWS, JSON.stringify(this.reviews));
       localStorage.setItem(CACHE_KEYS.ORDERS, JSON.stringify(this.orders));
@@ -405,28 +378,41 @@ class DBService {
   static getOrders() { return this.orders; }
 
   static getCategories() {
-    const cats = new Set(["Protection", "Helmets", "Lights", "Luggage", "Touring"]);
+    const cats = new Set();
     this.products.forEach(p => { if (p.category) cats.add(p.category); });
-    return Array.from(cats);
+    return Array.from(cats).sort();
   }
 
   static checkFitment(productId, activeBike) {
     if (!activeBike) return null;
 
     const product = this.getProductById(productId);
-    if (product?.fitmentCategories?.length && activeBike.category) {
-      const activeCategory = activeBike.category.toLowerCase();
-      const allowedCategories = product.fitmentCategories.map(c => c.toLowerCase());
-      if (allowedCategories.includes(activeCategory)) {
+    
+    // 1. Manufacturer Confirmed Fit (from scraped raw data)
+    if (product?.bike_compatibility && product.bike_compatibility.length > 0) {
+      const activeBikeStr = `${activeBike.brand} ${activeBike.model} ${activeBike.variant || ''}`.toLowerCase().trim();
+      const activeBikeStrShort = `${activeBike.brand} ${activeBike.model}`.toLowerCase();
+      const activeModelOnly = activeBike.model.toLowerCase();
+      
+      const isCompat = product.bike_compatibility.some(compatStr => {
+         const lower = compatStr.toLowerCase();
+         return activeBikeStr.includes(lower) || lower.includes(activeBikeStr) || 
+                activeBikeStrShort.includes(lower) || lower.includes(activeBikeStrShort) ||
+                lower === activeModelOnly ||
+                (lower.includes(activeBike.brand.toLowerCase()) && lower.includes(activeModelOnly));
+      });
+
+      if (isCompat) {
         return {
           isCompatible: true,
-          fitType: "Demo Fit",
-          notes: `${product.category} demo content shown for ${activeBike.category} bikes`,
-          sku: product.sku || "DEMO-FIT"
+          fitType: "Manufacturer Confirmed",
+          notes: `Verified exact fitment from manufacturer data for ${activeBike.brand} ${activeBike.model}.`,
+          sku: product.sku || "HRZ-FIT"
         };
       }
     }
 
+    // 2. Legacy Manual Compatibility Rules (from compatibility.json)
     const matchedBike = this.bikes.find(b =>
       b.brand.toLowerCase() === activeBike.brand.toLowerCase() &&
       b.model.toLowerCase() === activeBike.model.toLowerCase() &&
@@ -456,13 +442,35 @@ class DBService {
         sku: universalRule.sku
       };
     }
+    
+    // 3. If it's a bike-specific part (like Bike Protection or Accessories) and it didn't match above, it's NOT compatible.
+    const bikeSpecificCats = ["Protection", "Lights", "Accessories"];
+    if (bikeSpecificCats.includes(product?.category)) {
+       // Only allow if it had a specific rule (which it didn't, since it reached here)
+       return null; 
+    }
+
+    // 4. Universal Gear / General Fit (Helmets, Gears, etc.)
+    if (product?.fitmentCategories?.length && activeBike.category) {
+      const activeCategory = activeBike.category.toLowerCase();
+      const allowedCategories = product.fitmentCategories.map(c => c.toLowerCase());
+      if (allowedCategories.includes(activeCategory)) {
+        return {
+          isCompatible: true,
+          fitType: "Universal Style Match",
+          notes: `${product.category} suitable for ${activeBike.category} style riding.`,
+          sku: product.sku || "UNI-FIT"
+        };
+      }
+    }
 
     return null;
   }
 
   static getProductsForBike(activeBike) {
-    if (!activeBike) return this.products;
-    return this.products.filter(p => this.checkFitment(p.id, activeBike) !== null);
+    const visibleProducts = this.products.filter(p => p.isVisible !== false);
+    if (!activeBike) return visibleProducts;
+    return visibleProducts.filter(p => this.checkFitment(p.id, activeBike) !== null);
   }
 
   static getCompatibleBikesForProduct(productId) {

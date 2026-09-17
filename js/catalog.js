@@ -41,7 +41,7 @@ class CatalogView {
       products.sort((a, b) => b.rating - a.rating);
     }
 
-    const categories = ["All", "Protection", "Helmets", "Lights", "Luggage", "Touring"];
+    const categories = ["All", ...window.HRz.DB.getCategories()];
 
     container.innerHTML = `
       <div class="breadcrumb-trail">
@@ -161,8 +161,8 @@ class CatalogView {
               <span class="current-price">${utils.formatCurrency(p.price)}</span>
               ${p.originalPrice ? `<span class="original-price">${utils.formatCurrency(p.originalPrice)}</span>` : ""}
             </div>
-            <button class="accent-button add-to-cart-btn" data-id="${escapeHTML(p.id)}">
-              + Bag
+            <button class="accent-button add-to-cart-btn" data-id="${escapeHTML(p.id)}" ${!p.inStock ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}>
+              ${p.inStock ? '+ Bag' : 'Out of Stock'}
             </button>
           </div>
         </div>

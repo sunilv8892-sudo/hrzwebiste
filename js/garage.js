@@ -145,6 +145,7 @@ class GarageManager {
           modelSel.innerHTML += `<option value="${escapeHTML(m)}">${escapeHTML(m)}</option>`;
         });
         modelSel.disabled = false;
+        modelSel.focus();
       } else {
         modelSel.disabled = true;
       }
@@ -162,6 +163,15 @@ class GarageManager {
           variantSel.innerHTML += `<option value="${escapeHTML(v.id)}">${escapeHTML(v.variant)} (${escapeHTML(v.year)})</option>`;
         });
         variantSel.disabled = false;
+        
+        // Auto-select and auto-submit if there is only 1 variant
+        if (variantsList.length === 1) {
+          variantSel.value = variantsList[0].id;
+          submitBtn.disabled = false;
+          this.selectBike(variantsList[0]);
+        } else {
+          variantSel.focus();
+        }
       } else {
         variantSel.disabled = true;
       }
@@ -169,6 +179,13 @@ class GarageManager {
 
     variantSel.onchange = () => {
       submitBtn.disabled = !variantSel.value;
+      if (variantSel.value) {
+        const bikeId = variantSel.value;
+        const bikeObj = bikes.find(b => b.id === bikeId);
+        if (bikeObj) {
+          this.selectBike(bikeObj);
+        }
+      }
     };
 
     document.getElementById("bikeSelectForm").onsubmit = (e) => {

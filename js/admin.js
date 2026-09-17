@@ -7,6 +7,8 @@ window.HRz = window.HRz || {};
 
 class AdminCMS {
   static activeTab = "hero";
+  static catalogPage = 1;
+  static catalogSearch = "";
 
   static render(container) {
     const db = window.HRz.DB;
@@ -167,7 +169,28 @@ class AdminCMS {
     if (tab === "catalog") {
       const activeCategoryFilter = document.getElementById("app")?.dataset.catalogFilter || "All";
       const categories = ["All", ...window.HRz.DB.getCategories()];
-      const filteredProducts = activeCategoryFilter === "All" ? data.products : data.products.filter(p => p.category === activeCategoryFilter);
+      
+      let filteredProducts = data.products;
+      if (activeCategoryFilter !== "All") {
+        filteredProducts = filteredProducts.filter(p => p.category === activeCategoryFilter);
+      }
+      
+      if (this.catalogSearch) {
+        const query = this.catalogSearch.toLowerCase();
+        filteredProducts = filteredProducts.filter(p => 
+          p.name.toLowerCase().includes(query) || 
+          (p.sku && p.sku.toLowerCase().includes(query)) ||
+          (p.category && p.category.toLowerCase().includes(query))
+        );
+      }
+
+      const itemsPerPage = 50;
+      const totalPages = Math.ceil(filteredProducts.length / itemsPerPage) || 1;
+      if (this.catalogPage > totalPages) this.catalogPage = totalPages;
+      if (this.catalogPage < 1) this.catalogPage = 1;
+      
+      const startIndex = (this.catalogPage - 1) * itemsPerPage;
+      const paginatedProducts = filteredProducts.slice(startIndex, startIndex + itemsPerPage);
 
       return `
         <!-- Metrics Row -->
@@ -191,7 +214,14 @@ class AdminCMS {
             <div>
               <h3>Product Inventory</h3>
             </div>
-            <button class="accent-button" id="addNewProductBtn">+ Add New Product</button>
+            <div style="display: flex; gap: 8px;">
+              <button class="accent-button" id="exportCatalogBtn">📥 Export JSON</button>
+              <button class="accent-button" id="addNewProductBtn">+ Add New Product</button>
+            </div>
+          </div>
+          
+          <div style="margin-bottom: 16px;">
+            <input type="text" id="adminCatalogSearchInput" value="${escapeHTML(this.catalogSearch)}" placeholder="Search products by name or SKU..." style="width:100%; padding: 10px; border-radius: 6px; background: #1c1e22; border: 1px solid #333; color: white; font-size: 14px;" />
           </div>
 
           <div class="category-filter-pills" style="margin-bottom: 24px; display: flex; gap: 8px; flex-wrap: wrap;">
@@ -213,10 +243,10 @@ class AdminCMS {
                 </tr>
               </thead>
               <tbody>
-                ${filteredProducts.map(p => `
+                ${paginatedProducts.map(p => `
                   <tr>
                     <td><img src="${escapeHTML(p.image)}" alt="${escapeHTML(p.name)}" width="44" height="44" style="object-fit:cover; border-radius:6px; border:1px solid #333;" onerror="this.src='images/helmet_product.png'" /></td>
-                    <td><strong>${escapeHTML(p.name)}</strong><br/><small style="color:#888;">SKU: ${escapeHTML(p.sku)}</small></td>
+                    <td><strong>${escapeHTML(p.name)}</strong> ${p.isVisible === false ? '<span style="color:var(--red); font-size:10px; border:1px solid var(--red); padding:2px 4px; border-radius:3px; margin-left:4px;">HIDDEN</span>' : ''}<br/><small style="color:#888;">SKU: ${escapeHTML(p.sku)}</small></td>
                     <td><span class="cat-tag">${escapeHTML(p.category)}</span></td>
                     <td>${utils.formatCurrency(p.price)}</td>
                     <td>${p.inStock ? "<span class='stock-tag in'>In Stock</span>" : "<span class='stock-tag out'>Out of Stock</span>"}</td>
@@ -228,6 +258,12 @@ class AdminCMS {
                 `).join("")}
               </tbody>
             </table>
+          </div>
+          
+          <div class="admin-pagination" style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding-top: 16px; border-top: 1px solid #333;">
+            <button class="small-action-btn" id="prevCatPageBtn" ${this.catalogPage <= 1 ? 'disabled' : ''} style="cursor: ${this.catalogPage <= 1 ? 'not-allowed' : 'pointer'}; opacity: ${this.catalogPage <= 1 ? '0.5' : '1'};">&laquo; Prev</button>
+            <span style="color: #aaa; font-size: 14px;">Page ${this.catalogPage} of ${totalPages}</span>
+            <button class="small-action-btn" id="nextCatPageBtn" ${this.catalogPage >= totalPages ? 'disabled' : ''} style="cursor: ${this.catalogPage >= totalPages ? 'not-allowed' : 'pointer'}; opacity: ${this.catalogPage >= totalPages ? '0.5' : '1'};">Next &raquo;</button>
           </div>
         </div>
       `;
@@ -433,9 +469,70 @@ class AdminCMS {
     container.querySelectorAll(".admin-cat-filter").forEach(btn => {
       btn.onclick = () => {
         if (appContainer) appContainer.dataset.catalogFilter = btn.dataset.filter;
+        this.catalogPage = 1;
         this.render(container);
       };
     });
+
+    const searchInput = container.querySelector("#adminCatalogSearchInput");
+    if (searchInput) {
+      // Focus restoration trick
+      const focusEnd = () => {
+        if (searchInput) {
+          searchInput.focus();
+          const len = searchInput.value.length;
+          searchInput.setSelectionRange(len, len);
+        }
+      };
+      
+      searchInput.oninput = (e) => {
+        this.catalogSearch = e.target.value;
+        this.catalogPage = 1;
+        this.render(container);
+        
+        // Wait for next render cycle to restore focus
+        setTimeout(() => {
+          const newSearch = document.getElementById("adminCatalogSearchInput");
+          if (newSearch) {
+            newSearch.focus();
+            const l = newSearch.value.length;
+            newSearch.setSelectionRange(l, l);
+          }
+        }, 0);
+      };
+    }
+    
+    const prevBtn = container.querySelector("#prevCatPageBtn");
+    if (prevBtn) {
+      prevBtn.onclick = () => {
+        if (this.catalogPage > 1) {
+          this.catalogPage--;
+          this.render(container);
+        }
+      };
+    }
+
+    const nextBtn = container.querySelector("#nextCatPageBtn");
+    if (nextBtn) {
+      nextBtn.onclick = () => {
+        this.catalogPage++;
+        this.render(container);
+      };
+    }
+
+    const exportCatBtn = container.querySelector("#exportCatalogBtn");
+    if (exportCatBtn) {
+      exportCatBtn.onclick = () => {
+        const json = JSON.stringify(db.getProducts(), null, 2);
+        const blob = new Blob([json], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `products_export_${Date.now()}.json`;
+        a.click();
+        utils.showToast("Catalog exported as JSON", "success");
+      };
+    }
 
     const addProdBtn = container.querySelector("#addNewProductBtn");
     if (addProdBtn) {
@@ -578,6 +675,14 @@ class AdminCMS {
               <input type="text" id="newProdSizes" placeholder="e.g. S, M, L, XL" />
             </div>
 
+            <div class="form-group">
+              <label>Visible on Store</label>
+              <select id="newProdIsVisible">
+                <option value="true" selected>Yes</option>
+                <option value="false">No</option>
+              </select>
+            </div>
+
             <div class="form-group admin-form-full">
               <label>Full Description</label>
               <textarea id="newProdDesc" rows="4" placeholder="Enter detailed product description..."></textarea>
@@ -642,9 +747,10 @@ class AdminCMS {
       const description = document.getElementById("newProdDesc").value.trim();
       const sizes = document.getElementById("newProdSizes").value.trim();
       const image = imgUrlInput.value || "images/crash_guard_product.png";
+      const isVisible = document.getElementById("newProdIsVisible").value === "true";
 
       window.HRz.DB.addProduct({
-        name, category, price, originalPrice, sku, description, sizes, image,
+        name, category, price, originalPrice, sku, description, sizes, image, isVisible,
         badge: "NEW ARRIVAL", highlights: ["High tensile build", "Guaranteed fitment"]
       });
 
@@ -719,6 +825,14 @@ class AdminCMS {
               </select>
             </div>
 
+            <div class="form-group">
+              <label>Visible on Store</label>
+              <select id="editProdIsVisible">
+                <option value="true" ${product.isVisible !== false ? 'selected' : ''}>Yes</option>
+                <option value="false" ${product.isVisible === false ? 'selected' : ''}>No</option>
+              </select>
+            </div>
+
             <div class="form-group admin-form-full">
               <label>Full Description</label>
               <textarea id="editProdDesc" rows="4">${escapeHTML(product.description || '')}</textarea>
@@ -784,9 +898,10 @@ class AdminCMS {
       const sizes = document.getElementById("editProdSizes").value.trim();
       const image = imgUrlInput.value || product.image;
       const inStock = document.getElementById("editProdInStock").value === "true";
+      const isVisible = document.getElementById("editProdIsVisible").value === "true";
 
       window.HRz.DB.updateProduct(productId, {
-        name, category, price, originalPrice, sku, description, sizes, image, inStock
+        name, category, price, originalPrice, sku, description, sizes, image, inStock, isVisible
       });
 
       modal.classList.remove("show");

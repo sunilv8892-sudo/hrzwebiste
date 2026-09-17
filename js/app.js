@@ -417,7 +417,7 @@ class App {
           <a href="#catalog" class="text-link">View all gear <span>→</span></a>
         </div>
         <div class="category-grid">
-          <div class="category large" onclick="window.location.hash='catalog?category=Protection'">
+          <div class="category large" onclick="window.location.hash='catalog?category=Bike%20Protection'">
             <img src="${catImages.Protection}" alt="Crash guards and protection gear" />
             <span><small>01</small> Crash Guards <b>→</b></span>
           </div>
@@ -429,7 +429,7 @@ class App {
             <img src="${catImages.Lights}" alt="LED fog lights" />
             <span><small>03</small> Fog Lights <b>→</b></span>
           </div>
-          <div class="category" onclick="window.location.hash='catalog?category=Luggage'">
+          <div class="category" onclick="window.location.hash='catalog?category=Luggage%20%26%20Touring'">
             <img src="${catImages.Luggage}" alt="Saddlebags and luggage" />
             <span><small>04</small> Luggage <b>→</b></span>
           </div>
@@ -443,7 +443,7 @@ class App {
           <div class="filters">
             <button class="active" data-filter="all">All gear</button>
             <button data-filter="Protection">Protection</button>
-            <button data-filter="Lights">Performance</button>
+          <button data-filter="Lights">Performance</button>
           </div>
         </div>
         <div class="shop-toolbar">
@@ -512,7 +512,7 @@ class App {
             <div>
               <span class="drop-tag">NEW / PROTECTION</span>
               <h3>Guard Series</h3>
-              <a href="#catalog?category=Protection">Explore now →</a>
+              <a href="#catalog?category=Bike%20Protection">Explore now →</a>
             </div>
           </article>
         </div>

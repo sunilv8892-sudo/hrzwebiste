@@ -74,7 +74,7 @@ class StorageService {
   }
 
   static getActiveBike() {
-    return this.loadState().activeBike;
+    return null; // Feature on hold
   }
 
   static setActiveBike(bikeObj) {
