@@ -73,7 +73,7 @@ class CatalogView {
         </div>
       </div>
 
-      <div class="category-filter-pills" style="padding:0 7vw;">
+      <div class="category-filter-pills">
         ${categories.map(cat => `
           <button class="filter-pill ${this.activeCategory === cat ? "active" : ""}" data-category="${cat}">
             ${cat}

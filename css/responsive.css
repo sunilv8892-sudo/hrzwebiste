@@ -204,6 +204,9 @@ html, body {
   .section { padding: 40px 4vw; }
   .section-head { margin-bottom: 20px; align-items: flex-start; flex-direction: column; gap: 8px; }
   .section-head h2 { font-size: clamp(32px, 8vw, 44px); }
+  .inner-section { padding: 40px 4vw 80px; }
+  .view-header { padding: 0 4vw; }
+  .breadcrumb-trail { padding: 20px 4vw 0; }
 
   /* ---- Category Grid ---- */
   .category-grid { grid-template-columns: 1fr 1fr; grid-template-rows: 160px 160px; gap: 8px; }
@@ -237,7 +240,7 @@ html, body {
     overflow-x: auto;
     flex-wrap: nowrap;
     gap: 8px;
-    padding-bottom: 6px;
+    padding: 0 4vw 6px;
     -webkit-overflow-scrolling: touch;
   }
   .filter-pill { padding: 6px 14px; font-size: 12px; }
