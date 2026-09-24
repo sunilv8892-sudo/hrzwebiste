@@ -282,13 +282,8 @@ class ProductDetailView {
           <div class="gallery-badge-row">
             <span class="gallery-count-chip">${gallery.length} photos</span>
           </div>
-          <div class="main-image-frame desktop-only" role="button" tabindex="0" aria-label="Open product image viewer">
+          <div class="main-image-frame" role="button" tabindex="0" aria-label="Open product image viewer">
             <img id="mainProductImage" src="${escapeHTML(product.image)}" alt="${escapeHTML(product.name)}" loading="lazy" onerror="this.src='images/helmet_product.png'" />
-          </div>
-          <div class="mobile-swipe-carousel mobile-only">
-            ${gallery.map(img => `
-              <img src="${escapeHTML(img)}" alt="${escapeHTML(product.name)}" class="carousel-image" loading="lazy" onerror="this.src='images/helmet_product.png'" />
-            `).join("")}
           </div>
           <div class="thumbnail-strip">
             ${gallery.map((img, i) => `
