@@ -20,17 +20,25 @@ class CatalogView {
 
     let products = window.HRz.DB.getProductsForBike(activeBike);
 
-    if (this.activeCategory !== "All") {
-      products = products.filter(p => p.category.toLowerCase() === this.activeCategory.toLowerCase());
-    }
-
     if (this.searchQuery) {
+      // Search across ALL products, not just bike-specific
+      products = window.HRz.DB.products;
+      const bikeProductIds = new Set(window.HRz.DB.getProductsForBike(activeBike).map(p => p.id));
+      
       const q = this.searchQuery.toLowerCase();
       products = products.filter(p =>
         p.name.toLowerCase().includes(q) ||
         p.category.toLowerCase().includes(q) ||
         p.sku.toLowerCase().includes(q)
-      );
+      ).sort((a, b) => {
+        const aFit = bikeProductIds.has(a.id) ? 1 : 0;
+        const bFit = bikeProductIds.has(b.id) ? 1 : 0;
+        return bFit - aFit; // Boost products that fit the bike
+      });
+    }
+
+    if (this.activeCategory !== "All") {
+      products = products.filter(p => p.category.toLowerCase() === this.activeCategory.toLowerCase());
     }
 
     if (this.sortBy === "price-low") {

@@ -400,7 +400,7 @@
 .log-text { color: #999; }
 
 /* ---- Responsive ---- */
-@media (max-width: 900px) {
+@media (max-width: 768px) {
   .admin-dashboard-layout { grid-template-columns: 1fr; }
   .admin-sidebar { height: auto; position: relative; top: 0; padding: 16px; border-right: none; border-bottom: 1px solid #232528; }
   .admin-sidebar-header { padding: 0 0 16px 0; margin-bottom: 16px; }
@@ -420,6 +420,6 @@
   .admin-table th, .admin-table td { padding: 12px 8px; font-size: 13px; white-space: nowrap; }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   .admin-tab-btn { flex: 1 1 100%; }
 }

@@ -15,20 +15,6 @@ class ProductDetailView {
       gallery.unshift(product.image);
     }
 
-    if (gallery.length === 1) {
-      const fallbackByCategory = {
-        Helmets: ["images/intercom_product.png", "images/category_helmets.png"],
-        Protection: ["images/bash_plate_product.png", "images/category_protection.png"],
-        Lights: ["images/phone_mount_product.png", "images/category_lights.png"],
-        Luggage: ["images/phone_mount_product.png", "images/category_luggage.png"],
-        Touring: ["images/intercom_product.png", "images/category_touring.png"]
-      };
-
-      (fallbackByCategory[product.category] || ["images/category_helmets.png"]).forEach(image => {
-        if (!gallery.includes(image)) gallery.push(image);
-      });
-    }
-
     return Array.from(new Set(gallery));
   }
 
@@ -281,7 +267,7 @@ class ProductDetailView {
 
     const fitment = window.HRz.DB.checkFitment(product.id, activeBike);
     const reviews = window.HRz.DB.getReviews().filter(r => r.productId === product.id && r.status === "published");
-    const relatedProducts = window.HRz.DB.getProductsForBike(activeBike).filter(p => p.id !== product.id).slice(0, 4);
+    const relatedProducts = window.HRz.DB.getRecommendedProducts(activeBike, product.id, 4);
     const utils = window.HRz.Utils;
     const gallery = this.getGalleryImages(product);
 

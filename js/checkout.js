@@ -75,26 +75,27 @@ class CheckoutView {
 
             <div class="form-section-card">
               <h3>3. Payment Method</h3>
+              <p style="font-size: 0.9em; color: #666; margin-bottom: 12px;">Payment will be securely processed via WhatsApp after confirming your order details.</p>
               <div class="payment-options-grid">
                 <label class="payment-option-card active">
                   <input type="radio" name="payMethod" value="UPI GPay" checked />
                   <div class="pay-option-content">
-                    <strong>Instant UPI / GPay / PhonePe</strong>
-                    <small>0% Payment Fee · Fastest Dispatch</small>
+                    <strong>UPI / GPay / PhonePe</strong>
+                    <small>Confirm details with us on WhatsApp</small>
                   </div>
                 </label>
                 <label class="payment-option-card">
                   <input type="radio" name="payMethod" value="Credit/Debit Card" />
                   <div class="pay-option-content">
                     <strong>Credit & Debit Cards</strong>
-                    <small>Visa, Mastercard, RuPay, Amex</small>
+                    <small>Confirm details with us on WhatsApp</small>
                   </div>
                 </label>
                 <label class="payment-option-card">
                   <input type="radio" name="payMethod" value="Cash On Delivery" />
                   <div class="pay-option-content">
                     <strong>Cash On Delivery (COD)</strong>
-                    <small>Pay cash upon delivery to courier</small>
+                    <small>Confirm details with us on WhatsApp</small>
                   </div>
                 </label>
               </div>
@@ -159,8 +160,7 @@ class CheckoutView {
           id: "HRZ-ORD-" + Math.floor(10000 + Math.random() * 90000),
           date: new Date().toISOString().split("T")[0],
           bike: bikeStr,
-          status: "Order Placed",
-          trackingId: "DTDC-IN-" + Math.floor(100000 + Math.random() * 900000),
+          status: "Pending WhatsApp Confirmation",
           items: cart,
           total: grandTotal,
           paymentMethod: payMethod,
@@ -182,6 +182,10 @@ class CheckoutView {
 
         const waUrl = `https://wa.me/7019348327?text=${encodeURIComponent(waText)}`;
 
+        // Attempt to open WhatsApp first
+        const popup = window.open(waUrl, "_blank");
+
+        // Regardless of popup success, save the order locally and clear cart
         window.HRz.Storage.setCart([]);
         if (window.HRz.Cart && typeof window.HRz.Cart.updateCartBadge === 'function') {
           window.HRz.Cart.updateCartBadge();
@@ -190,10 +194,19 @@ class CheckoutView {
         db.orders.unshift(newOrder);
         db._persist();
 
-        utils.showToast("Redirecting to WhatsApp to finalize your order...", "success");
-        window.open(waUrl, "_blank");
-
-        this.renderSuccessView(container, newOrder);
+        if (popup) {
+          utils.showToast("Redirecting to WhatsApp to finalize your order...", "success");
+          this.renderSuccessView(container, newOrder);
+        } else {
+          utils.showToast("Popup blocked! Please click the button to continue to WhatsApp.", "error");
+          container.innerHTML = `
+            <div class="order-success-card">
+              <h2>Complete Your Order via WhatsApp</h2>
+              <p>Your browser blocked the automatic redirect. Please click the button below to send your order details to us on WhatsApp.</p>
+              <a href="${waUrl}" target="_blank" class="accent-button" style="display:inline-block; margin-top:20px; text-decoration:none;">Open WhatsApp</a>
+            </div>
+          `;
+        }
       };
     }
   }
@@ -202,10 +215,10 @@ class CheckoutView {
     const escapeHTML = window.HRz.Utils.escapeHTML;
     container.innerHTML = `
       <div class="order-success-card">
-        <div class="success-icon">🎉</div>
-        <h2>Order Confirmed & Fitment Verified!</h2>
-        <p class="order-number">Order ID: <strong>${escapeHTML(order.id)}</strong> · Tracking ID: <strong>${escapeHTML(order.trackingId)}</strong></p>
-        <p>Thank you for shopping at HRz Pitstop. Our technicians have verified that all ordered parts fit your <strong>${escapeHTML(order.bike)}</strong>.</p>
+        <div class="success-icon">💬</div>
+        <h2>Order Request Recorded!</h2>
+        <p class="order-number">Order ID: <strong>${escapeHTML(order.id)}</strong></p>
+        <p>Your order details have been drafted. We will finalize stock, shipping, and payment directly on WhatsApp.</p>
         
         <div class="success-actions">
           <button class="accent-button" onclick="window.location.hash='tracking'">Track Order Status</button>

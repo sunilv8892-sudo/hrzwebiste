@@ -975,4 +975,18 @@ body.gallery-viewer-open {
     padding: 12px 16px;
     margin: 12px 0 16px;
   }
+  .product-variants-section {
+    margin: 20px 0;
+  }
+  .color-selector-grid {
+    gap: 10px;
+  }
+  .color-btn {
+    padding: 8px 14px 8px 8px;
+    font-size: 13px;
+  }
+  .color-btn-img {
+    width: 32px;
+    height: 32px;
+  }
 }

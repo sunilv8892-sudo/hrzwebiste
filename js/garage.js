@@ -243,7 +243,7 @@ class GarageManager {
     const catalog = window.HRz.Catalog;
     const garage = window.HRz.Storage.getGarage();
     const activeBike = window.HRz.Storage.getActiveBike();
-    const recommendedProducts = db.getProductsForBike(activeBike).slice(0, 10);
+    const recommendedProducts = db.getRecommendedProducts(activeBike, null, 10);
     const escapeHTML = window.HRz.Utils.escapeHTML;
 
     container.innerHTML = `

@@ -6,12 +6,12 @@
 window.HRz = window.HRz || {};
 
 const CACHE_KEYS = {
-  BIKES: "hrz_db_bikes_v6",
-  PRODUCTS: "hrz_db_products_v6",
-  COMPATIBILITY: "hrz_db_compatibility_v6",
-  REVIEWS: "hrz_db_reviews_v6",
-  ORDERS: "hrz_db_orders_v6",
-  BUNDLES: "hrz_db_bundles_v6"
+  BIKES: "hrz_db_bikes_v9",
+  PRODUCTS: "hrz_db_products_v9",
+  COMPATIBILITY: "hrz_db_compatibility_v9",
+  REVIEWS: "hrz_db_reviews_v9",
+  ORDERS: "hrz_db_orders_v9",
+  BUNDLES: "hrz_db_bundles_v9"
 };
 
 const DEFAULT_BIKES = [
@@ -279,7 +279,7 @@ class DBService {
 
     try {
       if (window.HRz.Storage?.cleanupLegacyKeys) {
-        window.HRz.Storage.cleanupLegacyKeys([...Object.values(CACHE_KEYS), "hrz-pitstop-state-v6"]);
+        window.HRz.Storage.cleanupLegacyKeys([...Object.values(CACHE_KEYS), "hrz-pitstop-state-v6", "hrz_db_bikes_v7", "hrz_db_products_v7", "hrz_db_compatibility_v7", "hrz_db_reviews_v7", "hrz_db_orders_v7", "hrz_db_bundles_v7"]);
       }
 
       const cachedBikes = localStorage.getItem(CACHE_KEYS.BIKES);
@@ -473,6 +473,19 @@ class DBService {
     return visibleProducts.filter(p => this.checkFitment(p.id, activeBike) !== null);
   }
 
+  static getRecommendedProducts(activeBike, excludeId = null, limit = 10) {
+    let list = this.getProductsForBike(activeBike);
+    if (excludeId) {
+      list = list.filter(p => p.id !== excludeId);
+    }
+    // Curation: if no bike is selected, don't just return the first items in array.
+    // Instead, only return products explicitly flagged as BESTSELLER.
+    if (!activeBike) {
+      list = list.filter(p => p.badge && p.badge.toUpperCase() === 'BESTSELLER');
+    }
+    return list.slice(0, limit);
+  }
+
   static getCompatibleBikesForProduct(productId) {
     const rules = this.compatibility.filter(c => c.productId === productId);
     return rules.map(rule => {
@@ -484,6 +497,18 @@ class DBService {
         bike: bike || { brand: "Universal", model: "All Models", variant: "Standard", year: 2024 }
       };
     });
+  }
+
+  static markCatalogUnsaved() {
+    this.unsavedCatalogChanges = true;
+    let banner = document.getElementById('unsaved-catalog-banner');
+    if (!banner) {
+       banner = document.createElement('div');
+       banner.id = 'unsaved-catalog-banner';
+       banner.style.cssText = "position:fixed;top:0;left:0;right:0;background:var(--red);color:#fff;text-align:center;padding:12px;z-index:9999;font-weight:bold;box-shadow:0 4px 10px rgba(0,0,0,0.5);";
+       banner.innerHTML = "You have unsaved catalog changes — Edit applied in this session only. Click Export JSON and replace data/products.json to make this permanent.";
+       document.body.prepend(banner);
+    }
   }
 
   static addProduct(productData) {
@@ -500,6 +525,7 @@ class DBService {
     };
     this.products.unshift(newProduct);
     this._persist();
+    this.markCatalogUnsaved();
     if (window.HRz?.Storage) {
       window.HRz.Storage.addAuditLog(`Added new product "${newProduct.name}" (SKU: ${newProduct.sku})`);
     }
@@ -511,6 +537,7 @@ class DBService {
     if (!p) return null;
     Object.assign(p, updates);
     this._persist();
+    this.markCatalogUnsaved();
     if (window.HRz?.Storage) {
       window.HRz.Storage.addAuditLog(`Updated product "${p.name}" details/price (₹${p.price})`);
     }
@@ -522,6 +549,7 @@ class DBService {
     this.products = this.products.filter(item => item.id !== id);
     this.compatibility = this.compatibility.filter(c => c.productId !== id);
     this._persist();
+    this.markCatalogUnsaved();
     if (p && window.HRz?.Storage) {
       window.HRz.Storage.addAuditLog(`Deleted product "${p.name}"`);
     }

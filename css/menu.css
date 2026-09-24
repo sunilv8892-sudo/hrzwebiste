@@ -11,7 +11,7 @@
    ============================================= */
 
 /* ---- Desktop vs Mobile Visibility Controls ---- */
-@media (min-width: 801px) {
+@media (min-width: 769px) {
   #mainMenuBtn {
     display: none !important; /* NO hamburger in desktop view */
   }
@@ -20,7 +20,7 @@
   }
 }
 
-@media (max-width: 800px) {
+@media (max-width: 768px) {
   #mainMenuBtn {
     display: inline-flex !important; /* ONLY hamburger in mobile view */
     touch-action: manipulation;
@@ -1149,7 +1149,7 @@
 /* =============================================
    ABOUT US RESPONSIVE DESIGN (MOBILE & TABLET)
    ============================================= */
-@media (max-width: 950px) {
+@media (max-width: 768px) {
   .manifesto-quotes-grid,
   .about-narrative {
     grid-template-columns: 1fr;
@@ -1168,7 +1168,7 @@
   .manifesto-top-bar .manifesto-tag { display: none; }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .about-stats-grid { grid-template-columns: 1fr; }
   .rider-quote-box { padding: 18px 20px; font-size: 15.5px; }
   .telemetry-overlay { left: 14px; right: 14px; bottom: 14px; text-align: center; }

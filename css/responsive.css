@@ -95,12 +95,12 @@ html, body {
 /* ---- Mobile Dock Hide on Desktop ---- */
 .mobile-dock { display: none; }
 
-@media (min-width: 801px) {
+@media (min-width: 769px) {
   .mobile-dock { display: none !important; }
 }
 
 /* ---- Tablet & Below (≤ 800px) ---- */
-@media (max-width: 800px) {
+@media (max-width: 768px) {
   body { padding-bottom: calc(76px + env(safe-area-inset-bottom)); }
 
   .topline {
@@ -452,7 +452,7 @@ html, body {
 }
 
 /* ---- Small Mobile (≤ 480px) ---- */
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   h1 { font-size: 54px; }
   .hero { min-height: 440px; }
   .hero-copy { left: 4vw; right: 4vw; }

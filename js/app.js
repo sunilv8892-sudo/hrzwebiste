@@ -286,7 +286,7 @@ class App {
     const activeBike = window.HRz.Storage.getActiveBike();
     const heroBanner = window.HRz.Storage.getHeroBanner();
     const db = window.HRz.DB;
-    const featuredProducts = db.getProductsForBike(activeBike).slice(0, 8);
+    const featuredProducts = db.getRecommendedProducts(activeBike, null, 8);
     const utils = window.HRz.Utils;
     const catalog = window.HRz.Catalog;
     const wishlist = window.HRz.Storage.getWishlist();
@@ -319,93 +319,12 @@ class App {
         </div>
         <div class="bike-slider-container">
           <div class="bike-slider">
-            <!-- Set 1 -->
-            <div class="bike-item" data-brand="Royal Enfield" data-model="Classic 350" data-variant="Reborn" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_1.png" alt="Classic 350" /></div>
-              <div class="bike-info"><h3>Royal Enfield</h3></div>
-            </div>
-            <div class="bike-item" data-brand="KTM" data-model="Duke" data-variant="390 Gen-3" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_2.png" alt="390 Duke" /></div>
-              <div class="bike-info"><h3>KTM</h3></div>
-            </div>
-            <div class="bike-item" data-brand="BMW" data-model="GS" data-variant="1250 Adventure" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_3.png" alt="R 1250 GS" /></div>
-              <div class="bike-info"><h3>BMW</h3></div>
-            </div>
-            <div class="bike-item" data-brand="Kawasaki" data-model="Ninja" data-variant="ZX-10R" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_4.png" alt="Ninja ZX-10R" /></div>
-              <div class="bike-info"><h3>Kawasaki</h3></div>
-            </div>
-            <div class="bike-item" data-brand="Yamaha" data-model="R15" data-variant="V4" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_5.png" alt="YZF R15" /></div>
-              <div class="bike-info"><h3>Yamaha</h3></div>
-            </div>
-            <div class="bike-item" data-brand="Ducati" data-model="Panigale" data-variant="V4" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_6.png" alt="Panigale V4" /></div>
-              <div class="bike-info"><h3>Ducati</h3></div>
-            </div>
-            <div class="bike-item" data-brand="Triumph" data-model="Tiger" data-variant="900 Rally Pro" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_7.png" alt="Tiger 900" /></div>
-              <div class="bike-info"><h3>Triumph</h3></div>
-            </div>
-            <!-- Set 2 (Middle, contains active by default) -->
-            <div class="bike-item" data-brand="Royal Enfield" data-model="Classic 350" data-variant="Reborn" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_1.png" alt="Classic 350" /></div>
-              <div class="bike-info"><h3>Royal Enfield</h3></div>
-            </div>
-            <div class="bike-item" data-brand="KTM" data-model="Duke" data-variant="390 Gen-3" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_2.png" alt="390 Duke" /></div>
-              <div class="bike-info"><h3>KTM</h3></div>
-            </div>
-            <div class="bike-item active" data-brand="BMW" data-model="GS" data-variant="1250 Adventure" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_3.png" alt="R 1250 GS" /></div>
-              <div class="bike-info"><h3>BMW</h3></div>
-            </div>
-            <div class="bike-item" data-brand="Kawasaki" data-model="Ninja" data-variant="ZX-10R" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_4.png" alt="Ninja ZX-10R" /></div>
-              <div class="bike-info"><h3>Kawasaki</h3></div>
-            </div>
-            <div class="bike-item" data-brand="Yamaha" data-model="R15" data-variant="V4" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_5.png" alt="YZF R15" /></div>
-              <div class="bike-info"><h3>Yamaha</h3></div>
-            </div>
-            <div class="bike-item" data-brand="Ducati" data-model="Panigale" data-variant="V4" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_6.png" alt="Panigale V4" /></div>
-              <div class="bike-info"><h3>Ducati</h3></div>
-            </div>
-            <div class="bike-item" data-brand="Triumph" data-model="Tiger" data-variant="900 Rally Pro" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_7.png" alt="Tiger 900" /></div>
-              <div class="bike-info"><h3>Triumph</h3></div>
-            </div>
-            <!-- Set 3 -->
-            <div class="bike-item" data-brand="Royal Enfield" data-model="Classic 350" data-variant="Reborn" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_1.png" alt="Classic 350" /></div>
-              <div class="bike-info"><h3>Royal Enfield</h3></div>
-            </div>
-            <div class="bike-item" data-brand="KTM" data-model="Duke" data-variant="390 Gen-3" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_2.png" alt="390 Duke" /></div>
-              <div class="bike-info"><h3>KTM</h3></div>
-            </div>
-            <div class="bike-item" data-brand="BMW" data-model="GS" data-variant="1250 Adventure" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_3.png" alt="R 1250 GS" /></div>
-              <div class="bike-info"><h3>BMW</h3></div>
-            </div>
-            <div class="bike-item" data-brand="Kawasaki" data-model="Ninja" data-variant="ZX-10R" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_4.png" alt="Ninja ZX-10R" /></div>
-              <div class="bike-info"><h3>Kawasaki</h3></div>
-            </div>
-            <div class="bike-item" data-brand="Yamaha" data-model="R15" data-variant="V4" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_5.png" alt="YZF R15" /></div>
-              <div class="bike-info"><h3>Yamaha</h3></div>
-            </div>
-            <div class="bike-item" data-brand="Ducati" data-model="Panigale" data-variant="V4" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_6.png" alt="Panigale V4" /></div>
-              <div class="bike-info"><h3>Ducati</h3></div>
-            </div>
-            <div class="bike-item" data-brand="Triumph" data-model="Tiger" data-variant="900 Rally Pro" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_7.png" alt="Tiger 900" /></div>
-              <div class="bike-info"><h3>Triumph</h3></div>
-            </div>
+            ${[1, 2, 3].map(set => window.HRz.DB.getBikes().slice(0, 7).map((bike, idx) => `
+              <div class="bike-item ${set === 2 && idx === 2 ? 'active' : ''}" data-brand="${bike.brand}" data-model="${bike.model}" data-variant="${bike.variant}" data-year="${bike.year}">
+                <div class="bike-img-wrap"><img src="images/bike_t_${(idx % 7) + 1}.png" alt="${bike.model}" /></div>
+                <div class="bike-info"><h3>${bike.brand}</h3></div>
+              </div>
+            `).join('')).join('')}
           </div>
         </div>
       </section>
@@ -567,7 +486,7 @@ class App {
         b.classList.add("active");
         const filter = b.dataset.filter;
         let filtered = filter === "all"
-          ? db.getProductsForBike(activeBike).slice(0, 8)
+          ? db.getRecommendedProducts(activeBike, null, 8)
           : db.getProductsForBike(activeBike).filter(p => p.category === filter);
         const grid = container.querySelector("#home-product-grid");
         const count = container.querySelector("#product-count");
@@ -581,7 +500,7 @@ class App {
     const sortSelect = container.querySelector("#home-sort-select");
     if (sortSelect) {
       sortSelect.onchange = () => {
-        let items = [...db.getProductsForBike(activeBike).slice(0, 8)];
+        let items = [...db.getRecommendedProducts(activeBike, null, 8)];
         if (sortSelect.value === "low") items.sort((a, b) => a.price - b.price);
         if (sortSelect.value === "high") items.sort((a, b) => b.price - a.price);
         const grid = container.querySelector("#home-product-grid");
@@ -666,7 +585,7 @@ class App {
         filterTimer = setTimeout(() => {
           const f = container.querySelector(".filters .active")?.dataset.filter || "all";
           const items = f === "all"
-            ? db.getProductsForBike(bikeObj).slice(0, 8)
+            ? db.getRecommendedProducts(bikeObj, null, 8)
             : db.getProductsForBike(bikeObj).filter(p => p.category === f);
           const grid  = container.querySelector("#home-product-grid");
           const count = container.querySelector("#product-count");
