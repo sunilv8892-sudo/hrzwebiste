@@ -216,9 +216,9 @@ html, body {
   /* ---- Product Cards & Grid ---- */
   .product-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
   .product-card-media,
-  .product-image { height: 170px; }
+  .product-image { height: auto; width: 100%; aspect-ratio: 1 / 1; }
   .view:not(#home) .product-card-media,
-  .view:not(#home) .product-image { height: 150px; }
+  .view:not(#home) .product-image { height: auto; width: 100%; aspect-ratio: 1 / 1; }
 
   .product-card .quick-button {
     transform: none;
@@ -480,7 +480,7 @@ html, body {
 
   .product-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
   .product-card-media,
-  .product-image { height: 150px; }
+  .product-image { height: auto; width: 100%; aspect-ratio: 1 / 1; }
   .product-info h3,
   .product-title { font-size: 13px; }
   
