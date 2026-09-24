@@ -336,7 +336,7 @@ class App {
           <a href="#catalog" class="text-link">View all gear <span>→</span></a>
         </div>
         <div class="category-grid">
-          <div class="category large" onclick="window.location.hash='catalog?category=Bike%20Protection'">
+          <div class="category large" onclick="window.location.hash='catalog?category=Protection'">
             <img src="${catImages.Protection}" alt="Crash guards and protection gear" />
             <span><small>01</small> Crash Guards <b>→</b></span>
           </div>
@@ -348,7 +348,7 @@ class App {
             <img src="${catImages.Lights}" alt="LED fog lights" />
             <span><small>03</small> Fog Lights <b>→</b></span>
           </div>
-          <div class="category" onclick="window.location.hash='catalog?category=Luggage%20%26%20Touring'">
+          <div class="category" onclick="window.location.hash='catalog?category=Luggage'">
             <img src="${catImages.Luggage}" alt="Saddlebags and luggage" />
             <span><small>04</small> Luggage <b>→</b></span>
           </div>

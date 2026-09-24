@@ -20,6 +20,17 @@ def extract_base_and_color(name):
         return base_name, color
     return name.strip(), "Standard"
 
+def normalize_category(cat_str):
+    if not cat_str: return "Accessories"
+    c = cat_str.lower()
+    if any(x in c for x in ["helmet"]): return "Helmets"
+    if any(x in c for x in ["crash", "guard", "protection", "bash plate", "slider", "tail tidy", "metal visor"]): return "Protection"
+    if any(x in c for x in ["light", "fog"]): return "Lights"
+    if any(x in c for x in ["luggage", "bag", "carrier", "saddle", "top plate", "rack"]): return "Luggage"
+    if any(x in c for x in ["jacket", "glove", "pant", "boot", "goggle", "gear", "suit", "rain"]): return "Riding Gear"
+    if any(x in c for x in ["lube", "lubricant", "oil", "maintenance"]): return "Lubricants"
+    return "Accessories"
+
 def main():
     with open(CATALOG_FILE, 'r', encoding='utf-8') as f:
         catalog = json.load(f)
@@ -41,7 +52,7 @@ def main():
             "id": f"hrz-prod-cat-{i+1}",
             "name": item.get('product_name', 'Unknown'),
             "brand": item.get('brand', 'Unknown'),
-            "category": item.get('category', 'Accessories'),
+            "category": normalize_category(item.get('category', '')),
             "price": price,
             "originalPrice": int(price * 1.15),
             "image": img_path,
