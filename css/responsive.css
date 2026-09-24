@@ -225,15 +225,25 @@ html, body {
     position: relative;
     bottom: 0; left: 0; right: 0;
     width: 100%;
-    padding: 8px;
     margin-top: 6px;
+  }
+  .product-card .quick-button,
+  .product-card .add-to-cart-btn {
+    padding: 6px 10px;
     font-size: 11px;
-    border-radius: var(--radius-sm);
+  }
+  .product-card .current-price,
+  .product-card .original-price {
+    font-size: 12px;
   }
   .product-card-content,
-  .product-info { padding: 8px 6px; }
+  .product-info { padding: 10px 8px; }
   .product-title,
-  .product-info h3 { font-size: 14px; }
+  .product-info h3 { font-size: 12px; }
+  .price-action-row {
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
 
   /* Filter Pills on Catalog */
   .category-filter-pills {
