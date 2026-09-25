@@ -113,4 +113,96 @@ function escapeHTML(str) {
   );
 }
 
-window.HRz.Utils = { formatCurrency, renderStarRating, showToast, setupModalAccessibility, debounce, escapeHTML };
+function levenshtein(a, b) {
+  const matrix = [];
+  for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+  for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+  for (let i = 1; i <= b.length; i++) {
+    for (let j = 1; j <= a.length; j++) {
+      if (b.charAt(i - 1) === a.charAt(j - 1)) {
+        matrix[i][j] = matrix[i - 1][j - 1];
+      } else {
+        matrix[i][j] = Math.min(
+          matrix[i - 1][j - 1] + 1,
+          Math.min(matrix[i][j - 1] + 1, matrix[i - 1][j] + 1)
+        );
+      }
+    }
+  }
+  return matrix[b.length][a.length];
+}
+
+function smartSearch(query, products, activeBike) {
+  if (!query) return products;
+  
+  const tokens = query.toLowerCase().split(/\s+/).filter(t => t.length > 1);
+  if (tokens.length === 0) return products;
+
+  const scoredProducts = products.map(p => {
+    let score = 0;
+    const nameStr = p.name.toLowerCase();
+    const brandStr = p.brand.toLowerCase();
+    const catStr = p.category.toLowerCase();
+    
+    const allWords = [...new Set([...nameStr.split(/\s+/), ...brandStr.split(/\s+/), ...catStr.split(/\s+/)])];
+    
+    let tokensMatched = 0;
+    
+    for (const token of tokens) {
+      let bestTokenScore = 0;
+      
+      if (nameStr.includes(token)) bestTokenScore = Math.max(bestTokenScore, 10);
+      if (brandStr.includes(token)) bestTokenScore = Math.max(bestTokenScore, 15);
+      if (catStr.includes(token)) bestTokenScore = Math.max(bestTokenScore, 15);
+      if (p.sku && p.sku.toLowerCase().includes(token)) bestTokenScore = Math.max(bestTokenScore, 20);
+
+      if (p.bike_compatibility) {
+          for (const b of p.bike_compatibility) {
+              if (b.toLowerCase().includes(token)) {
+                  bestTokenScore = Math.max(bestTokenScore, 12);
+              }
+          }
+      }
+      
+      if (bestTokenScore === 0 && token.length > 3) {
+         for (const w of allWords) {
+             if (w.length > 3) {
+                 const dist = levenshtein(token, w);
+                 const maxTypos = w.length >= 6 ? 2 : 1;
+                 if (dist <= maxTypos) {
+                     bestTokenScore = Math.max(bestTokenScore, 8 - dist);
+                 }
+             }
+         }
+      }
+      
+      if (bestTokenScore > 0) {
+        score += bestTokenScore;
+        tokensMatched++;
+      }
+    }
+    
+    if (tokensMatched === 0) return { product: p, score: 0 };
+    
+    if (tokensMatched === tokens.length) {
+       score *= 2.0; 
+    } else if (tokensMatched > 0) {
+       score *= (tokensMatched / tokens.length);
+    }
+    
+    if (activeBike && window.HRz.DB && window.HRz.DB.checkFitment) {
+        if (window.HRz.DB.checkFitment(p.id, activeBike)) {
+            score += 10;
+        }
+    }
+    
+    return { product: p, score: score };
+  });
+  
+  return scoredProducts
+    .filter(item => item.score > 2)
+    .sort((a, b) => b.score - a.score)
+    .map(item => item.product);
+}
+
+window.HRz.Utils = { formatCurrency, renderStarRating, showToast, setupModalAccessibility, debounce, escapeHTML, levenshtein, smartSearch };

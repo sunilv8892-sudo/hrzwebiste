@@ -25,15 +25,7 @@ class SearchEngine {
       const bikeProducts = window.HRz.DB.getProductsForBike(activeBike);
       const bikeProductIds = new Set(bikeProducts.map(p => p.id));
 
-      const matches = allProducts.filter(p =>
-        p.name.toLowerCase().includes(q) ||
-        p.category.toLowerCase().includes(q) ||
-        p.sku.toLowerCase().includes(q)
-      ).sort((a, b) => {
-        const aFit = bikeProductIds.has(a.id) ? 1 : 0;
-        const bFit = bikeProductIds.has(b.id) ? 1 : 0;
-        return bFit - aFit;
-      }).slice(0, 5);
+      const matches = window.HRz.Utils.smartSearch(q, allProducts, activeBike).slice(0, 5);
 
       if (matches.length === 0) {
         popover.innerHTML = `<p style="padding:14px;color:#666;">No gear found. Try crash guard or helmet.</p>`;

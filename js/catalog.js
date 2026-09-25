@@ -1,6 +1,6 @@
 /* =============================================
    HRz PITSTOP – Product Catalog & Filtering Module
-   Adapted for editorial design
+   Adapted for Premium Slide-out Drawer Filtering
    ============================================= */
 
 window.HRz = window.HRz || {};
@@ -9,127 +9,394 @@ class CatalogView {
   static activeCategory = "All";
   static searchQuery = "";
   static sortBy = "featured";
+  static activeBrands = new Set();
+  static activeColors = new Set();
+  static activeSubtypes = new Set();
+  static minPrice = null;
+  static maxPrice = null;
+
+  static BASE_COLORS = [
+    { name: "Black", hex: "#222222" },
+    { name: "White", hex: "#FFFFFF" },
+    { name: "Red", hex: "#E53935" },
+    { name: "Blue", hex: "#1E88E5" },
+    { name: "Green", hex: "#43A047" },
+    { name: "Yellow", hex: "#FDD835" },
+    { name: "Orange", hex: "#FB8C00" },
+    { name: "Grey", hex: "#757575" },
+    { name: "Silver", hex: "#BDBDBD" },
+    { name: "Neon", hex: "#76FF03" }
+  ];
 
   static render(container, options = {}) {
-    if (options.category) this.activeCategory = options.category;
-    if (options.search) this.searchQuery = options.search;
+    if (options.category !== undefined) {
+      if (this.activeCategory !== options.category) {
+        this.activeCategory = options.category;
+        this.resetAdvancedFilters();
+      }
+    }
+    if (options.search !== undefined) {
+      if (this.searchQuery !== options.search) {
+        this.searchQuery = options.search;
+        this.resetAdvancedFilters();
+      }
+    }
 
     const activeBike = window.HRz.Storage.getActiveBike();
     const wishlist = window.HRz.Storage.getWishlist();
     const escapeHTML = window.HRz.Utils.escapeHTML;
 
-    let products = window.HRz.DB.getProductsForBike(activeBike);
+    let allBaseProducts = window.HRz.DB.products;
+    if (!this.searchQuery && this.activeCategory === "All" && activeBike) {
+        allBaseProducts = window.HRz.DB.getProductsForBike(activeBike);
+    }
+
+    let products = [...allBaseProducts];
 
     if (this.searchQuery) {
-      // Search across ALL products, not just bike-specific
-      products = window.HRz.DB.products;
-      const bikeProductIds = new Set(window.HRz.DB.getProductsForBike(activeBike).map(p => p.id));
-      
-      const q = this.searchQuery.toLowerCase();
-      products = products.filter(p =>
-        p.name.toLowerCase().includes(q) ||
-        p.category.toLowerCase().includes(q) ||
-        p.sku.toLowerCase().includes(q)
-      ).sort((a, b) => {
-        const aFit = bikeProductIds.has(a.id) ? 1 : 0;
-        const bFit = bikeProductIds.has(b.id) ? 1 : 0;
-        return bFit - aFit; // Boost products that fit the bike
-      });
+      products = window.HRz.Utils.smartSearch(this.searchQuery, products, activeBike);
     }
 
     if (this.activeCategory !== "All") {
       products = products.filter(p => p.category.toLowerCase() === this.activeCategory.toLowerCase());
     }
 
-    if (this.sortBy === "price-low") {
-      products.sort((a, b) => a.price - b.price);
-    } else if (this.sortBy === "price-high") {
-      products.sort((a, b) => b.price - a.price);
-    } else if (this.sortBy === "rating") {
-      products.sort((a, b) => b.rating - a.rating);
+    const availableBrands = [...new Set(products.map(p => p.brand))].sort();
+    
+    const availableBaseColors = new Set();
+    products.forEach(p => {
+      if (p.variants) {
+        p.variants.forEach(v => {
+          const vColor = (v.color || "").toLowerCase();
+          this.BASE_COLORS.forEach(bc => {
+            if (vColor.includes(bc.name.toLowerCase())) availableBaseColors.add(bc.name);
+          });
+        });
+      }
+    });
+    
+    const availableSubtypes = new Set();
+    let subtypeLabel = "";
+    if (this.activeCategory === "Helmets") {
+        subtypeLabel = "Helmet Type";
+        products.forEach(p => {
+            const n = p.name.toLowerCase();
+            if (n.includes('full face') || n.includes('full-face')) availableSubtypes.add("Full Face");
+            else if (n.includes('half face') || n.includes('open face')) availableSubtypes.add("Half Face");
+            else if (n.includes('offroad') || n.includes('motocross') || n.includes('dirt')) availableSubtypes.add("Offroad");
+            else if (n.includes('modular')) availableSubtypes.add("Modular");
+        });
+    } else if (this.activeCategory === "Luggage") {
+        subtypeLabel = "Luggage Type";
+        products.forEach(p => {
+            const n = p.name.toLowerCase();
+            if (n.includes('saddle')) availableSubtypes.add("Saddlebags");
+            else if (n.includes('tank')) availableSubtypes.add("Tank Bags");
+            else if (n.includes('tail')) availableSubtypes.add("Tail Bags");
+            else if (n.includes('top case') || n.includes('box')) availableSubtypes.add("Top Cases");
+            else if (n.includes('backpack')) availableSubtypes.add("Backpacks");
+        });
+    } else if (this.activeCategory === "Protection") {
+        subtypeLabel = "Protection Type";
+        products.forEach(p => {
+            const n = p.name.toLowerCase();
+            if (n.includes('crash guard') || n.includes('engine guard')) availableSubtypes.add("Crash Guards");
+            else if (n.includes('bash plate') || n.includes('skid plate')) availableSubtypes.add("Bash Plates");
+            else if (n.includes('slider')) availableSubtypes.add("Sliders");
+            else if (n.includes('radiator')) availableSubtypes.add("Radiator Guards");
+        });
+    } else if (this.activeCategory === "Riding Gears") {
+        subtypeLabel = "Apparel Type";
+        products.forEach(p => {
+            const n = p.name.toLowerCase();
+            if (n.includes('jacket')) availableSubtypes.add("Jackets");
+            else if (n.includes('glove')) availableSubtypes.add("Gloves");
+            else if (n.includes('pant') || n.includes('trouser')) availableSubtypes.add("Pants");
+            else if (n.includes('shoe') || n.includes('boot')) availableSubtypes.add("Footwear");
+        });
     }
 
-    const categories = ["All", ...window.HRz.DB.getCategories()];
+    if (this.activeBrands.size > 0) {
+      products = products.filter(p => this.activeBrands.has(p.brand));
+    }
+    if (this.activeColors.size > 0) {
+      products = products.filter(p => {
+        if (!p.variants) return false;
+        return p.variants.some(v => {
+          const vCol = (v.color || "").toLowerCase();
+          for (const ac of this.activeColors) {
+            if (vCol.includes(ac.toLowerCase())) return true;
+          }
+          return false;
+        });
+      });
+    }
+    if (this.activeSubtypes.size > 0) {
+      products = products.filter(p => {
+          const n = p.name.toLowerCase();
+          for (const st of this.activeSubtypes) {
+              const stLower = st.toLowerCase().replace(/s$/, '');
+              if (n.includes(stLower)) return true;
+          }
+          return false;
+      });
+    }
+
+    if (this.minPrice !== null) products = products.filter(p => p.price >= this.minPrice);
+    if (this.maxPrice !== null) products = products.filter(p => p.price <= this.maxPrice);
+
+    if (this.sortBy === "price-low") products.sort((a, b) => a.price - b.price);
+    else if (this.sortBy === "price-high") products.sort((a, b) => b.price - a.price);
+    else if (this.sortBy === "rating") products.sort((a, b) => b.rating - a.rating);
+
+    const pageTitle = this.activeCategory !== "All" ? this.activeCategory.toUpperCase() : "PRODUCT CATALOG";
+    const eyebrowText = this.activeCategory !== "All" ? `Explore Premium ${this.activeCategory}` : "Guaranteed Motorcycle Parts";
+    
+    let activeFilterCount = this.activeBrands.size + this.activeColors.size + this.activeSubtypes.size + (this.minPrice ? 1 : 0) + (this.maxPrice ? 1 : 0);
 
     container.innerHTML = `
       <div class="breadcrumb-trail">
-        <a href="#home">Home</a> / <span class="current">Shop All</span>
+        <a href="#home">Home</a> / <span class="current">${escapeHTML(this.activeCategory === "All" ? "Shop All" : this.activeCategory)}</span>
       </div>
 
       <div class="view-header">
         <div>
-          <p class="eyebrow red">Guaranteed Motorcycle Parts</p>
-          <h2>PRODUCT <em>CATALOG</em></h2>
+          <p class="eyebrow red">${escapeHTML(eyebrowText)}</p>
+          <h2>${escapeHTML(pageTitle)}</h2>
           ${activeBike ? `<p class="active-bike-filter-note" style="margin-top:8px;">Showing parts compatible with <strong>${escapeHTML(activeBike.brand)} ${escapeHTML(activeBike.model)} (${escapeHTML(activeBike.variant)})</strong></p>` : ""}
         </div>
-        <div class="sort-wrapper">
-          <label for="catalogSort">Sort By:</label>
-          <select id="catalogSort">
-            <option value="featured" ${this.sortBy === "featured" ? "selected" : ""}>Featured</option>
-            <option value="price-low" ${this.sortBy === "price-low" ? "selected" : ""}>Price: Low to High</option>
-            <option value="price-high" ${this.sortBy === "price-high" ? "selected" : ""}>Price: High to Low</option>
-            <option value="rating" ${this.sortBy === "rating" ? "selected" : ""}>Customer Rating</option>
-          </select>
-        </div>
       </div>
 
-      <div class="category-filter-pills">
-        ${categories.map(cat => `
-          <button class="filter-pill ${this.activeCategory === cat ? "active" : ""}" data-category="${cat}">
-            ${cat}
-          </button>
-        `).join("")}
-      </div>
+      <div class="catalog-container inner-section" style="padding-top: 10px;">
+        
+        <div class="view-header" style="padding: 0; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 16px;">
+           <button class="open-filter-btn" id="openFilterDrawerBtn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+              Filter & Sort ${activeFilterCount > 0 ? `<span class="filter-count-badge">${activeFilterCount}</span>` : ''}
+           </button>
+           <p style="color: #888; font-size: 13px; margin:0;">Showing ${products.length} products</p>
+        </div>
 
-      ${products.length === 0 ? `
-        <div class="empty-state-card">
-          <div class="empty-icon">🔍</div>
-          <h3>No Compatible Parts Found</h3>
-          <p>We couldn't find any products in "${escapeHTML(this.activeCategory)}" matching your criteria for ${activeBike ? escapeHTML(activeBike.brand) + " " + escapeHTML(activeBike.model) : "this filter"}.</p>
-          <button class="accent-button" id="resetCatalogFiltersBtn">Reset All Filters</button>
-        </div>
-      ` : `
-        <div class="product-grid inner-section" id="catalogProductGrid">
-          ${this.renderSkeletons(Math.min(products.length, 8))}
-        </div>
-      `}
+        ${products.length === 0 ? `
+          <div class="empty-state-card" style="margin: 0; max-width: 100%;">
+            <div class="empty-icon">🔍</div>
+            <h3>No Parts Found</h3>
+            <p>We couldn't find any products matching your selected filters.</p>
+            <button class="accent-button" id="resetCatalogFiltersBtnMain">Reset Filters</button>
+          </div>
+        ` : `
+          <div class="product-grid" id="catalogProductGrid">
+            ${this.renderSkeletons(Math.min(products.length, 8))}
+          </div>
+        `}
+
+        <aside class="filter-drawer" id="catalogFilterDrawer">
+          <div class="filter-drawer-head">
+            <h3>Filter ${this.activeCategory !== "All" ? this.activeCategory : "Products"}</h3>
+            <button class="close-filter-btn" id="closeFilterDrawerBtn">×</button>
+          </div>
+          <div class="filter-drawer-body">
+            
+            <div class="filter-group">
+              <div class="filter-group-header">
+                <h4>Sort By</h4>
+              </div>
+              <div class="filter-options">
+                <select id="catalogSortSelectDrawer" class="premium-select">
+                  <option value="featured" ${this.sortBy === "featured" ? "selected" : ""}>Featured</option>
+                  <option value="price-low" ${this.sortBy === "price-low" ? "selected" : ""}>Price: Low to High</option>
+                  <option value="price-high" ${this.sortBy === "price-high" ? "selected" : ""}>Price: High to Low</option>
+                  <option value="rating" ${this.sortBy === "rating" ? "selected" : ""}>Customer Rating</option>
+                </select>
+              </div>
+            </div>
+
+            ${this.activeCategory === "All" ? `
+            <div class="filter-group">
+              <div class="filter-group-header">
+                <h4>Category</h4>
+              </div>
+              <div class="filter-pill-grid">
+                ${window.HRz.DB.getCategories().map(cat => `
+                  <label class="premium-filter-pill">
+                    <input type="radio" name="cat_filter" value="${escapeHTML(cat)}">
+                    <span>${escapeHTML(cat)}</span>
+                  </label>
+                `).join('')}
+              </div>
+            </div>
+            ` : ''}
+
+            ${availableSubtypes.size > 0 ? `
+            <div class="filter-group">
+              <div class="filter-group-header">
+                <h4>${escapeHTML(subtypeLabel)}</h4>
+              </div>
+              <div class="filter-pill-grid">
+                ${[...availableSubtypes].sort().map(st => `
+                  <label class="premium-filter-pill">
+                    <input type="checkbox" class="subtype-filter-cb" value="${escapeHTML(st)}" ${this.activeSubtypes.has(st) ? 'checked' : ''}>
+                    <span>${escapeHTML(st)}</span>
+                  </label>
+                `).join('')}
+              </div>
+            </div>
+            ` : ''}
+
+            ${availableBrands.length > 0 ? `
+            <div class="filter-group">
+              <div class="filter-group-header">
+                <h4>Brands</h4>
+              </div>
+              <div class="filter-pill-grid">
+                ${availableBrands.map(b => `
+                  <label class="premium-filter-pill">
+                    <input type="checkbox" class="brand-filter-cb" value="${escapeHTML(b)}" ${this.activeBrands.has(b) ? 'checked' : ''}>
+                    <span>${escapeHTML(b)}</span>
+                  </label>
+                `).join('')}
+              </div>
+            </div>
+            ` : ''}
+
+            ${availableBaseColors.size > 0 ? `
+            <div class="filter-group">
+              <div class="filter-group-header">
+                <h4>Colors</h4>
+              </div>
+              <div class="color-swatch-grid">
+                ${this.BASE_COLORS.filter(c => availableBaseColors.has(c.name)).map(c => `
+                  <div class="color-swatch ${this.activeColors.has(c.name) ? 'selected' : ''}" data-color="${escapeHTML(c.name)}" style="background-color: ${c.hex};" title="${escapeHTML(c.name)}">
+                    <span class="swatch-check">✓</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+            ` : ''}
+
+            <div class="filter-group">
+              <div class="filter-group-header">
+                <h4>Price Range (₹)</h4>
+              </div>
+              <div class="price-range-inputs premium-price-range">
+                <input type="number" id="minPriceInput" placeholder="Min" value="${this.minPrice || ''}">
+                <span class="range-divider">-</span>
+                <input type="number" id="maxPriceInput" placeholder="Max" value="${this.maxPrice || ''}">
+              </div>
+            </div>
+
+          </div>
+          <div class="filter-drawer-footer">
+            <button class="btn-outline" id="clearFiltersBtn">Clear</button>
+            <button class="btn-primary" id="applyFiltersBtn">Show Results</button>
+          </div>
+        </aside>
+      </div>
     `;
 
-    // Bind events first (pills, sort, reset)
-    const sortSelect = container.querySelector("#catalogSort");
-    if (sortSelect) {
-      sortSelect.onchange = (e) => {
-        this.sortBy = e.target.value;
+    this.bindDrawerEvents(container);
+
+    const resetBtnMain = container.querySelector("#resetCatalogFiltersBtnMain");
+    if (resetBtnMain) {
+      resetBtnMain.onclick = () => {
+        this.resetAdvancedFilters();
         this.render(container);
       };
     }
 
-    container.querySelectorAll(".filter-pill").forEach(pill => {
-      pill.onclick = () => {
-        this.activeCategory = pill.dataset.category;
-        this.render(container);
-      };
-    });
-
-    const resetBtn = container.querySelector("#resetCatalogFiltersBtn");
-    if (resetBtn) {
-      resetBtn.onclick = () => {
-        this.activeCategory = "All";
-        this.searchQuery = "";
-        this.render(container);
-      };
-    }
-
-    // Lazy-load real cards after a brief shimmer delay
     const grid = container.querySelector("#catalogProductGrid");
     if (grid && products.length > 0) {
       setTimeout(() => {
         grid.innerHTML = products.map(p => this.renderProductCard(p, activeBike, wishlist)).join("");
         this.bindCardEvents(container);
-      }, 350);
+      }, 300);
+    }
+  }
+
+  static resetAdvancedFilters() {
+    this.activeBrands.clear();
+    this.activeColors.clear();
+    this.activeSubtypes.clear();
+    this.minPrice = null;
+    this.maxPrice = null;
+  }
+
+  static bindDrawerEvents(container) {
+    const drawer = container.querySelector("#catalogFilterDrawer");
+    const overlay = document.getElementById("overlay");
+    const openBtn = container.querySelector("#openFilterDrawerBtn");
+    const closeBtn = container.querySelector("#closeFilterDrawerBtn");
+    const clearBtn = container.querySelector("#clearFiltersBtn");
+    const applyBtn = container.querySelector("#applyFiltersBtn");
+
+    const closeDrawer = () => {
+      drawer.classList.remove("open");
+      if (overlay) overlay.classList.remove("open");
+    };
+
+    if (openBtn) {
+      openBtn.onclick = () => {
+        drawer.classList.add("open");
+        if (overlay) {
+          overlay.classList.add("open");
+          overlay.onclick = closeDrawer;
+        }
+      };
     }
 
-    return; // Skip the old bindCardEvents call below
+    if (closeBtn) closeBtn.onclick = closeDrawer;
+
+    if (clearBtn) {
+      clearBtn.onclick = () => {
+        this.resetAdvancedFilters();
+        closeDrawer();
+        setTimeout(() => this.render(container), 200);
+      };
+    }
+
+    if (applyBtn) {
+      applyBtn.onclick = () => {
+        const catRadio = container.querySelector("input[name='cat_filter']:checked");
+        if (catRadio) {
+           this.activeCategory = catRadio.value;
+           this.resetAdvancedFilters();
+        }
+
+        const sortSel = container.querySelector("#catalogSortSelectDrawer");
+        if (sortSel) this.sortBy = sortSel.value;
+
+        this.activeBrands.clear();
+        container.querySelectorAll(".brand-filter-cb:checked").forEach(cb => {
+          this.activeBrands.add(cb.value);
+        });
+        
+        this.activeSubtypes.clear();
+        container.querySelectorAll(".subtype-filter-cb:checked").forEach(cb => {
+          this.activeSubtypes.add(cb.value);
+        });
+        
+        const minVal = container.querySelector("#minPriceInput").value;
+        const maxVal = container.querySelector("#maxPriceInput").value;
+        this.minPrice = minVal ? parseFloat(minVal) : null;
+        this.maxPrice = maxVal ? parseFloat(maxVal) : null;
+
+        closeDrawer();
+        setTimeout(() => this.render(container), 200);
+      };
+    }
+
+    container.querySelectorAll(".color-swatch").forEach(swatch => {
+      swatch.onclick = () => {
+        const color = swatch.dataset.color;
+        if (this.activeColors.has(color)) {
+          this.activeColors.delete(color);
+          swatch.classList.remove("selected");
+        } else {
+          this.activeColors.add(color);
+          swatch.classList.add("selected");
+        }
+      };
+    });
   }
 
   static renderSkeletons(count = 6) {
@@ -148,9 +415,22 @@ class CatalogView {
 
   static renderProductCard(p, activeBike, wishlist) {
     const isWishlisted = wishlist ? wishlist.includes(p.id) : false;
-    const fitment = window.HRz.DB.checkFitment(p.id, activeBike);
     const utils = window.HRz.Utils;
     const escapeHTML = utils.escapeHTML;
+    
+    let displayImage = p.image;
+    if (this.activeColors && this.activeColors.size > 0 && p.variants) {
+        const matchingVar = p.variants.find(v => {
+           const vCol = (v.color || "").toLowerCase();
+           for (const ac of this.activeColors) {
+               if (vCol.includes(ac.toLowerCase())) return true;
+           }
+           return false;
+        });
+        if (matchingVar && matchingVar.image) {
+            displayImage = matchingVar.image;
+        }
+    }
     
     return `
       <div class="product-card reveal" data-id="${escapeHTML(p.id)}" style="cursor:pointer;">
@@ -159,7 +439,7 @@ class CatalogView {
           <button class="wishlist-toggle-btn ${isWishlisted ? "active" : ""}" data-id="${escapeHTML(p.id)}" aria-label="Toggle wishlist">
             ${isWishlisted ? "❤️" : "🤍"}
           </button>
-          <img src="${escapeHTML(p.image)}" alt="${escapeHTML(p.name)}" loading="lazy" onerror="this.src='images/helmet_product.png'" />
+          <img src="${escapeHTML(displayImage)}" alt="${escapeHTML(p.name)}" loading="lazy" onerror="this.src='images/helmet_product.png'" />
         </div>
         <div class="product-card-content">
           <div class="card-category-strip">${escapeHTML(p.category)}</div>

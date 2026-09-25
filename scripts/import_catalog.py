@@ -68,7 +68,7 @@ def main():
             "highlights": ["High Quality Material", "100% Genuine Product", "Durable Build"],
             "description": f"Premium quality {item.get('category', 'product')} from {item.get('brand', 'brand')}.",
             "fitmentCategories": ["Adventure", "Roadster", "Classic", "Naked", "Supersport", "Tourer", "Cruiser", "Scrambler", "Twin", "Cafe Racer"],
-            "bike_compatibility": [],
+            "bike_compatibility": item.get('bike_compatibility', []),
             "variants": []
         }
         
