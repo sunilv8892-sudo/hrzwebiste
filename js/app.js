@@ -298,16 +298,16 @@ class App {
     const categories = db.getProducts();
     const escapeHTML = utils.escapeHTML;
     const catImages = {
-      Protection: "images/category_protection.png",
-      Helmets: "images/category_helmets.png",
-      Lights: "images/category_lights.png",
-      Luggage: "images/category_luggage.png"
+      Protection: "images/category_protection.webp",
+      Helmets: "images/category_helmets.webp",
+      Lights: "images/category_lights.webp",
+      Luggage: "images/category_luggage.webp"
     };
 
     container.innerHTML = `
       <!-- Hero -->
       <section class="hero">
-        <img src="images/hero-rider.png" alt="Motorcyclist and sport motorcycle in a dark garage" />
+        <img src="images/hero-rider.webp" alt="Motorcyclist and sport motorcycle in a dark garage" />
         <div class="hero-shade"></div>
         <div class="hero-copy">
           <p class="eyebrow">Built for every mile</p>
@@ -341,7 +341,7 @@ class App {
                 if (diverseBikes.length >= 7) break;
                 if (!diverseBikes.some(b => b.id === bike.id)) diverseBikes.push(bike);
               }
-              const bikeImages = ['bike_t_1.png','bike_t_2.png','bike_t_3.png','bike_t_4.png','bike_t_5.png','bike_t_6.png','bike_t_7.png'];
+              const bikeImages = ['bike_t_1.webp','bike_t_2.webp','bike_t_3.webp','bike_t_4.webp','bike_t_5.webp','bike_t_6.webp','bike_t_7.webp'];
               return [1, 2, 3].map(set => diverseBikes.map((bike, idx) => `
                 <div class="bike-item ${set === 2 && idx === 2 ? 'active' : ''}" data-brand="${bike.brand}" data-model="${bike.model}" data-variant="${bike.variant}" data-year="${bike.year}">
                   <div class="bike-img-wrap"><img src="images/${bikeImages[idx % 7]}" alt="${bike.brand} ${bike.model}" /></div>
@@ -426,7 +426,7 @@ class App {
 
       <!-- Statement -->
       <section class="statement">
-        <div class="statement-image"><img src="images/hero_banner.png" alt="Motorcycle rider on the road" /></div>
+        <div class="statement-image"><img src="images/hero_banner.webp" alt="Motorcycle rider on the road" /></div>
         <div class="statement-copy">
           <p class="eyebrow red">The HRz standard</p>
           <h2>NOT JUST<br />A <em>RIDE.</em></h2>
@@ -447,7 +447,7 @@ class App {
         </div>
         <div class="drop-grid">
           <article class="drop-card">
-            <img src="images/category_helmets.png" alt="Premium motorcycle helmet" />
+            <img src="images/category_helmets.webp" alt="Premium motorcycle helmet" />
             <div>
               <span class="drop-tag">NEW / HELMETS</span>
               <h3>Premium Series</h3>
@@ -455,7 +455,7 @@ class App {
             </div>
           </article>
           <article class="drop-card">
-            <img src="images/category_protection.png" alt="Crash guard kit" />
+            <img src="images/category_protection.webp" alt="Crash guard kit" />
             <div>
               <span class="drop-tag">NEW / PROTECTION</span>
               <h3>Guard Series</h3>
@@ -945,7 +945,7 @@ class App {
                 <div class="order-card-body">
                   <div class="order-items-preview-row">
                     ${o.items.map(i => `
-                      <img src="${escapeHTML(i.image || 'images/helmet_product.png')}" alt="${escapeHTML(i.name)}" class="order-item-thumb" onerror="this.src='images/helmet_product.png'" />
+                      <img src="${escapeHTML(i.image || 'images/helmet_product.webp')}" alt="${escapeHTML(i.name)}" class="order-item-thumb" onerror="this.src='images/helmet_product.webp'" />
                     `).join("")}
                     <div class="order-item-details-compact">
                       <strong>${escapeHTML(firstItem ? firstItem.name : "Accessories")}</strong>
@@ -1084,7 +1084,7 @@ class App {
             <div class="full-order-items-list">
               ${order.items.map(item => `
                 <div class="full-order-item">
-                  <img src="${escapeHTML(item.image || 'images/helmet_product.png')}" alt="${escapeHTML(item.name)}" onerror="this.src='images/helmet_product.png'" />
+                  <img src="${escapeHTML(item.image || 'images/helmet_product.webp')}" alt="${escapeHTML(item.name)}" onerror="this.src='images/helmet_product.webp'" />
                   <div class="full-order-item-info">
                     <strong>${escapeHTML(item.name)}</strong>
                     <small>Qty: ${item.quantity} · SKU: ${escapeHTML(item.sku || 'N/A')}</small>
@@ -1295,6 +1295,7 @@ if (document.readyState === "loading") {
 } else {
   App.init();
 }
+
 
 
 

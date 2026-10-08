@@ -131,12 +131,12 @@ class AdminCMS {
 
             <div class="form-group admin-form-full">
               <label for="heroBgImageInput">Hero Background Image URL or Path *</label>
-              <input type="text" id="heroBgImageInput" value="${escapeHTML(hero.bgImage || 'images/hero_banner.jpg')}" required />
+              <input type="text" id="heroBgImageInput" value="${escapeHTML(hero.bgImage || 'images/hero_banner.webp')}" required />
               
               <div class="image-preset-picker">
-                <button type="button" class="preset-img-btn" data-url="images/hero-rider.png">Default Rider PNG</button>
-                <button type="button" class="preset-img-btn" data-url="images/hero_banner.jpg">Hero Banner JPG</button>
-                <button type="button" class="preset-img-btn" data-url="images/category_protection.png">Protection Banner</button>
+                <button type="button" class="preset-img-btn" data-url="images/hero-rider.webp">Default Rider PNG</button>
+                <button type="button" class="preset-img-btn" data-url="images/hero_banner.webp">Hero Banner JPG</button>
+                <button type="button" class="preset-img-btn" data-url="images/category_protection.webp">Protection Banner</button>
               </div>
 
               <div class="file-upload-row">
@@ -215,7 +215,7 @@ class AdminCMS {
               <tbody>
                 ${filteredProducts.map(p => `
                   <tr>
-                    <td><img src="${escapeHTML(p.image)}" alt="${escapeHTML(p.name)}" width="44" height="44" style="object-fit:cover; border-radius:6px; border:1px solid #333;" onerror="this.src='images/helmet_product.png'" /></td>
+                    <td><img src="${escapeHTML(p.image)}" alt="${escapeHTML(p.name)}" width="44" height="44" style="object-fit:cover; border-radius:6px; border:1px solid #333;" onerror="this.src='images/helmet_product.webp'" /></td>
                     <td><strong>${escapeHTML(p.name)}</strong><br/><small style="color:#888;">SKU: ${escapeHTML(p.sku)}</small></td>
                     <td><span class="cat-tag">${escapeHTML(p.category)}</span></td>
                     <td>${utils.formatCurrency(p.price)}</td>
@@ -585,7 +585,7 @@ class AdminCMS {
 
             <div class="form-group admin-form-full">
               <label>Product Image URL *</label>
-              <input type="text" id="newProdImgUrl" value="images/crash_guard_product.png" required placeholder="Image Path or URL" />
+              <input type="text" id="newProdImgUrl" value="images/crash_guard_product.webp" required placeholder="Image Path or URL" />
               
               <div style="margin-top:12px;">
                 <label for="prodImgFileUpload" class="small-action-btn" style="display:inline-block;">📤 Upload Image File</label>
@@ -641,7 +641,7 @@ class AdminCMS {
       const sku = document.getElementById("newProdSku").value || `HRZ-${Date.now().toString().slice(-4)}`;
       const description = document.getElementById("newProdDesc").value.trim();
       const sizes = document.getElementById("newProdSizes").value.trim();
-      const image = imgUrlInput.value || "images/crash_guard_product.png";
+      const image = imgUrlInput.value || "images/crash_guard_product.webp";
 
       window.HRz.DB.addProduct({
         name, category, price, originalPrice, sku, description, sizes, image,
@@ -868,3 +868,4 @@ class AdminCMS {
 }
 
 window.HRz.Admin = AdminCMS;
+

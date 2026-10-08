@@ -164,7 +164,7 @@ class CartDrawer {
     } else {
       container.innerHTML = cart.map(item => `
         <div class="cart-item-row">
-          <img src="${escapeHTML(item.image)}" alt="${escapeHTML(item.name)}" loading="lazy" onerror="this.src='images/helmet_product.png'" />
+          <img src="${escapeHTML(item.image)}" alt="${escapeHTML(item.name)}" loading="lazy" onerror="this.src='images/helmet_product.webp'" />
           <div class="cart-item-info">
             <small class="cart-item-sku">${escapeHTML(item.sku || "Accessory")}</small>
             <h4 class="cart-item-title">${escapeHTML(item.name)}</h4>
@@ -214,3 +214,4 @@ class CartDrawer {
 }
 
 window.HRz.Cart = CartDrawer;
+

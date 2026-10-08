@@ -62,7 +62,7 @@ files.forEach(file => {
                          const folderName = file.replace('.json', '').toLowerCase();
                          return `images/${folderName}/${filename}`;
                       })
-                    : ['images/helmet_product.png'];
+                    : ['images/helmet_product.webp'];
                 
                 let priceStr = String(item.price).replace(/,/g, '');
                 let price = parseFloat(priceStr);
@@ -229,3 +229,4 @@ if (newBikesAdded.length > 0) {
 } else {
     console.log(`No new bikes to add.`);
 }
+

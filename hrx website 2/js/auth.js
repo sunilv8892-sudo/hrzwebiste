@@ -47,7 +47,7 @@ class AuthService {
         <button class="login-popup-close" id="loginPopupClose" aria-label="Close">&#x2715;</button>
 
         <div class="login-popup-logo">
-          <img src="images/HRZ_BIKE_LOGO_page-0001-removebg-preview (3)_20250705_182254_0000.png" alt="HRz Logo" style="height: 38px; width: auto; object-fit: contain;" />
+          <img src="images/HRZ_BIKE_LOGO_page-0001-removebg-preview (3)_20250705_182254_0000.webp" alt="HRz Logo" style="height: 38px; width: auto; object-fit: contain;" />
           <span>HRz Pitstop</span>
         </div>
 
@@ -172,3 +172,4 @@ class AuthService {
 }
 
 window.HRz.Auth = AuthService;
+

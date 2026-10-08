@@ -19,7 +19,7 @@ const defaultState = {
     badge: "MONSOON RIDER OFFER · FLAT ₹500 OFF",
     title: "Guaranteed Fitment & Heavy Protection Parts",
     subtitle: "Select your bike model to automatically filter crash guards, LED lights, helmets, and touring gear engineered specifically for your ride.",
-    bgImage: "images/hero-rider.png",
+    bgImage: "images/hero-rider.webp",
     buttonText: "Explore Offers & Parts",
     buttonTarget: "catalog"
   },
@@ -173,4 +173,5 @@ class StorageService {
 }
 
 window.HRz.Storage = StorageService;
+
 

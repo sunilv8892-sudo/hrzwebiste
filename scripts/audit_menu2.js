@@ -20,7 +20,7 @@ const strMatches = block.match(/(?:"([^"]+)")|(?:'([^']+)')/g);
 const terms = new Set();
 strMatches.forEach(s => {
     let clean = s.replace(/["']/g, '');
-    if (clean && clean.length > 2 && !clean.includes('images/') && !clean.includes('.png') && !clean.includes('.jpg')) {
+    if (clean && clean.length > 2 && !clean.includes('images/') && !clean.includes('.webp') && !clean.includes('.webp')) {
         terms.add(clean);
     }
 });
@@ -57,3 +57,4 @@ report.forEach(r => {
 
 console.log(`\nTotal menu items audited: ${report.length}`);
 console.log(`Menu items with 0 matches: ${zeroCount}`);
+

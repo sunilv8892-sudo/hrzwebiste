@@ -36,8 +36,8 @@ const DEFAULT_PRODUCTS = [
     "category": "Helmets",
     "price": 4999,
     "originalPrice": 5999,
-    "image": "images/helmet_product.png",
-    "gallery": ["images/helmet_product.png", "images/category_helmets.png"],
+    "image": "images/helmet_product.webp",
+    "gallery": ["images/helmet_product.webp", "images/category_helmets.webp"],
     "rating": 4.9,
     "authenticity": "ECE & DOT Certified",
     "warranty": "24 months",
@@ -54,8 +54,8 @@ const DEFAULT_PRODUCTS = [
     "category": "Protection",
     "price": 3899,
     "originalPrice": 4499,
-    "image": "images/crash_guard_product.png",
-    "gallery": ["images/crash_guard_product.png", "images/category_protection.png"],
+    "image": "images/crash_guard_product.webp",
+    "gallery": ["images/crash_guard_product.webp", "images/category_protection.webp"],
     "rating": 4.8,
     "authenticity": "OEM Custom Engineered",
     "warranty": "36 months",
@@ -72,8 +72,8 @@ const DEFAULT_PRODUCTS = [
     "category": "Lights",
     "price": 3299,
     "originalPrice": 4299,
-    "image": "images/fog_lights_product.png",
-    "gallery": ["images/fog_lights_product.png", "images/category_lights.png"],
+    "image": "images/fog_lights_product.webp",
+    "gallery": ["images/fog_lights_product.webp", "images/category_lights.webp"],
     "rating": 4.9,
     "authenticity": "IP68 Waterproof Standard",
     "warranty": "12 months",
@@ -90,8 +90,8 @@ const DEFAULT_PRODUCTS = [
     "category": "Luggage",
     "price": 4599,
     "originalPrice": 5299,
-    "image": "images/saddlebags_product.png",
-    "gallery": ["images/saddlebags_product.png", "images/category_luggage.png"],
+    "image": "images/saddlebags_product.webp",
+    "gallery": ["images/saddlebags_product.webp", "images/category_luggage.webp"],
     "rating": 4.7,
     "authenticity": "1000D TPU Roll-top",
     "warranty": "24 months",
@@ -108,8 +108,8 @@ const DEFAULT_PRODUCTS = [
     "category": "Protection",
     "price": 1899,
     "originalPrice": 2299,
-    "image": "images/bash_plate_product.png",
-    "gallery": ["images/bash_plate_product.png"],
+    "image": "images/bash_plate_product.webp",
+    "gallery": ["images/bash_plate_product.webp"],
     "rating": 4.9,
     "authenticity": "100% Original Brembo Italy",
     "warranty": "6 months",
@@ -126,8 +126,8 @@ const DEFAULT_PRODUCTS = [
     "category": "Touring",
     "price": 2499,
     "originalPrice": 2999,
-    "image": "images/intercom_product.png",
-    "gallery": ["images/intercom_product.png"],
+    "image": "images/intercom_product.webp",
+    "gallery": ["images/intercom_product.webp"],
     "rating": 4.6,
     "authenticity": "PMMA High Impact Polycarbonate",
     "warranty": "12 months",
@@ -165,7 +165,7 @@ const DEFAULT_REVIEWS = [
     "title": "Saved my engine during a low-speed slide in Leh!",
     "comment": "Installed this before my Ladakh trip. Took a spill on slush near Zoji La. Guard took the full impact, not a scratch on the engine casing or tank! Worth every single rupee.",
     "verifiedFitment": true,
-    "photo": "images/crash_guard_product.png",
+    "photo": "images/crash_guard_product.webp",
     "status": "published"
   },
   {
@@ -178,7 +178,7 @@ const DEFAULT_REVIEWS = [
     "title": "Night visibility upgraded tenfold!",
     "comment": "Cruising through Western Ghats fog with yellow beam on is an absolute game-changer.",
     "verifiedFitment": true,
-    "photo": "images/fog_lights_product.png",
+    "photo": "images/fog_lights_product.webp",
     "status": "published"
   }
 ];
@@ -191,7 +191,7 @@ const DEFAULT_ORDERS = [
     "status": "In Transit",
     "trackingId": "DTDC-IN-889123",
     "items": [
-      { "productId": "crash-guard-steelmoto", "name": "HRz Expedition Heavy Engine Crash Guard", "price": 3899, "quantity": 1, "image": "images/crash_guard_product.png", "sku": "HRZ-CG-01" }
+      { "productId": "crash-guard-steelmoto", "name": "HRz Expedition Heavy Engine Crash Guard", "price": 3899, "quantity": 1, "image": "images/crash_guard_product.webp", "sku": "HRZ-CG-01" }
     ],
     "total": 3899,
     "paymentMethod": "UPI GPay",
@@ -225,37 +225,37 @@ const DEFAULT_BUNDLES = [
 const DEMO_PRODUCT_GROUPS = [
   {
     category: "Helmets",
-    image: "images/category_helmets.png",
+    image: "images/category_helmets.webp",
     prefix: "Demo Helmet",
-    gallery: ["images/helmet_product.png", "images/intercom_product.png", "images/category_helmets.png"],
+    gallery: ["images/helmet_product.webp", "images/intercom_product.webp", "images/category_helmets.webp"],
     fitmentCategories: ["Adventure", "Roadster", "Classic", "Naked", "Supersport", "Tourer", "Cruiser", "Scrambler", "Twin", "Cafe Racer"]
   },
   {
     category: "Protection",
-    image: "images/category_protection.png",
+    image: "images/category_protection.webp",
     prefix: "Demo Protection",
-    gallery: ["images/crash_guard_product.png", "images/bash_plate_product.png", "images/category_protection.png"],
+    gallery: ["images/crash_guard_product.webp", "images/bash_plate_product.webp", "images/category_protection.webp"],
     fitmentCategories: ["Adventure", "Roadster", "Classic", "Naked", "Supersport", "Tourer", "Cruiser", "Scrambler", "Twin", "Cafe Racer"]
   },
   {
     category: "Lights",
-    image: "images/category_lights.png",
+    image: "images/category_lights.webp",
     prefix: "Demo Light",
-    gallery: ["images/fog_lights_product.png", "images/phone_mount_product.png", "images/category_lights.png"],
+    gallery: ["images/fog_lights_product.webp", "images/phone_mount_product.webp", "images/category_lights.webp"],
     fitmentCategories: ["Adventure", "Roadster", "Naked", "Tourer", "Cruiser", "Scrambler"]
   },
   {
     category: "Luggage",
-    image: "images/category_luggage.png",
+    image: "images/category_luggage.webp",
     prefix: "Demo Luggage",
-    gallery: ["images/saddlebags_product.png", "images/phone_mount_product.png", "images/category_luggage.png"],
+    gallery: ["images/saddlebags_product.webp", "images/phone_mount_product.webp", "images/category_luggage.webp"],
     fitmentCategories: ["Adventure", "Tourer", "Cruiser", "Classic", "Roadster"]
   },
   {
     category: "Touring",
-    image: "images/category_touring.png",
+    image: "images/category_touring.webp",
     prefix: "Demo Touring",
-    gallery: ["images/intercom_product.png", "images/helmet_product.png", "images/category_touring.png"],
+    gallery: ["images/intercom_product.webp", "images/helmet_product.webp", "images/category_touring.webp"],
     fitmentCategories: ["Adventure", "Tourer", "Cruiser", "Classic", "Roadster", "Naked"]
   }
 ];
@@ -627,3 +627,4 @@ class DBService {
 }
 
 window.HRz.DB = DBService;
+

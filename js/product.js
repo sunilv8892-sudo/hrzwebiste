@@ -293,7 +293,7 @@ class ProductDetailView {
             <span class="gallery-count-chip">${gallery.length} photos</span>
           </div>
           <div class="main-image-frame" role="button" tabindex="0" aria-label="Open product image viewer">
-            <img id="mainProductImage" src="${escapeHTML(displayImage)}" alt="${escapeHTML(product.name)}" loading="lazy" onerror="this.src='images/helmet_product.png'" />
+            <img id="mainProductImage" src="${escapeHTML(displayImage)}" alt="${escapeHTML(product.name)}" loading="lazy" onerror="this.src='images/helmet_product.webp'" />
           </div>
           <div class="thumbnail-strip">
             ${gallery.map((img, i) => `
@@ -315,7 +315,7 @@ class ProductDetailView {
               <div class="color-selector-grid">
                 ${product.variants.map((v, idx) => `
                   <button class="color-btn ${idx === defaultVariantIdx ? 'active' : ''}" data-index="${idx}" title="${escapeHTML(v.color)}">
-                    <img class="color-btn-img" src="${escapeHTML(v.image)}" alt="${escapeHTML(v.color)}" loading="lazy" onerror="this.src='images/helmet_product.png'" />
+                    <img class="color-btn-img" src="${escapeHTML(v.image)}" alt="${escapeHTML(v.color)}" loading="lazy" onerror="this.src='images/helmet_product.webp'" />
                     <span class="color-btn-text">${escapeHTML(v.color)}</span>
                   </button>
                 `).join("")}
@@ -437,7 +437,7 @@ class ProductDetailView {
               </div>
             </div>
             <div class="install-card">
-              <img src="images/crash_guard_product.png" alt="Installation" loading="lazy" />
+              <img src="images/crash_guard_product.webp" alt="Installation" loading="lazy" />
               <div class="install-caption">
                 <strong>Duke 390 Gen-3</strong>
                 <small>Installed by Ankit S. · Pune</small>
@@ -652,7 +652,7 @@ class ProductDetailView {
            
            if (carouselStrip) {
               carouselStrip.innerHTML = v.gallery.map(img => `
-                <img src="${window.HRz.Utils.escapeHTML(img)}" alt="${window.HRz.Utils.escapeHTML(product.name)}" class="carousel-image" loading="lazy" onerror="this.src='images/helmet_product.png'" />
+                <img src="${window.HRz.Utils.escapeHTML(img)}" alt="${window.HRz.Utils.escapeHTML(product.name)}" class="carousel-image" loading="lazy" onerror="this.src='images/helmet_product.webp'" />
               `).join("");
            }
            
@@ -676,5 +676,6 @@ class ProductDetailView {
 }
 
 window.HRz.Product = ProductDetailView;
+
 
 

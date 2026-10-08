@@ -17,14 +17,14 @@ class ProductDetailView {
 
     if (gallery.length === 1) {
       const fallbackByCategory = {
-        Helmets: ["images/intercom_product.png", "images/category_helmets.png"],
-        Protection: ["images/bash_plate_product.png", "images/category_protection.png"],
-        Lights: ["images/phone_mount_product.png", "images/category_lights.png"],
-        Luggage: ["images/phone_mount_product.png", "images/category_luggage.png"],
-        Touring: ["images/intercom_product.png", "images/category_touring.png"]
+        Helmets: ["images/intercom_product.webp", "images/category_helmets.webp"],
+        Protection: ["images/bash_plate_product.webp", "images/category_protection.webp"],
+        Lights: ["images/phone_mount_product.webp", "images/category_lights.webp"],
+        Luggage: ["images/phone_mount_product.webp", "images/category_luggage.webp"],
+        Touring: ["images/intercom_product.webp", "images/category_touring.webp"]
       };
 
-      (fallbackByCategory[product.category] || ["images/category_helmets.png"]).forEach(image => {
+      (fallbackByCategory[product.category] || ["images/category_helmets.webp"]).forEach(image => {
         if (!gallery.includes(image)) gallery.push(image);
       });
     }
@@ -297,11 +297,11 @@ class ProductDetailView {
             <span class="gallery-count-chip">${gallery.length} photos</span>
           </div>
           <div class="main-image-frame desktop-only" role="button" tabindex="0" aria-label="Open product image viewer">
-            <img id="mainProductImage" src="${escapeHTML(product.image)}" alt="${escapeHTML(product.name)}" loading="lazy" onerror="this.src='images/helmet_product.png'" />
+            <img id="mainProductImage" src="${escapeHTML(product.image)}" alt="${escapeHTML(product.name)}" loading="lazy" onerror="this.src='images/helmet_product.webp'" />
           </div>
           <div class="mobile-swipe-carousel mobile-only">
             ${gallery.map(img => `
-              <img src="${escapeHTML(img)}" alt="${escapeHTML(product.name)}" class="carousel-image" loading="lazy" onerror="this.src='images/helmet_product.png'" />
+              <img src="${escapeHTML(img)}" alt="${escapeHTML(product.name)}" class="carousel-image" loading="lazy" onerror="this.src='images/helmet_product.webp'" />
             `).join("")}
           </div>
           <div class="thumbnail-strip">
@@ -404,7 +404,7 @@ class ProductDetailView {
               </div>
             </div>
             <div class="install-card">
-              <img src="images/crash_guard_product.png" alt="Installation" loading="lazy" />
+              <img src="images/crash_guard_product.webp" alt="Installation" loading="lazy" />
               <div class="install-caption">
                 <strong>Duke 390 Gen-3</strong>
                 <small>Installed by Ankit S. · Pune</small>
@@ -564,3 +564,4 @@ class ProductDetailView {
 }
 
 window.HRz.Product = ProductDetailView;
+

@@ -67,36 +67,36 @@ class Menu {
     ridingGears: {
       sidebar: ["Rider Protection", "Casuals", "Rainwear & Visibility"],
       cards: [
-        { name: "Helmet", image: "images/helmet.png", category: "Helmets" },
-        { name: "Jacket", image: "images/jacket.png", category: "Riding Gears" },
-        { name: "Glove", image: "images/gloves.png", category: "Riding Gears" },
-        { name: "Pants", image: "images/hero-rider.png", category: "Riding Gears" },
-        { name: "Boot", image: "images/boot.png", category: "Riding Gears" },
-        { name: "Shoe Protector", image: "images/category_protection.png", category: "Riding Gears" },
-        { name: "Kneeguard", image: "images/crash_guard_product.png", category: "Riding Gears" },
-        { name: "Elbow Guards", image: "images/bash_plate_product.png", category: "Riding Gears" }
+        { name: "Helmet", image: "images/helmet.webp", category: "Helmets" },
+        { name: "Jacket", image: "images/jacket.webp", category: "Riding Gears" },
+        { name: "Glove", image: "images/gloves.webp", category: "Riding Gears" },
+        { name: "Pants", image: "images/hero-rider.webp", category: "Riding Gears" },
+        { name: "Boot", image: "images/boot.webp", category: "Riding Gears" },
+        { name: "Shoe Protector", image: "images/category_protection.webp", category: "Riding Gears" },
+        { name: "Kneeguard", image: "images/crash_guard_product.webp", category: "Riding Gears" },
+        { name: "Elbow Guards", image: "images/bash_plate_product.webp", category: "Riding Gears" }
       ]
     },
     luggageTouring: {
       sidebar: ["Bags And Backpacks", "Luggage Accessories", "Carriers and Backrest", "Touring Accessories"],
       cards: [
-        { name: "Saddle Bag", image: "images/saddlebags_product.png", search: "Saddle Bag" },
-        { name: "Backpack", image: "images/category_luggage.png", search: "Backpack" },
-        { name: "Tank Bag", image: "images/saddlebags.jpg", search: "Tank Bag" },
-        { name: "Tail Bag", image: "images/category_luggage.png", search: "Tail Bag" },
-        { name: "Luggage Accessories", image: "images/phone_mount_product.png", search: "Luggage Accessories" },
-        { name: "Carriers and Backrest", image: "images/bash_plate_product.png", search: "Carriers and Backrest" },
-        { name: "Touring Accessories", image: "images/fog_lights_product.png", search: "Touring Accessories" }
+        { name: "Saddle Bag", image: "images/saddlebags_product.webp", search: "Saddle Bag" },
+        { name: "Backpack", image: "images/category_luggage.webp", search: "Backpack" },
+        { name: "Tank Bag", image: "images/saddlebags.webp", search: "Tank Bag" },
+        { name: "Tail Bag", image: "images/category_luggage.webp", search: "Tail Bag" },
+        { name: "Luggage Accessories", image: "images/phone_mount_product.webp", search: "Luggage Accessories" },
+        { name: "Carriers and Backrest", image: "images/bash_plate_product.webp", search: "Carriers and Backrest" },
+        { name: "Touring Accessories", image: "images/fog_lights_product.webp", search: "Touring Accessories" }
       ]
     },
     helmetsAccessories: {
       sidebar: ["Helmets", "Accessories", "Rider Tech"],
       cards: [
-        { name: "Half face Helmet", image: "images/category_helmets.png", search: "Half face Helmet" },
-        { name: "Full Face Helmet", image: "images/helmet_product.png", search: "Full Face Helmet" },
-        { name: "Offroad Helmet", image: "images/helmet.jpg", search: "Offroad Helmet" },
-        { name: "Helmet Accessories", image: "images/intercom_product.png", search: "Accessories" },
-        { name: "Rider Tech & Intercom", image: "images/phone_mount_product.png", search: "Rider Tech" }
+        { name: "Half face Helmet", image: "images/category_helmets.webp", search: "Half face Helmet" },
+        { name: "Full Face Helmet", image: "images/helmet_product.webp", search: "Full Face Helmet" },
+        { name: "Offroad Helmet", image: "images/helmet.webp", search: "Offroad Helmet" },
+        { name: "Helmet Accessories", image: "images/intercom_product.webp", search: "Accessories" },
+        { name: "Rider Tech & Intercom", image: "images/phone_mount_product.webp", search: "Rider Tech" }
       ]
     },
     brands: [
@@ -867,7 +867,7 @@ class Menu {
             <div class="corner-bracket top-right"></div>
             <div class="corner-bracket bottom-left"></div>
             <div class="corner-bracket bottom-right"></div>
-            <img src="images/hero-rider.png" alt="HRz Pitstop Garage & Custom Tuning Bay" class="about-img-frame" />
+            <img src="images/hero-rider.webp" alt="HRz Pitstop Garage & Custom Tuning Bay" class="about-img-frame" />
             <div class="telemetry-overlay">
               <code>LAT: 28.6139° N | LON: 77.2090° E // BAY OPERATIONAL</code>
             </div>
@@ -1043,3 +1043,4 @@ class Menu {
 }
 
 window.HRz.Menu = Menu;
+

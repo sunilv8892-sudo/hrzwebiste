@@ -293,16 +293,16 @@ class App {
     const categories = db.getProducts();
     const escapeHTML = utils.escapeHTML;
     const catImages = {
-      Protection: "images/category_protection.png",
-      Helmets: "images/category_helmets.png",
-      Lights: "images/category_lights.png",
-      Luggage: "images/category_luggage.png"
+      Protection: "images/category_protection.webp",
+      Helmets: "images/category_helmets.webp",
+      Lights: "images/category_lights.webp",
+      Luggage: "images/category_luggage.webp"
     };
 
     container.innerHTML = `
       <!-- Hero -->
       <section class="hero">
-        <img src="images/hero-rider.png" alt="Motorcyclist and sport motorcycle in a dark garage" />
+        <img src="images/hero-rider.webp" alt="Motorcyclist and sport motorcycle in a dark garage" />
         <div class="hero-shade"></div>
         <div class="hero-copy">
           <p class="eyebrow">Built for every mile</p>
@@ -321,89 +321,89 @@ class App {
           <div class="bike-slider">
             <!-- Set 1 -->
             <div class="bike-item" data-brand="Royal Enfield" data-model="Classic 350" data-variant="Reborn" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_1.png" alt="Classic 350" /></div>
+              <div class="bike-img-wrap"><img src="images/bike_t_1.webp" alt="Classic 350" /></div>
               <div class="bike-info"><h3>Royal Enfield</h3></div>
             </div>
             <div class="bike-item" data-brand="KTM" data-model="Duke" data-variant="390 Gen-3" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_2.png" alt="390 Duke" /></div>
+              <div class="bike-img-wrap"><img src="images/bike_t_2.webp" alt="390 Duke" /></div>
               <div class="bike-info"><h3>KTM</h3></div>
             </div>
             <div class="bike-item" data-brand="BMW" data-model="GS" data-variant="1250 Adventure" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_3.png" alt="R 1250 GS" /></div>
+              <div class="bike-img-wrap"><img src="images/bike_t_3.webp" alt="R 1250 GS" /></div>
               <div class="bike-info"><h3>BMW</h3></div>
             </div>
             <div class="bike-item" data-brand="Kawasaki" data-model="Ninja" data-variant="ZX-10R" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_4.png" alt="Ninja ZX-10R" /></div>
+              <div class="bike-img-wrap"><img src="images/bike_t_4.webp" alt="Ninja ZX-10R" /></div>
               <div class="bike-info"><h3>Kawasaki</h3></div>
             </div>
             <div class="bike-item" data-brand="Yamaha" data-model="R15" data-variant="V4" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_5.png" alt="YZF R15" /></div>
+              <div class="bike-img-wrap"><img src="images/bike_t_5.webp" alt="YZF R15" /></div>
               <div class="bike-info"><h3>Yamaha</h3></div>
             </div>
             <div class="bike-item" data-brand="Ducati" data-model="Panigale" data-variant="V4" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_6.png" alt="Panigale V4" /></div>
+              <div class="bike-img-wrap"><img src="images/bike_t_6.webp" alt="Panigale V4" /></div>
               <div class="bike-info"><h3>Ducati</h3></div>
             </div>
             <div class="bike-item" data-brand="Triumph" data-model="Tiger" data-variant="900 Rally Pro" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_7.png" alt="Tiger 900" /></div>
+              <div class="bike-img-wrap"><img src="images/bike_t_7.webp" alt="Tiger 900" /></div>
               <div class="bike-info"><h3>Triumph</h3></div>
             </div>
             <!-- Set 2 (Middle, contains active by default) -->
             <div class="bike-item" data-brand="Royal Enfield" data-model="Classic 350" data-variant="Reborn" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_1.png" alt="Classic 350" /></div>
+              <div class="bike-img-wrap"><img src="images/bike_t_1.webp" alt="Classic 350" /></div>
               <div class="bike-info"><h3>Royal Enfield</h3></div>
             </div>
             <div class="bike-item" data-brand="KTM" data-model="Duke" data-variant="390 Gen-3" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_2.png" alt="390 Duke" /></div>
+              <div class="bike-img-wrap"><img src="images/bike_t_2.webp" alt="390 Duke" /></div>
               <div class="bike-info"><h3>KTM</h3></div>
             </div>
             <div class="bike-item active" data-brand="BMW" data-model="GS" data-variant="1250 Adventure" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_3.png" alt="R 1250 GS" /></div>
+              <div class="bike-img-wrap"><img src="images/bike_t_3.webp" alt="R 1250 GS" /></div>
               <div class="bike-info"><h3>BMW</h3></div>
             </div>
             <div class="bike-item" data-brand="Kawasaki" data-model="Ninja" data-variant="ZX-10R" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_4.png" alt="Ninja ZX-10R" /></div>
+              <div class="bike-img-wrap"><img src="images/bike_t_4.webp" alt="Ninja ZX-10R" /></div>
               <div class="bike-info"><h3>Kawasaki</h3></div>
             </div>
             <div class="bike-item" data-brand="Yamaha" data-model="R15" data-variant="V4" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_5.png" alt="YZF R15" /></div>
+              <div class="bike-img-wrap"><img src="images/bike_t_5.webp" alt="YZF R15" /></div>
               <div class="bike-info"><h3>Yamaha</h3></div>
             </div>
             <div class="bike-item" data-brand="Ducati" data-model="Panigale" data-variant="V4" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_6.png" alt="Panigale V4" /></div>
+              <div class="bike-img-wrap"><img src="images/bike_t_6.webp" alt="Panigale V4" /></div>
               <div class="bike-info"><h3>Ducati</h3></div>
             </div>
             <div class="bike-item" data-brand="Triumph" data-model="Tiger" data-variant="900 Rally Pro" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_7.png" alt="Tiger 900" /></div>
+              <div class="bike-img-wrap"><img src="images/bike_t_7.webp" alt="Tiger 900" /></div>
               <div class="bike-info"><h3>Triumph</h3></div>
             </div>
             <!-- Set 3 -->
             <div class="bike-item" data-brand="Royal Enfield" data-model="Classic 350" data-variant="Reborn" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_1.png" alt="Classic 350" /></div>
+              <div class="bike-img-wrap"><img src="images/bike_t_1.webp" alt="Classic 350" /></div>
               <div class="bike-info"><h3>Royal Enfield</h3></div>
             </div>
             <div class="bike-item" data-brand="KTM" data-model="Duke" data-variant="390 Gen-3" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_2.png" alt="390 Duke" /></div>
+              <div class="bike-img-wrap"><img src="images/bike_t_2.webp" alt="390 Duke" /></div>
               <div class="bike-info"><h3>KTM</h3></div>
             </div>
             <div class="bike-item" data-brand="BMW" data-model="GS" data-variant="1250 Adventure" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_3.png" alt="R 1250 GS" /></div>
+              <div class="bike-img-wrap"><img src="images/bike_t_3.webp" alt="R 1250 GS" /></div>
               <div class="bike-info"><h3>BMW</h3></div>
             </div>
             <div class="bike-item" data-brand="Kawasaki" data-model="Ninja" data-variant="ZX-10R" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_4.png" alt="Ninja ZX-10R" /></div>
+              <div class="bike-img-wrap"><img src="images/bike_t_4.webp" alt="Ninja ZX-10R" /></div>
               <div class="bike-info"><h3>Kawasaki</h3></div>
             </div>
             <div class="bike-item" data-brand="Yamaha" data-model="R15" data-variant="V4" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_5.png" alt="YZF R15" /></div>
+              <div class="bike-img-wrap"><img src="images/bike_t_5.webp" alt="YZF R15" /></div>
               <div class="bike-info"><h3>Yamaha</h3></div>
             </div>
             <div class="bike-item" data-brand="Ducati" data-model="Panigale" data-variant="V4" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_6.png" alt="Panigale V4" /></div>
+              <div class="bike-img-wrap"><img src="images/bike_t_6.webp" alt="Panigale V4" /></div>
               <div class="bike-info"><h3>Ducati</h3></div>
             </div>
             <div class="bike-item" data-brand="Triumph" data-model="Tiger" data-variant="900 Rally Pro" data-year="2024">
-              <div class="bike-img-wrap"><img src="images/bike_t_7.png" alt="Tiger 900" /></div>
+              <div class="bike-img-wrap"><img src="images/bike_t_7.webp" alt="Tiger 900" /></div>
               <div class="bike-info"><h3>Triumph</h3></div>
             </div>
           </div>
@@ -479,7 +479,7 @@ class App {
 
       <!-- Statement -->
       <section class="statement">
-        <div class="statement-image"><img src="images/hero_banner.png" alt="Motorcycle rider on the road" /></div>
+        <div class="statement-image"><img src="images/hero_banner.webp" alt="Motorcycle rider on the road" /></div>
         <div class="statement-copy">
           <p class="eyebrow red">The HRz standard</p>
           <h2>NOT JUST<br />A <em>RIDE.</em></h2>
@@ -500,7 +500,7 @@ class App {
         </div>
         <div class="drop-grid">
           <article class="drop-card">
-            <img src="images/category_helmets.png" alt="Premium motorcycle helmet" />
+            <img src="images/category_helmets.webp" alt="Premium motorcycle helmet" />
             <div>
               <span class="drop-tag">NEW / HELMETS</span>
               <h3>Premium Series</h3>
@@ -508,7 +508,7 @@ class App {
             </div>
           </article>
           <article class="drop-card">
-            <img src="images/category_protection.png" alt="Crash guard kit" />
+            <img src="images/category_protection.webp" alt="Crash guard kit" />
             <div>
               <span class="drop-tag">NEW / PROTECTION</span>
               <h3>Guard Series</h3>
@@ -998,7 +998,7 @@ class App {
                 <div class="order-card-body">
                   <div class="order-items-preview-row">
                     ${o.items.map(i => `
-                      <img src="${escapeHTML(i.image || 'images/helmet_product.png')}" alt="${escapeHTML(i.name)}" class="order-item-thumb" onerror="this.src='images/helmet_product.png'" />
+                      <img src="${escapeHTML(i.image || 'images/helmet_product.webp')}" alt="${escapeHTML(i.name)}" class="order-item-thumb" onerror="this.src='images/helmet_product.webp'" />
                     `).join("")}
                     <div class="order-item-details-compact">
                       <strong>${escapeHTML(firstItem ? firstItem.name : "Accessories")}</strong>
@@ -1137,7 +1137,7 @@ class App {
             <div class="full-order-items-list">
               ${order.items.map(item => `
                 <div class="full-order-item">
-                  <img src="${escapeHTML(item.image || 'images/helmet_product.png')}" alt="${escapeHTML(item.name)}" onerror="this.src='images/helmet_product.png'" />
+                  <img src="${escapeHTML(item.image || 'images/helmet_product.webp')}" alt="${escapeHTML(item.name)}" onerror="this.src='images/helmet_product.webp'" />
                   <div class="full-order-item-info">
                     <strong>${escapeHTML(item.name)}</strong>
                     <small>Qty: ${item.quantity} · SKU: ${escapeHTML(item.sku || 'N/A')}</small>
@@ -1331,3 +1331,4 @@ if (document.readyState === "loading") {
 } else {
   App.init();
 }
+

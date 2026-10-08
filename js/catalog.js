@@ -436,7 +436,7 @@ class CatalogView {
           <button class="wishlist-toggle-btn ${isWishlisted ? "active" : ""}" data-id="${escapeHTML(p.id)}" aria-label="Toggle wishlist">
             ${isWishlisted ? "❤️" : "🤍"}
           </button>
-          <img src="${escapeHTML(displayImage)}" alt="${escapeHTML(p.name)}" loading="lazy" onerror="this.src='images/helmet_product.png'" />
+          <img src="${escapeHTML(displayImage)}" alt="${escapeHTML(p.name)}" loading="lazy" onerror="this.src='images/helmet_product.webp'" />
         </div>
         <div class="product-card-content">
           <div class="card-category-strip">${escapeHTML(p.category)}</div>
@@ -496,5 +496,6 @@ class CatalogView {
 }
 
 window.HRz.Catalog = CatalogView;
+
 
 

@@ -4,7 +4,7 @@ const strMatches = code.match(/(?:"([^"]+)")|(?:'([^']+)')/g);
 const terms = new Set();
 strMatches.forEach(s => {
     let clean = s.replace(/["']/g, '');
-    if (clean.length > 2 && !clean.includes('images/') && !clean.includes('.png')) {
+    if (clean.length > 2 && !clean.includes('images/') && !clean.includes('.webp')) {
         terms.add(clean);
     }
 });
@@ -28,3 +28,4 @@ terms.forEach(term => {
 });
 console.log('\nTotal menu items audited:', terms.size);
 console.log('Menu items with 0 matches:', zeroCount);
+
