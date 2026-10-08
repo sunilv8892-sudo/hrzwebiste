@@ -361,19 +361,19 @@ class App {
         </div>
         <div class="category-grid">
           <div class="category large" onclick="window.location.hash='catalog?category=Protection'">
-            <img src="${catImages.Protection}" alt="Crash guards and protection gear" />
+            <video src="images/cat_vid_crash.mp4" autoplay loop muted playsinline class="category-vid"></video>
             <span><small>01</small> Crash Guards <b>→</b></span>
           </div>
           <div class="category" onclick="window.location.hash='catalog?category=Helmets'">
-            <img src="${catImages.Helmets}" alt="Helmets and intercoms" />
+            <video src="images/cat_vid_helmet.mp4" autoplay loop muted playsinline class="category-vid"></video>
             <span><small>02</small> Helmets <b>→</b></span>
           </div>
           <div class="category" onclick="window.location.hash='catalog?category=Lights'">
-            <img src="${catImages.Lights}" alt="LED fog lights" />
+            <video src="images/cat_vid_fog.mp4" autoplay loop muted playsinline class="category-vid"></video>
             <span><small>03</small> Fog Lights <b>→</b></span>
           </div>
           <div class="category" onclick="window.location.hash='catalog?category=Luggage'">
-            <img src="${catImages.Luggage}" alt="Saddlebags and luggage" />
+            <video src="images/cat_vid_luggage.mp4" autoplay loop muted playsinline class="category-vid"></video>
             <span><small>04</small> Luggage <b>→</b></span>
           </div>
         </div>
@@ -1291,6 +1291,7 @@ if (document.readyState === "loading") {
 } else {
   App.init();
 }
+
 
 
 
