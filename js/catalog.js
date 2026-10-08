@@ -461,9 +461,7 @@ class CatalogView {
         if (e.target.closest(".wishlist-toggle-btn") || e.target.closest(".add-to-cart-btn")) {
           return;
         }
-        const id = card.dataset.id;
-        if (id) {
-          window.location.hash = `product?id=${encodeURIComponent(id)}`;
+        const id = card.dataset.id; if (id) { let hash = `product?id=${encodeURIComponent(id)}`; if (window.HRz.Catalog.activeColors && window.HRz.Catalog.activeColors.size > 0) { const activeColor = Array.from(window.HRz.Catalog.activeColors)[0]; hash += `&color=${encodeURIComponent(activeColor)}`; } window.location.hash = hash;
         }
       };
     });
@@ -498,4 +496,5 @@ class CatalogView {
 }
 
 window.HRz.Catalog = CatalogView;
+
 

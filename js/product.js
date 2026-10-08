@@ -246,11 +246,20 @@ class ProductDetailView {
     setActiveImage(Number(mainImage?.dataset.galleryIndex || 0));
   }
 
-  static render(container, productId) {
+  static render(container, productId, initialColor = null) {
     window.HRz.Storage.addRecentlyViewed(productId);
     const product = window.HRz.DB.getProductById(productId);
     const activeBike = window.HRz.Storage.getActiveBike();
     const escapeHTML = window.HRz.Utils.escapeHTML;
+
+    let defaultVariantIdx = 0;
+    if (initialColor && product && product.variants) {
+      const foundIdx = product.variants.findIndex(v => (v.color || "").toLowerCase().includes(initialColor.toLowerCase()));
+      if (foundIdx !== -1) defaultVariantIdx = foundIdx;
+    }
+    const displayVariant = product && product.variants ? product.variants[defaultVariantIdx] : null;
+    const displayImage = displayVariant ? displayVariant.image : (product ? product.image : '');
+    const displayPrice = displayVariant ? displayVariant.price : (product ? product.price : 0);
 
     if (!product) {
       container.innerHTML = `
@@ -284,7 +293,7 @@ class ProductDetailView {
             <span class="gallery-count-chip">${gallery.length} photos</span>
           </div>
           <div class="main-image-frame" role="button" tabindex="0" aria-label="Open product image viewer">
-            <img id="mainProductImage" src="${escapeHTML(product.image)}" alt="${escapeHTML(product.name)}" loading="lazy" onerror="this.src='images/helmet_product.png'" />
+            <img id="mainProductImage" src="${escapeHTML(displayImage)}" alt="${escapeHTML(product.name)}" loading="lazy" onerror="this.src='images/helmet_product.png'" />
           </div>
           <div class="thumbnail-strip">
             ${gallery.map((img, i) => `
@@ -305,7 +314,7 @@ class ProductDetailView {
               <h4>Select Color</h4>
               <div class="color-selector-grid">
                 ${product.variants.map((v, idx) => `
-                  <button class="color-btn ${idx === 0 ? 'active' : ''}" data-index="${idx}" title="${escapeHTML(v.color)}">
+                  <button class="color-btn ${idx === defaultVariantIdx ? 'active' : ''}" data-index="${idx}" title="${escapeHTML(v.color)}">
                     <img class="color-btn-img" src="${escapeHTML(v.image)}" alt="${escapeHTML(v.color)}" loading="lazy" onerror="this.src='images/helmet_product.png'" />
                     <span class="color-btn-text">${escapeHTML(v.color)}</span>
                   </button>
@@ -487,25 +496,43 @@ class ProductDetailView {
 
     this.bindVariantEvents(product);
 
-    const addBtn = container.querySelector("#addToBagHeroBtn");
+      const addBtn = container.querySelector("#addToBagHeroBtn");
     if (addBtn) {
       addBtn.onclick = () => {
-        window.dispatchEvent(new CustomEvent("hrz:add-to-cart", { detail: { product } }));
+        let pCopy = { ...product };
+        const activeColorBtn = container.querySelector(".color-btn.active");
+        if (activeColorBtn && product.variants) {
+          const v = product.variants[activeColorBtn.dataset.index];
+          pCopy.image = v.image || pCopy.image;
+          pCopy.price = v.price || pCopy.price;
+          pCopy.color = v.color || pCopy.color;
+          pCopy.id = pCopy.id + "-" + (v.color || "").toLowerCase().replace(/[^a-z0-9]/g, '-');
+        }
+        window.dispatchEvent(new CustomEvent("hrz:add-to-cart", { detail: { product: pCopy } }));
       };
     }
 
     const buyNowBtn = container.querySelector("#buyNowBtn");
     if (buyNowBtn) {
       buyNowBtn.onclick = () => {
+        let pCopy = { ...product };
+        const activeColorBtn = container.querySelector(".color-btn.active");
+        if (activeColorBtn && product.variants) {
+          const v = product.variants[activeColorBtn.dataset.index];
+          pCopy.image = v.image || pCopy.image;
+          pCopy.price = v.price || pCopy.price;
+          pCopy.color = v.color || pCopy.color;
+          pCopy.id = pCopy.id + "-" + (v.color || "").toLowerCase().replace(/[^a-z0-9]/g, '-');
+        }
         const isLoggedIn = window.HRz.Auth && window.HRz.Auth.isLoggedIn();
         if (!isLoggedIn) {
           window.HRz.Auth.showLoginPopup(() => {
             window.HRz.Cart.add_to_bag_login_prompted = true;
-            window.HRz.Cart.addItem(product);
+            window.HRz.Cart.addItem(pCopy);
             setTimeout(() => { window.location.hash = "checkout"; }, 100);
           });
         } else {
-          window.HRz.Cart.addItem(product);
+          window.HRz.Cart.addItem(pCopy);
           setTimeout(() => { window.location.hash = "checkout"; }, 100);
         }
       };
@@ -649,4 +676,5 @@ class ProductDetailView {
 }
 
 window.HRz.Product = ProductDetailView;
+
 

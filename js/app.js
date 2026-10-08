@@ -252,7 +252,7 @@ class App {
         });
         break;
       case "product":
-        window.HRz.Product.render(activeViewEl, params.get("id"));
+        window.HRz.Product.render(activeViewEl, params.get("id"), params.get("color"));
         break;
       case "garage":
         window.HRz.Garage.renderGarageView(activeViewEl);
@@ -1295,6 +1295,7 @@ if (document.readyState === "loading") {
 } else {
   App.init();
 }
+
 
 
 
