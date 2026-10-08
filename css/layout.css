@@ -86,7 +86,7 @@
   align-items: center;
   gap: 12px;
 }
-.active-bike-summary .bike-icon { font-size: 28px; }
+.active-bike-summary .bike-icon { font-size: 32px; }
 .active-bike-summary small {
   display: block;
   font-size: 11px;
@@ -286,15 +286,15 @@
   inset: 0;
   background: linear-gradient(transparent 20%, #000a);
 }
-.category span { position: absolute; bottom: 0; left: 0; right: 0; height: 100%; padding: 0 28px 24px 28px; z-index: 1; font-family: 'Barlow Condensed'; font-size: 56px; font-weight: 700; text-transform: uppercase; display: flex; align-items: flex-end; gap: 12px; color: #ffffff !important;  }
+.category span { position: absolute; bottom: 0; left: 0; right: 0; height: auto; padding: 0 28px 24px 28px; z-index: 1; font-family: 'Barlow Condensed'; font-size: 64px; font-weight: 700; text-transform: uppercase; display: flex; align-items: center; gap: 12px; color: #ffffff !important; }
 .category small {
-  font: 700 13px 'DM Sans';
+  font: 700 18px 'DM Sans';
   color: rgba(255, 255, 255, 0.7);
 }
 .category b {
   margin-left: auto;
   color: #ffffff !important; /* Ensure white arrow for contrast */
-  font-size: 28px;
+  font-size: 32px;
 }
 
 /* ---- Statement / Brand Section ---- */
@@ -961,5 +961,6 @@
 
 
 .cat-watermark { position: absolute; bottom: 20px; right: 20px; height: 35px; width: auto; opacity: 0.75; z-index: 2; object-fit: contain; }
+
 
 
