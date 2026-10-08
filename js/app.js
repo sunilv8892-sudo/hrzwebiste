@@ -361,22 +361,22 @@ class App {
         </div>
         <div class="category-grid">
           <div class="category large" onclick="window.location.hash='catalog?category=Protection'">
-            <video src="images/cat_vid_crash.mp4" autoplay loop muted playsinline class="category-vid"></video> <img src="images/HRZ_BIKE_LOGO_page-0001-removebg-preview (3)_20250705_182254_0000.webp" class="cat-watermark" alt="HRz" />
+            <video src="images/cat_vid_crash.mp4" autoplay loop muted playsinline class="category-vid"></video>
             
             <span><small>01</small> Crash Guards <b>→</b></span>
           </div>
           <div class="category" onclick="window.location.hash='catalog?category=Helmets'">
-            <video src="images/cat_vid_helmet.mp4" autoplay loop muted playsinline class="category-vid"></video> <img src="images/HRZ_BIKE_LOGO_page-0001-removebg-preview (3)_20250705_182254_0000.webp" class="cat-watermark" alt="HRz" />
+            <video src="images/cat_vid_helmet.mp4" autoplay loop muted playsinline class="category-vid"></video>
             
             <span><small>02</small> Helmets <b>→</b></span>
           </div>
           <div class="category" onclick="window.location.hash='catalog?category=Lights'">
-            <video src="images/cat_vid_fog.mp4" autoplay loop muted playsinline class="category-vid"></video> <img src="images/HRZ_BIKE_LOGO_page-0001-removebg-preview (3)_20250705_182254_0000.webp" class="cat-watermark" alt="HRz" />
+            <video src="images/cat_vid_fog.mp4" autoplay loop muted playsinline class="category-vid"></video>
             
             <span><small>03</small> Fog Lights <b>→</b></span>
           </div>
           <div class="category" onclick="window.location.hash='catalog?category=Luggage'">
-            <video src="images/cat_vid_luggage.mp4" autoplay loop muted playsinline class="category-vid"></video> <img src="images/HRZ_BIKE_LOGO_page-0001-removebg-preview (3)_20250705_182254_0000.webp" class="cat-watermark" alt="HRz" />
+            <video src="images/cat_vid_luggage.mp4" autoplay loop muted playsinline class="category-vid"></video>
             
             <span><small>04</small> Luggage <b>→</b></span>
           </div>
@@ -1295,6 +1295,7 @@ if (document.readyState === "loading") {
 } else {
   App.init();
 }
+
 
 
 
