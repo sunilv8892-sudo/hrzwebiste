@@ -7,6 +7,7 @@ window.HRz = window.HRz || {};
 const STORAGE_KEY = "hrz_pitstop_app_state_v10";
 
 const defaultState = {
+  recentlyViewed: [],
   activeBike: null,
   garage: [],
   cart: [],
@@ -74,7 +75,7 @@ class StorageService {
   }
 
   static getActiveBike() {
-    return null; // Feature on hold
+    return this.loadState().activeBike || null;
   }
 
   static setActiveBike(bikeObj) {
@@ -111,6 +112,19 @@ class StorageService {
   static setCart(cartArray) {
     const state = this.loadState();
     state.cart = cartArray;
+    this.saveState(state);
+  }
+
+  static getRecentlyViewed() {
+    return this.loadState().recentlyViewed || [];
+  }
+
+  static addRecentlyViewed(productId) {
+    const state = this.loadState();
+    if (!state.recentlyViewed) state.recentlyViewed = [];
+    state.recentlyViewed = state.recentlyViewed.filter(id => id !== productId);
+    state.recentlyViewed.unshift(productId);
+    if (state.recentlyViewed.length > 10) state.recentlyViewed = state.recentlyViewed.slice(0, 10);
     this.saveState(state);
   }
 
@@ -159,3 +173,4 @@ class StorageService {
 }
 
 window.HRz.Storage = StorageService;
+

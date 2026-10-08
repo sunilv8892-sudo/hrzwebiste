@@ -476,12 +476,33 @@ class DBService {
   static getRecommendedProducts(activeBike, excludeId = null, limit = 10) {
     let list = this.getProductsForBike(activeBike);
     if (excludeId) {
+      const excludedProduct = this.getProductById(excludeId);
       list = list.filter(p => p.id !== excludeId);
-    }
-    // Curation: if no bike is selected, don't just return the first items in array.
-    // Instead, only return products explicitly flagged as BESTSELLER.
-    if (!activeBike) {
-      list = list.filter(p => p.badge && p.badge.toUpperCase() === 'BESTSELLER');
+      // When showing related products on a product page, prioritize same category
+      if (excludedProduct) {
+        const sameCategory = list.filter(p => p.category === excludedProduct.category);
+        const otherCategory = list.filter(p => p.category !== excludedProduct.category);
+        list = [...sameCategory, ...otherCategory];
+      }
+    } else if (!activeBike) {
+      // On homepage with no bike: show curated selection across categories
+      const byCategory = {};
+      list.forEach(p => {
+        if (!byCategory[p.category]) byCategory[p.category] = [];
+        byCategory[p.category].push(p);
+      });
+      const curated = [];
+      const cats = Object.keys(byCategory);
+      let idx = 0;
+      while (curated.length < limit && idx < 100) {
+        const cat = cats[idx % cats.length];
+        const catItems = byCategory[cat];
+        const pick = catItems.shift();
+        if (pick) curated.push(pick);
+        idx++;
+        if (cats.every(c => byCategory[c].length === 0)) break;
+      }
+      list = curated;
     }
     return list.slice(0, limit);
   }

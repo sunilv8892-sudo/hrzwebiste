@@ -143,8 +143,13 @@ class App {
 
     document.getElementById("overlay")?.classList.remove("open");
     document.getElementById("searchPanel")?.classList.remove("open");
+    const searchInput = document.getElementById("globalSearch");
+    if (searchInput) searchInput.value = "";
+    const searchResults = document.getElementById("searchAutocomplete");
+    if (searchResults) searchResults.innerHTML = "";
     document.getElementById("quickView")?.classList.remove("open");
     document.getElementById("cartDrawer")?.classList.remove("open");
+    document.getElementById("catalogFilterDrawer")?.classList.remove("open");
     if (window.HRz.Menu) window.HRz.Menu.closeAll(true);
     
     // If it was closed manually (not via back button), remove the history state
@@ -319,12 +324,31 @@ class App {
         </div>
         <div class="bike-slider-container">
           <div class="bike-slider">
-            ${[1, 2, 3].map(set => window.HRz.DB.getBikes().slice(0, 7).map((bike, idx) => `
-              <div class="bike-item ${set === 2 && idx === 2 ? 'active' : ''}" data-brand="${bike.brand}" data-model="${bike.model}" data-variant="${bike.variant}" data-year="${bike.year}">
-                <div class="bike-img-wrap"><img src="images/bike_t_${(idx % 7) + 1}.png" alt="${bike.model}" /></div>
-                <div class="bike-info"><h3>${bike.brand}</h3></div>
-              </div>
-            `).join('')).join('')}
+            ${(() => {
+              const allBikes = window.HRz.DB.getBikes();
+              // Pick diverse bikes: one per brand, then fill remaining
+              const seenBrands = new Set();
+              const diverseBikes = [];
+              // Priority brand order for visual variety
+              const brandOrder = ['Royal Enfield', 'KTM', 'BMW', 'Triumph', 'Yamaha', 'TVS', 'Honda', 'Bajaj', 'Kawasaki', 'Suzuki', 'Hero'];
+              for (const brand of brandOrder) {
+                const bike = allBikes.find(b => b.brand === brand && !seenBrands.has(b.brand));
+                if (bike) { diverseBikes.push(bike); seenBrands.add(bike.brand); }
+                if (diverseBikes.length >= 7) break;
+              }
+              // If less than 7, fill with remaining bikes
+              for (const bike of allBikes) {
+                if (diverseBikes.length >= 7) break;
+                if (!diverseBikes.some(b => b.id === bike.id)) diverseBikes.push(bike);
+              }
+              const bikeImages = ['bike_t_1.png','bike_t_2.png','bike_t_3.png','bike_t_4.png','bike_t_5.png','bike_t_6.png','bike_t_7.png'];
+              return [1, 2, 3].map(set => diverseBikes.map((bike, idx) => `
+                <div class="bike-item ${set === 2 && idx === 2 ? 'active' : ''}" data-brand="${bike.brand}" data-model="${bike.model}" data-variant="${bike.variant}" data-year="${bike.year}">
+                  <div class="bike-img-wrap"><img src="images/${bikeImages[idx % 7]}" alt="${bike.brand} ${bike.model}" /></div>
+                  <div class="bike-info"><h3>${bike.model}</h3></div>
+                </div>
+              `).join('')).join('');
+            })()}
           </div>
         </div>
       </section>
@@ -471,7 +495,7 @@ class App {
           <div><p class="eyebrow red">Keep exploring</p><h2>RECENTLY <em>VIEWED</em></h2></div>
         </div>
         <div class="product-grid" id="recent-product-grid">
-          ${featuredProducts.slice(0, 4).map(p => catalog.renderProductCard(p, activeBike, wishlist)).join("")}
+          ${(() => { const recentIds = window.HRz.Storage.getRecentlyViewed(); let recentProducts = recentIds.map(id => window.HRz.DB.getProductById(id)).filter(p => p); if (recentProducts.length === 0) recentProducts = featuredProducts.slice(0, 4); return recentProducts.slice(0, 4).map(p => catalog.renderProductCard(p, activeBike, wishlist)).join(""); })()}
         </div>
       </section>
     `;
@@ -1238,8 +1262,25 @@ class App {
           <summary>Do you ship internationally?</summary>
           <p>Currently we ship PAN-India only. International shipping is planned for Q4 2026. Sign up for our newsletter to be notified.</p>
         </details>
-      </div>
-    `;
+
+          <h3 style="margin-top: 48px; margin-bottom: 24px; font-family: var(--font-display); text-transform: uppercase;">Legal & Policies</h3>
+          
+          <details>
+            <summary>Terms & Conditions</summary>
+            <p>Welcome to HRz Pitstop. By using our website, you agree to these terms. All content is for informational purposes. Product specifications are subject to change without notice. We reserve the right to refuse service, terminate accounts, or cancel orders at our discretion. Our full terms govern your use of our platform.</p>
+          </details>
+          
+          <details>
+            <summary>Privacy Policy</summary>
+            <p>We value your privacy. HRz Pitstop collects personal information such as your name, email, and shipping address solely for fulfilling your orders. We do not sell your data to third parties. Our site uses secure encryption to protect your information. For more details, contact our support team.</p>
+          </details>
+          
+          <details>
+            <summary>Return & Refund Policy</summary>
+            <p>We offer a 7-Day Free Fitment Return Guarantee. If the product does not fit your vehicle despite being marked as compatible, you may return it within 7 days for a full refund. The item must be unused, in its original packaging, and with all tags attached. Refunds are processed to the original payment method within 5-7 business days after we receive the return.</p>
+          </details>
+        </div>
+      `;
   }
 }
 
@@ -1250,3 +1291,7 @@ if (document.readyState === "loading") {
 } else {
   App.init();
 }
+
+
+
+

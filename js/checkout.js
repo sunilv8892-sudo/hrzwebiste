@@ -59,6 +59,10 @@ class CheckoutView {
                   <input type="tel" id="checkPhone" required placeholder="+91 98765 43210" pattern="[0-9+ ]{10,14}" />
                 </div>
                 <div class="form-group full-width">
+                  <label for="checkEmail">Email Address *</label>
+                  <input type="email" id="checkEmail" required placeholder="rider@example.com" />
+                </div>
+                <div class="form-group full-width">
                   <label for="checkAddress">Street Address & Landmark *</label>
                   <input type="text" id="checkAddress" required placeholder="House/Flat No, Street, Landmark" />
                 </div>
@@ -68,7 +72,7 @@ class CheckoutView {
                 </div>
                 <div class="form-group">
                   <label for="checkPincode">PIN Code *</label>
-                  <input type="text" id="checkPincode" required placeholder="560102" pattern="[0-9]{6}" />
+                  <input type="text" id="checkPincode" required placeholder="560102" pattern="[0-9]{6}" maxlength="6" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
                 </div>
               </div>
             </div>
@@ -130,6 +134,10 @@ class CheckoutView {
                 <span>${utils.formatCurrency(subtotal)}</span>
               </div>
               <div class="calc-row">
+                <span>GST (18% included)</span>
+                <span>${utils.formatCurrency(Math.round(subtotal * 0.18))}</span>
+              </div>
+              <div class="calc-row">
                 <span>Express Shipping</span>
                 <span>${shippingFee === 0 ? "<strong class='free-tag'>FREE</strong>" : utils.formatCurrency(shippingFee)}</span>
               </div>
@@ -150,26 +158,29 @@ class CheckoutView {
         const payMethod = form.querySelector("input[name='payMethod']:checked").value;
         const name = container.querySelector("#checkFullName").value;
         const phone = container.querySelector("#checkPhone").value;
+        const email = container.querySelector("#checkEmail").value;
         const address = container.querySelector("#checkAddress").value;
         const city = container.querySelector("#checkCity").value;
         const pincode = container.querySelector("#checkPincode").value;
 
         const bikeStr = activeBike ? `${activeBike.brand} ${activeBike.model} (${activeBike.variant})` : "Universal";
 
-        const newOrder = {
-          id: "HRZ-ORD-" + Math.floor(10000 + Math.random() * 90000),
-          date: new Date().toISOString().split("T")[0],
-          bike: bikeStr,
-          status: "Pending WhatsApp Confirmation",
-          items: cart,
-          total: grandTotal,
-          paymentMethod: payMethod,
-          shippingAddress: `${address}, ${city}`
-        };
+          const newOrder = {
+            id: "HRZ-ORD-" + Math.floor(10000 + Math.random() * 90000),
+            trackingId: "DTDC-" + Math.floor(10000000 + Math.random() * 90000000),
+            date: new Date().toISOString().split("T")[0],
+            bike: bikeStr,
+            status: "Pending WhatsApp Confirmation",
+            items: cart,
+            total: grandTotal,
+            paymentMethod: payMethod,
+            shippingAddress: `${address}, ${city}`
+          };
 
         let waText = `Hello HRz PITSTOP! I would like to place an order.\n\n`;
         waText += `*Customer:* ${name}\n`;
         waText += `*Phone:* ${phone}\n`;
+        waText += `*Email:* ${email}\n`;
         waText += `*Address:* ${address}, ${city} - ${pincode}\n`;
         waText += `*Payment:* ${payMethod}\n`;
         waText += `*Bike Fitment:* ${bikeStr}\n\n`;

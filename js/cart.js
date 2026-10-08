@@ -183,6 +183,25 @@ class CartDrawer {
     const subtotalEl = document.getElementById("cartSubtotalText");
     if (subtotalEl) subtotalEl.textContent = utils.formatCurrency(subtotal);
 
+    const gstEl = document.getElementById("cartGstText");
+    const gstValue = Math.round(subtotal * 0.18);
+    if (gstEl) gstEl.textContent = utils.formatCurrency(gstValue);
+
+    const shippingEl = document.getElementById("cartShippingText");
+    let shippingValue = 0;
+    if (shippingEl) {
+      if (subtotal >= FREE_SHIPPING_THRESHOLD || subtotal === 0) {
+        shippingEl.textContent = "FREE";
+        shippingValue = 0;
+      } else {
+        shippingEl.textContent = utils.formatCurrency(199);
+        shippingValue = 199;
+      }
+    }
+
+    const totalEl = document.getElementById("cartTotalText");
+    if (totalEl) totalEl.textContent = utils.formatCurrency(subtotal + shippingValue);
+
     container.querySelectorAll(".minus-qty").forEach(btn => {
       btn.onclick = () => this.updateQuantity(btn.dataset.id, -1);
     });

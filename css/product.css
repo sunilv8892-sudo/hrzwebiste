@@ -154,6 +154,9 @@
   object-fit: cover;
   mix-blend-mode: multiply;
   transition: .4s;
+  clip-path: inset(0.5px);
+  -webkit-clip-path: inset(0.5px);
+  transform: translate3d(0, 0, 0);
 }
 .product-card:hover .product-card-media img,
 .product-card:hover .product-image img {
@@ -178,6 +181,9 @@
   padding: 0;
   width: 100%;
   height: 100%;
+  clip-path: inset(0.5px);
+  -webkit-clip-path: inset(0.5px);
+  transform: translate3d(0, 0, 0);
 }
 
 /* Badges & Actions */
@@ -430,7 +436,7 @@ blockquote {
   width: 100%;
   height: 100%;
   display: block;
-  object-fit: cover;
+  object-fit: contain;
   transform-origin: var(--zoom-x, 50%) var(--zoom-y, 50%);
   transition: transform 0.28s ease;
 }
@@ -671,11 +677,17 @@ blockquote {
   touch-action: pan-y;
 }
 .gallery-viewer-stage img {
+    cursor: zoom-in;
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
   max-width: min(92vw, 1180px);
   max-height: 84vh;
   object-fit: contain;
   box-shadow: var(--shadow-xl);
   border-radius: 18px;
+  }
+  .gallery-viewer-stage img.zoomed {
+    transform: scale(2.2);
+    cursor: zoom-out;
   background: #0e1017;
 }
 .gallery-viewer-close,
@@ -868,8 +880,6 @@ body.gallery-viewer-open {
   filter: brightness(1.1);
 }
 
-}
-
 /* ---- Premium Product Detail Specs Styling ---- */
 .product-detail-specs {
   display: flex;
@@ -990,3 +1000,4 @@ body.gallery-viewer-open {
     height: 32px;
   }
 }
+

@@ -28,7 +28,7 @@
   <link rel="stylesheet" href="css/layout.css" />
   <link rel="stylesheet" href="css/header.css" />
   <link rel="stylesheet" href="css/menu.css" />
-  <link rel="stylesheet" href="css/product.css?v=13" />
+  <link rel="stylesheet" href="css/product.css?v=14" />
   <link rel="stylesheet" href="css/garage.css" />
   <link rel="stylesheet" href="css/cart.css" />
   <link rel="stylesheet" href="css/admin.css" />
@@ -142,8 +142,8 @@
         </div>
       </div>
       <div class="footer-socials">
-        <a href="#">Instagram</a>
-        <a href="#">YouTube</a>
+        <a href="https://instagram.com/hrzpitstop" target="_blank" rel="noopener noreferrer">Instagram</a>
+        <a href="https://youtube.com/c/hrzpitstop" target="_blank" rel="noopener noreferrer">YouTube</a>
         <a href="mailto:support@hrzpitstop.com">Contact</a>
       </div>
     </div>
@@ -184,12 +184,23 @@
       <p class="empty-state">Your bag is ready when you are.</p>
     </div>
     <div class="cart-summary">
-      <div>
+      <div style="display: flex; justify-content: space-between; margin-bottom: 8px; color: var(--mute);">
         <span>Subtotal</span>
-        <b id="cartSubtotalText">₹0</b>
+        <span id="cartSubtotalText">₹0</span>
       </div>
-      <small>Shipping and taxes calculated at checkout.</small>
-      <button class="button button-red" id="cartCheckoutBtn" disabled>Secure checkout <span>→</span></button>
+      <div style="display: flex; justify-content: space-between; margin-bottom: 8px; color: var(--mute);">
+        <span>GST (18% included)</span>
+        <span id="cartGstText">₹0</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-bottom: 12px; color: var(--mute);">
+        <span>Shipping</span>
+        <span id="cartShippingText">Calculated at checkout</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-bottom: 16px; border-top: 1px solid var(--border); padding-top: 12px;">
+        <strong>Total</strong>
+        <b id="cartTotalText" style="font-size: 1.2em;">₹0</b>
+      </div>
+      <button class="button button-red" id="cartCheckoutBtn" disabled style="width: 100%;">Secure checkout <span>→</span></button>
     </div>
   </aside>
 

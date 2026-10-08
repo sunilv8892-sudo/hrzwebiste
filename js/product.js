@@ -104,6 +104,22 @@ class ProductDetailView {
 
     if (image) image.src = this.currentGallery[this.currentGalleryIndex];
     if (title) title.textContent = "Swipe or use arrows to browse";
+    if (image) {
+      image.classList.remove("zoomed");
+      image.style.transformOrigin = "center center";
+      image.onclick = (e) => {
+        if (image.classList.contains("zoomed")) {
+          image.classList.remove("zoomed");
+          image.style.transformOrigin = "center center";
+        } else {
+          const rect = image.getBoundingClientRect();
+          const x = ((e.clientX - rect.left) / rect.width) * 100;
+          const y = ((e.clientY - rect.top) / rect.height) * 100;
+          image.style.transformOrigin = `${x}% ${y}%`;
+          image.classList.add("zoomed");
+        }
+      };
+    }
     if (counter) counter.textContent = `${this.currentGalleryIndex + 1} / ${this.currentGallery.length}`;
   }
 
@@ -247,6 +263,7 @@ class ProductDetailView {
   }
 
   static render(container, productId) {
+    window.HRz.Storage.addRecentlyViewed(productId);
     const product = window.HRz.DB.getProductById(productId);
     const activeBike = window.HRz.Storage.getActiveBike();
     const escapeHTML = window.HRz.Utils.escapeHTML;
@@ -323,6 +340,25 @@ class ProductDetailView {
               <span class="detail-price">${utils.formatCurrency(product.price)}</span>
               ${product.originalPrice ? `<span class="detail-original-price">${utils.formatCurrency(product.originalPrice)}</span>` : ""}
               <span class="tax-inclusive-tag">Inclusive of all taxes & free shipping</span>
+            </div>
+          </div>
+
+          <div class="product-logistics-box" style="margin-top: 16px; margin-bottom: 16px; background: rgba(255,255,255,0.03); padding: 12px 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+            <div style="display: flex; align-items: center; margin-bottom: 8px; font-size: 14px;">
+              <span style="color: #00d26a; margin-right: 8px; font-weight: bold;">●</span>
+              <strong style="color: #fff; margin-right: 8px;">In Stock.</strong>
+              <span style="color: var(--mute);">Only ${Math.floor(Math.random() * 5) + 2} left — order soon.</span>
+            </div>
+            <div style="display: flex; align-items: center; font-size: 14px; color: #fff;">
+              <span style="margin-right: 8px;">🚚</span>
+              <strong>Estimated Delivery:</strong>&nbsp;<span style="color: var(--mute);">${(() => {
+                const start = new Date();
+                start.setDate(start.getDate() + 3);
+                const end = new Date();
+                end.setDate(end.getDate() + 6);
+                const opts = { month: 'short', day: 'numeric' };
+                return start.toLocaleDateString('en-US', opts) + " - " + end.toLocaleDateString('en-US', opts);
+              })()}</span>
             </div>
           </div>
 
@@ -629,3 +665,4 @@ class ProductDetailView {
 }
 
 window.HRz.Product = ProductDetailView;
+
