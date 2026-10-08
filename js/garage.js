@@ -264,7 +264,7 @@ class GarageManager {
             <p class="eyebrow red">Choose your ride</p>
             <h2>${activeBike ? `${escapeHTML(activeBike.brand)} ${escapeHTML(activeBike.model)}` : "Pick a Bike"}</h2>
           </div>
-          <p style="max-width: 620px; color: var(--mute);">Select a bike to refresh the recommendation shelf below. Saved garage bikes appear underneath so every control on this page has a purpose.</p>
+          <p style="max-width: 620px; color: var(--mute);">Select a bike below to view guaranteed fitment parts for your motorcycle.</p>
         </div>
 
         <div class="garage-chip-row" style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin-bottom:16px;">
@@ -277,7 +277,7 @@ class GarageManager {
               <small>to filter the demo catalog</small>
             `}
           </div>
-          <button class="secondary-button" id="openBikeModalTopBtn">Open Bike Selector</button>
+          
         </div>
 
         <div class="product-grid inner-section" id="garageRecommendationGrid">
@@ -296,7 +296,7 @@ class GarageManager {
         <div class="empty-state-card">
           <div class="empty-icon">🏍️</div>
           <h3>No bikes saved yet</h3>
-          <p>Add a motorcycle above. The recommendation shelf already works without your saved garage list.</p>
+          <p>Add your motorcycle above to get started.</p>
         </div>
       ` : `
         <div class="garage-grid">
@@ -351,3 +351,4 @@ class GarageManager {
 }
 
 window.HRz.Garage = GarageManager;
+

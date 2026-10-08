@@ -677,18 +677,12 @@ blockquote {
   touch-action: pan-y;
 }
 .gallery-viewer-stage img {
-    cursor: zoom-in;
-    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
   max-width: min(92vw, 1180px);
   max-height: 84vh;
   object-fit: contain;
   box-shadow: var(--shadow-xl);
   border-radius: 18px;
-  }
-  .gallery-viewer-stage img.zoomed {
-    transform: scale(2.2);
-    cursor: zoom-out;
-  background: #0e1017;
+  }  background: #0e1017;
 }
 .gallery-viewer-close,
 .gallery-viewer-nav {
@@ -1000,4 +994,6 @@ body.gallery-viewer-open {
     height: 32px;
   }
 }
+
+
 

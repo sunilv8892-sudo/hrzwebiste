@@ -47,14 +47,11 @@ class CatalogView {
     const escapeHTML = window.HRz.Utils.escapeHTML;
 
     let allBaseProducts = window.HRz.DB.products;
-    if (!this.searchQuery && this.activeCategory === "All" && activeBike) {
-        allBaseProducts = window.HRz.DB.getProductsForBike(activeBike);
-    }
 
     let products = [...allBaseProducts];
 
     if (this.searchQuery) {
-      products = window.HRz.Utils.smartSearch(this.searchQuery, products, activeBike);
+      products = window.HRz.Utils.smartSearch(this.searchQuery, products, null); // Pass null so search doesn't globally filter
     }
 
     if (this.activeCategory !== "All") {
@@ -163,7 +160,7 @@ class CatalogView {
         <div>
           <p class="eyebrow red">${escapeHTML(eyebrowText)}</p>
           <h2>${escapeHTML(pageTitle)}</h2>
-          ${activeBike ? `<p class="active-bike-filter-note" style="margin-top:8px;">Showing parts compatible with <strong>${escapeHTML(activeBike.brand)} ${escapeHTML(activeBike.model)} (${escapeHTML(activeBike.variant)})</strong></p>` : ""}
+          
         </div>
       </div>
 
@@ -501,3 +498,4 @@ class CatalogView {
 }
 
 window.HRz.Catalog = CatalogView;
+

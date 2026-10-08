@@ -291,7 +291,7 @@ class App {
     const activeBike = window.HRz.Storage.getActiveBike();
     const heroBanner = window.HRz.Storage.getHeroBanner();
     const db = window.HRz.DB;
-    const featuredProducts = db.getRecommendedProducts(activeBike, null, 8);
+    const featuredProducts = db.getRecommendedProducts(null, null, 8);
     const utils = window.HRz.Utils;
     const catalog = window.HRz.Catalog;
     const wishlist = window.HRz.Storage.getWishlist();
@@ -594,7 +594,7 @@ class App {
         return best;
       };
 
-      const activateBike = (el) => {
+      const activateBike = (el, saveToStorage = true) => {
         if (el === lastActive) return;
         lastActive = el;
         bikeItems.forEach(i => i.classList.remove("active"));
@@ -603,7 +603,7 @@ class App {
         const { brand, model, variant, year } = el.dataset;
         if (!brand || !model) return;
         const bikeObj = { brand, model, variant, year, category: inferBikeCategory(brand, model) };
-        window.HRz.Storage.setActiveBike(bikeObj);
+        if (saveToStorage) window.HRz.Storage.setActiveBike(bikeObj);
 
         clearTimeout(filterTimer);
         filterTimer = setTimeout(() => {
@@ -624,7 +624,7 @@ class App {
         if (sliderContainer.dataset.isAutoScrolling === "true") return;
         
         const closest = getClosestItem();
-        if (closest) activateBike(closest);
+        if (closest) activateBike(closest, false);
 
         // When scrolling stops completely
         clearTimeout(scrollStopTimer);
@@ -688,12 +688,12 @@ class App {
         if (clicked) {
           if (clicked.classList.contains("active")) {
             // Already centered & active -> open garage recommendations
-            setTimeout(() => { window.location.hash = "garage"; }, 150);
+            activateBike(clicked, true); setTimeout(() => { window.location.hash = "garage"; }, 150);
           } else {
             // Not active -> smoothly scroll it to the center
             const targetPos = getMid(clicked) - sliderContainer.clientWidth / 2;
             sliderContainer.scrollTo({ left: targetPos, behavior: "smooth" });
-            setTimeout(() => { window.location.hash = "garage"; }, 450);
+            activateBike(clicked, true); setTimeout(() => { window.location.hash = "garage"; }, 450);
           }
         }
       });
@@ -739,7 +739,7 @@ class App {
                 sliderContainer.style.scrollSnapType = "";
                 sliderContainer.style.pointerEvents = "";
                 sliderContainer.dataset.isAutoScrolling = "false";
-                activateBike(endEl);
+                activateBike(endEl, false);
               }
             };
             requestAnimationFrame(animateScroll);
@@ -1291,6 +1291,8 @@ if (document.readyState === "loading") {
 } else {
   App.init();
 }
+
+
 
 
 

@@ -104,22 +104,6 @@ class ProductDetailView {
 
     if (image) image.src = this.currentGallery[this.currentGalleryIndex];
     if (title) title.textContent = "Swipe or use arrows to browse";
-    if (image) {
-      image.classList.remove("zoomed");
-      image.style.transformOrigin = "center center";
-      image.onclick = (e) => {
-        if (image.classList.contains("zoomed")) {
-          image.classList.remove("zoomed");
-          image.style.transformOrigin = "center center";
-        } else {
-          const rect = image.getBoundingClientRect();
-          const x = ((e.clientX - rect.left) / rect.width) * 100;
-          const y = ((e.clientY - rect.top) / rect.height) * 100;
-          image.style.transformOrigin = `${x}% ${y}%`;
-          image.classList.add("zoomed");
-        }
-      };
-    }
     if (counter) counter.textContent = `${this.currentGalleryIndex + 1} / ${this.currentGallery.length}`;
   }
 

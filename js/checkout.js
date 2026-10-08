@@ -134,10 +134,6 @@ class CheckoutView {
                 <span>${utils.formatCurrency(subtotal)}</span>
               </div>
               <div class="calc-row">
-                <span>GST (18% included)</span>
-                <span>${utils.formatCurrency(Math.round(subtotal * 0.18))}</span>
-              </div>
-              <div class="calc-row">
                 <span>Express Shipping</span>
                 <span>${shippingFee === 0 ? "<strong class='free-tag'>FREE</strong>" : utils.formatCurrency(shippingFee)}</span>
               </div>
