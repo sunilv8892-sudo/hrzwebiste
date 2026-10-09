@@ -245,6 +245,9 @@ class App {
       case "home":
         this.renderHomeView(activeViewEl);
         break;
+      case "models":
+        this.renderModelsView(activeViewEl, params.get("brand"));
+        break;
       case "catalog":
         window.HRz.Catalog.render(activeViewEl, {
           category: params.get("category") || "All",
@@ -287,6 +290,23 @@ class App {
     }
   }
 
+  static getWikiImage(query, imgEl, fallback) {
+    const url = `https://en.wikipedia.org/w/api.php?origin=*&action=query&format=json&prop=pageimages&generator=search&gsrsearch=${encodeURIComponent(query)}&gsrlimit=1&pithumbsize=500`;
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        const pages = data.query && data.query.pages;
+        if (pages) {
+          const pageId = Object.keys(pages)[0];
+          if (pages[pageId] && pages[pageId].thumbnail) {
+            imgEl.src = pages[pageId].thumbnail.source;
+            return;
+          }
+        }
+      })
+      .catch(() => {});
+  }
+
   static renderHomeView(container) {
     const activeBike = window.HRz.Storage.getActiveBike();
     const heroBanner = window.HRz.Storage.getHeroBanner();
@@ -320,34 +340,25 @@ class App {
       <!-- 3D Bike Selector -->
       <section class="bike-selector-3d section" id="bikeSelector3D">
         <div class="section-head">
-          <div><p class="eyebrow red">Select your machine</p><h2>CHOOSE YOUR <em>RIDE</em></h2></div>
+          <div><p class="eyebrow red">Select your machine</p><h2>CHOOSE YOUR <em>BRAND</em></h2></div>
         </div>
         <div class="bike-slider-container">
           <div class="bike-slider">
             ${(() => {
-              const allBikes = window.HRz.DB.getBikes();
-              // Pick diverse bikes: one per brand, then fill remaining
-              const seenBrands = new Set();
-              const diverseBikes = [];
-              // Priority brand order for visual variety
-              const brandOrder = ['Royal Enfield', 'KTM', 'BMW', 'Triumph', 'Yamaha', 'TVS', 'Honda', 'Bajaj', 'Kawasaki', 'Suzuki', 'Hero'];
-              for (const brand of brandOrder) {
-                const bike = allBikes.find(b => b.brand === brand && !seenBrands.has(b.brand));
-                if (bike) { diverseBikes.push(bike); seenBrands.add(bike.brand); }
-                if (diverseBikes.length >= 7) break;
-              }
-              // If less than 7, fill with remaining bikes
-              for (const bike of allBikes) {
-                if (diverseBikes.length >= 7) break;
-                if (!diverseBikes.some(b => b.id === bike.id)) diverseBikes.push(bike);
-              }
-              const bikeImages = ['bike_t_1.webp','bike_t_2.webp','bike_t_3.webp','bike_t_4.webp','bike_t_5.webp','bike_t_6.webp','bike_t_7.webp'];
-              return [1, 2, 3].map(set => diverseBikes.map((bike, idx) => `
-                <div class="bike-item ${set === 2 && idx === 2 ? 'active' : ''}" data-brand="${bike.brand}" data-model="${bike.model}" data-variant="${bike.variant}" data-year="${bike.year}">
-                  <div class="bike-img-wrap"><img src="images/${bikeImages[idx % 7]}" alt="${bike.brand} ${bike.model}" /></div>
-                  <div class="bike-info"><h3>${bike.model}</h3></div>
+              const brands = Object.keys(window.HRz.Menu.menuData.shopByBike);
+              return [1, 2, 3].map(set => brands.map((brand, idx) => {
+                const brandModels = window.HRz.Menu.menuData.shopByBike[brand];
+                const firstModel = brandModels && brandModels.length > 0 ? brandModels[0] : null;
+                const imgUrl = (firstModel && window.HRzImageMap && window.HRzImageMap[firstModel]) 
+                  ? window.HRzImageMap[firstModel].replace('.jpg', '_transparent.png') 
+                  : `images/bike_t_${(idx % 7) + 1}.webp`;
+                const uid = `brand-img-${set}-${idx}`;
+                return `
+                <div class="bike-item" style="cursor:pointer;" onclick="window.location.hash='#models?brand=' + encodeURIComponent('${brand}')">
+                  <div class="bike-img-wrap"><img id="${uid}" src="${imgUrl}" alt="${brand}" style="object-fit: contain; padding: 10px;" onerror="this.src='images/bike_t_${(idx % 7) + 1}.webp'" /></div>
+                  <div class="bike-info"><h3>${brand}</h3></div>
                 </div>
-              `).join('')).join('');
+              `}).join('')).join('');
             })()}
           </div>
         </div>
@@ -690,14 +701,19 @@ class App {
         
         const clicked = e.target.closest(".bike-item");
         if (clicked) {
+          const brandName = clicked.querySelector("h3").innerText;
           if (clicked.classList.contains("active")) {
-            // Already centered & active -> open garage recommendations
-            activateBike(clicked, true); setTimeout(() => { window.location.hash = "garage"; }, 150);
+            setTimeout(() => { window.location.hash = "#models?brand=" + encodeURIComponent(brandName); }, 150);
           } else {
             // Not active -> smoothly scroll it to the center
             const targetPos = getMid(clicked) - sliderContainer.clientWidth / 2;
             sliderContainer.scrollTo({ left: targetPos, behavior: "smooth" });
-            activateBike(clicked, true); setTimeout(() => { window.location.hash = "garage"; }, 450);
+            
+            // Add active class to clicked, remove from others
+            bikeItems.forEach(b => b.classList.remove("active"));
+            clicked.classList.add("active");
+            
+            setTimeout(() => { window.location.hash = "#models?brand=" + encodeURIComponent(brandName); }, 450);
           }
         }
       });
@@ -1285,6 +1301,40 @@ class App {
           </details>
         </div>
       `;
+  }
+
+  static renderModelsView(container, brand) {
+    if (!brand) {
+      window.location.hash = "#home";
+      return;
+    }
+    const models = window.HRz.Menu.menuData.shopByBike[brand] || [];
+    
+    container.innerHTML = `
+      <div class="section-head" style="margin-top:40px; text-align:center;">
+        <div><p class="eyebrow red">${brand}</p><h2>SELECT YOUR <em>MODEL</em></h2></div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 24px; padding: 40px 4vw;">
+        ${models.map((model, idx) => {
+          const fallbackUrl = `images/bike_t_${(idx % 7) + 1}.webp`;
+          const imgUrl = (window.HRzImageMap && window.HRzImageMap[model]) 
+            ? window.HRzImageMap[model].replace('.jpg', '_transparent.png') 
+            : fallbackUrl;
+          return `
+          <div style="cursor:pointer; background: #111215; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.05); transition: transform 0.3s ease, box-shadow 0.3s ease;" 
+               onclick="window.location.hash='#catalog?search=' + encodeURIComponent('${model}')"
+               onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.4)'"
+               onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+            <div style="padding: 20px; background: transparent; display: flex; align-items: center; justify-content: center; height: 180px;">
+              <img src="${imgUrl}" alt="${model}" style="max-height: 120%; max-width: 120%; object-fit: contain; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.25));" onerror="this.src='${fallbackUrl}'" />
+            </div>
+            <div style="padding: 16px; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.05);">
+              <h3 style="margin: 0; font-size: 16px; color: #ffffff; font-weight: 700; text-transform: uppercase;">${model}</h3>
+            </div>
+          </div>
+        `}).join('')}
+      </div>
+    `;
   }
 }
 

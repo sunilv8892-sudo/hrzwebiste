@@ -12,33 +12,43 @@ class Menu {
   static menuData = {
     shopByBike: {
       "ROYAL ENFIELD": [
-        "Classic 650", "Bear 650", "Guerrilla 450", "Himalayan 450", 
-        "Super Meteor 650", "Hunter 350", "Himalayan", "Classic 350 Reborn", 
-        "Meteor 350", "Bullet Standard", "Interceptor", "Continental GT"
+        "Scram 440 new", "Classic 650", "Bear 650", "Guerrilla 450", 
+        "Himalayan 450", "SUPER METEOR 650", "Hunter 350", "Himalayan", 
+        "Classic 350 Reborn", "Standard 350 Reborn", "Meteor 350", "Classic", 
+        "Standard", "Electra", "Interceptor", "Thunderbird", "Thunderbird X", 
+        "Continental GT", "Scram"
       ],
-      "HERO": ["Xpulse 210", "Mavrick 440", "Xpulse 200"],
-      "OLA": ["Ola"],
-      "YAMAHA": ["Aerox 155", "RX100", "MT 15", "R3", "R15 V1", "R15 V2", "R15 V3", "R15 V4"],
-      "BMW": ["G 310GS", "G 310 R", "S 1000R", "R 1200GS", "R 1300GS"],
-      "HARLEY DAVIDSON": ["Harley 440X"],
+      "YAMAHA": [
+        "XSR 155", "RX 100", "Aerox 155", "MT 15", "R3", "R15 V1", 
+        "R15 V2", "R15 V3", "R15 V4", "R1"
+      ],
       "KTM": [
-        "KTM 390 Enduro R", "Adventure 890", "Adventure 390 2025 Model", 
-        "Adventure 390", "Duke 125", "Duke 200", "Duke 250 BS6", "Duke 250", "Duke 390", "RC 390"
+        "KTM 390 Enduro R", "Adventure 890", "ADVENTURE 390 2025 Model", 
+        "Adventure 390", "Duke 125", "Duke 200", "Duke 250 BS6", "Duke 250", 
+        "Duke 390", "RC 390"
       ],
-      "KAWASAKI": ["Versys 650", "Ninja 300", "Z900", "Ninja 400", "Ninja ZX-10R", "Ninja ZX6R"],
-      "BENELLI": ["Benelli 600", "TRK 502"],
       "BAJAJ": [
-        "Pulsar NS 400Z", "Pulsar 220", "Pulsar NS 200", "Pulsar RS 200", 
+        "NS400Z", "Pulsar 220", "Pulsar NS 200", "Pulsar RS 200", 
         "Dominar 400", "Pulsar 150", "Pulsar 180"
       ],
-      "TRIUMPH": ["Tiger 660", "Speed 400", "Tiger", "Trident 660"],
-      "DUCATI": ["Panigale V4"],
       "HONDA": [
-        "NX500", "CB 200X", "Hness CB 350", "CB 350RS", "NX400", "CB 500X", 
-        "CBR 250R", "CB 300", "CB 650R", "CBR 650R", "CBR 1000RR", "Hornet 160R"
+        "XL750 Transalp", "NX500", "CB 200X", "Hness CB 350", "Hornet 160R", 
+        "CBR 250 R", "CB 300", "CB 350 RS", "CB 500X", "NX400", "CB650R", 
+        "CBR 650R", "CBR 1000RR"
       ],
-      "TVS": ["Apache RTX 300", "TVS Ronin", "Apache RTR 310", "Apache 200", "Apache RTR 160"],
-      "APRILA": ["RS660"]
+      "SUZUKI": [
+        "Gixxer", "Gixxer SF", "V Strom 250", "Hayabusa", "GSX-S750", 
+        "V Strom 800DE", "V Strom DL650"
+      ],
+      "HERO": ["Xpulse 210", "Mavrick 440", "Xpulse 200", "Impulse"],
+      "TRIUMPH": [
+        "Tiger 900", "Tracker 400", "Scrambler 400 x", "Speed 400", 
+        "Tiger Sport 660", "Tiger", "Trident 660"
+      ],
+      "TVS": [
+        "Apache RTX 300 new", "tvs ronin", "Apache 200", "Apache RTR 160", "Apache RTR 310"
+      ],
+      "HARLEY DAVIDSON": ["Harley 440X"]
     },
     accessories: {
       "BIKE PROTECTION": [
@@ -52,18 +62,28 @@ class Menu {
         "Grips and Throttle", "Hand Guard", "Handlebars", "Handle Risers", 
         "Lever Guard", "Mirror", "Mounts and Chargers", "Handlebar And Accessories"
       ],
-      "FOOT CONTROLS": ["Foot Pegs and Mounts"],
-      "LIGHTING": [
-        "Tail Light", "Auxiliary Light", "Light Accessories", "Indicator", 
-        "Headlight", "Hazard Module", "Fancy led light"
-      ],
-      "WHEEL ACCESSORIES": ["Wheel Cover"],
-      "PERFORMANCE ACCESSORIES": [
-        "Air Filter", "Exhaust", "Performance Parts", "Exhaust Accessories", "Racing Spare Parts accessories"
-      ],
+      "FOOT RESTS": ["Foot Pegs and Mounts"],
+      "HEAD LIGHT GRILL": ["Head Light Grill"],
+      "FRONT OIL CAP SILVER": ["Front Oil Cap Silver"],
+      "REAR OIL CAP": ["Rear Oil Cap"],
+      "SIDE STAND BASE": ["Side Stand Base"],
+      "FOOT REST": ["Foot Rest"],
+      "LUGGAGE CARRIER": ["Luggage Carrier"],
+      "MASTER CYLINDER GUARD": ["Master Cylinder Guard"],
+      "FOG LIGHT MOUNT": ["Fog Light Mount"],
+      "SADDLE STAY": ["Saddle Stay"],
+      "CRASH GUARD": ["Crash Guard"],
+      "RADIATOR GRILL": ["Radiator Grill"],
       "CLEANING ACCESSORIES": ["Cleaning Accessories"],
       "BODY FAIRING AND FENDERS": ["Body Fairing", "Fenders and Extenders", "Tail"]
     },
+    lighting: [
+      "Tail Light", "Auxiliary Light", "Light Accessories", "Indicator", 
+      "Headlight", "Hazard Module", "Fancy led light"
+    ],
+    performanceAccessories: [
+      "Air Filter", "Exhaust", "Performance Parts", "Exhaust Accessories", "Racing Spare Parts accessories"
+    ],
     ridingGears: {
       sidebar: ["Rider Protection", "Casuals", "Rainwear & Visibility"],
       cards: [
@@ -145,6 +165,10 @@ class Menu {
                 <ul class="mega-col-list">
                   ${shopByBike["ROYAL ENFIELD"].map(m => `<li><a href="#catalog?search=${encodeURIComponent(m)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(m)}</a></li>`).join("")}
                 </ul>
+                <h4 class="mega-col-title second-cat" onclick="window.HRz.Menu.navigateToSearch('HARLEY DAVIDSON')">HARLEY DAVIDSON</h4>
+                <ul class="mega-col-list">
+                  ${shopByBike["HARLEY DAVIDSON"].map(m => `<li><a href="#catalog?search=${encodeURIComponent(m)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(m)}</a></li>`).join("")}
+                </ul>
               </div>
               <!-- Col 2 -->
               <div class="mega-v-col">
@@ -152,9 +176,9 @@ class Menu {
                 <ul class="mega-col-list">
                   ${shopByBike["KTM"].map(m => `<li><a href="#catalog?search=${encodeURIComponent(m)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(m)}</a></li>`).join("")}
                 </ul>
-                <h4 class="mega-col-title second-cat" onclick="window.HRz.Menu.navigateToSearch('OLA')">OLA</h4>
+                <h4 class="mega-col-title second-cat" onclick="window.HRz.Menu.navigateToSearch('BAJAJ')">BAJAJ</h4>
                 <ul class="mega-col-list">
-                  ${shopByBike["OLA"].map(m => `<li><a href="#catalog?search=${encodeURIComponent(m)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(m)}</a></li>`).join("")}
+                  ${shopByBike["BAJAJ"].map(m => `<li><a href="#catalog?search=${encodeURIComponent(m)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(m)}</a></li>`).join("")}
                 </ul>
               </div>
               <!-- Col 3 -->
@@ -163,9 +187,9 @@ class Menu {
                 <ul class="mega-col-list">
                   ${shopByBike["HONDA"].map(m => `<li><a href="#catalog?search=${encodeURIComponent(m)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(m)}</a></li>`).join("")}
                 </ul>
-                <h4 class="mega-col-title second-cat" onclick="window.HRz.Menu.navigateToSearch('DUCATI')">DUCATI</h4>
+                <h4 class="mega-col-title second-cat" onclick="window.HRz.Menu.navigateToSearch('HERO')">HERO</h4>
                 <ul class="mega-col-list">
-                  ${shopByBike["DUCATI"].map(m => `<li><a href="#catalog?search=${encodeURIComponent(m)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(m)}</a></li>`).join("")}
+                  ${shopByBike["HERO"].map(m => `<li><a href="#catalog?search=${encodeURIComponent(m)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(m)}</a></li>`).join("")}
                 </ul>
               </div>
               <!-- Col 4 -->
@@ -174,29 +198,20 @@ class Menu {
                 <ul class="mega-col-list">
                   ${shopByBike["YAMAHA"].map(m => `<li><a href="#catalog?search=${encodeURIComponent(m)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(m)}</a></li>`).join("")}
                 </ul>
-                <h4 class="mega-col-title second-cat" onclick="window.HRz.Menu.navigateToSearch('BMW')">BMW</h4>
+                <h4 class="mega-col-title second-cat" onclick="window.HRz.Menu.navigateToSearch('SUZUKI')">SUZUKI</h4>
                 <ul class="mega-col-list">
-                  ${shopByBike["BMW"].map(m => `<li><a href="#catalog?search=${encodeURIComponent(m)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(m)}</a></li>`).join("")}
-                </ul>
-                <h4 class="mega-col-title second-cat" onclick="window.HRz.Menu.navigateToSearch('HARLEY DAVIDSON')">HARLEY DAVIDSON</h4>
-                <ul class="mega-col-list">
-                  ${shopByBike["HARLEY DAVIDSON"].map(m => `<li><a href="#catalog?search=${encodeURIComponent(m)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(m)}</a></li>`).join("")}
+                  ${shopByBike["SUZUKI"].map(m => `<li><a href="#catalog?search=${encodeURIComponent(m)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(m)}</a></li>`).join("")}
                 </ul>
               </div>
               <!-- Col 5 -->
               <div class="mega-v-col no-border">
-                <h4 class="mega-col-title" onclick="window.HRz.Menu.navigateToSearch('KAWASAKI')">KAWASAKI</h4>
+                <h4 class="mega-col-title" onclick="window.HRz.Menu.navigateToSearch('TRIUMPH')">TRIUMPH</h4>
                 <ul class="mega-col-list">
-                  ${shopByBike["KAWASAKI"].map(m => `<li><a href="#catalog?search=${encodeURIComponent(m)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(m)}</a></li>`).join("")}
+                  ${shopByBike["TRIUMPH"].map(m => `<li><a href="#catalog?search=${encodeURIComponent(m)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(m)}</a></li>`).join("")}
                 </ul>
-                <h4 class="mega-col-title second-cat" onclick="window.HRz.Menu.navigateToSearch('BAJAJ')">BAJAJ</h4>
+                <h4 class="mega-col-title second-cat" onclick="window.HRz.Menu.navigateToSearch('TVS')">TVS</h4>
                 <ul class="mega-col-list">
-                  ${shopByBike["BAJAJ"].map(m => `<li><a href="#catalog?search=${encodeURIComponent(m)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(m)}</a></li>`).join("")}
-                </ul>
-                <h4 class="mega-col-title second-cat" onclick="window.HRz.Menu.navigateToSearch('TRIUMPH')">TRIUMPH & OTHERS</h4>
-                <ul class="mega-col-list">
-                  ${shopByBike["TRIUMPH"].concat(shopByBike["TVS"]).concat(shopByBike["BENELLI"]).concat(shopByBike["HERO"]).concat(shopByBike["APRILA"]).slice(0, 6).map(m => `<li><a href="#catalog?search=${encodeURIComponent(m)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(m)}</a></li>`).join("")}
-                  <li><a href="#catalog" class="view-all-link" onclick="window.HRz.Menu.closeAll()">View All Models →</a></li>
+                  ${shopByBike["TVS"].map(m => `<li><a href="#catalog?search=${encodeURIComponent(m)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(m)}</a></li>`).join("")}
                 </ul>
               </div>
             </div>
@@ -224,31 +239,35 @@ class Menu {
                 <ul class="mega-col-list">
                   ${accessories["HANDLEBAR & ACCESSORIES"].map(a => `<li><a href="#catalog?search=${encodeURIComponent(a)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(a)}</a></li>`).join("")}
                 </ul>
-                <h4 class="mega-col-title second-cat" onclick="window.HRz.Menu.navigateToSearch('FOOT CONTROLS')">FOOT CONTROLS</h4>
+                <h4 class="mega-col-title second-cat" onclick="window.HRz.Menu.navigateToSearch('FOOT RESTS')">FOOT RESTS</h4>
                 <ul class="mega-col-list">
-                  ${accessories["FOOT CONTROLS"].map(a => `<li><a href="#catalog?search=${encodeURIComponent(a)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(a)}</a></li>`).join("")}
+                  ${accessories["FOOT RESTS"].map(a => `<li><a href="#catalog?search=${encodeURIComponent(a)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(a)}</a></li>`).join("")}
+                </ul>
+                <h4 class="mega-col-title second-cat" onclick="window.HRz.Menu.navigateToSearch('FOOT REST')">FOOT REST</h4>
+                <ul class="mega-col-list">
+                  ${accessories["FOOT REST"].map(a => `<li><a href="#catalog?search=${encodeURIComponent(a)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(a)}</a></li>`).join("")}
                 </ul>
               </div>
               <!-- Col 3 -->
               <div class="mega-v-col">
-                <h4 class="mega-col-title" onclick="window.HRz.Menu.navigateToSearch('LIGHTING')">LIGHTING</h4>
+                <h4 class="mega-col-title" onclick="window.HRz.Menu.navigateToSearch('GUARDS & MOUNTS')">GUARDS & MOUNTS</h4>
                 <ul class="mega-col-list">
-                  ${accessories["LIGHTING"].map(a => `<li><a href="#catalog?search=${encodeURIComponent(a)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(a)}</a></li>`).join("")}
-                </ul>
-                <h4 class="mega-col-title second-cat" onclick="window.HRz.Menu.navigateToSearch('WHEEL ACCESSORIES')">WHEEL ACCESSORIES</h4>
-                <ul class="mega-col-list">
-                  ${accessories["WHEEL ACCESSORIES"].map(a => `<li><a href="#catalog?search=${encodeURIComponent(a)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(a)}</a></li>`).join("")}
+                  ${accessories["HEAD LIGHT GRILL"].map(a => `<li><a href="#catalog?search=${encodeURIComponent(a)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(a)}</a></li>`).join("")}
+                  ${accessories["MASTER CYLINDER GUARD"].map(a => `<li><a href="#catalog?search=${encodeURIComponent(a)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(a)}</a></li>`).join("")}
+                  ${accessories["FOG LIGHT MOUNT"].map(a => `<li><a href="#catalog?search=${encodeURIComponent(a)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(a)}</a></li>`).join("")}
+                  ${accessories["CRASH GUARD"].map(a => `<li><a href="#catalog?search=${encodeURIComponent(a)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(a)}</a></li>`).join("")}
+                  ${accessories["RADIATOR GRILL"].map(a => `<li><a href="#catalog?search=${encodeURIComponent(a)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(a)}</a></li>`).join("")}
                 </ul>
               </div>
               <!-- Col 4 -->
               <div class="mega-v-col">
-                <h4 class="mega-col-title" onclick="window.HRz.Menu.navigateToSearch('PERFORMANCE ACCESSORIES')">PERFORMANCE ACCESSORIES</h4>
+                <h4 class="mega-col-title" onclick="window.HRz.Menu.navigateToSearch('OIL CAPS & STANDS')">OIL CAPS & STANDS</h4>
                 <ul class="mega-col-list">
-                  ${accessories["PERFORMANCE ACCESSORIES"].map(a => `<li><a href="#catalog?search=${encodeURIComponent(a)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(a)}</a></li>`).join("")}
-                </ul>
-                <h4 class="mega-col-title second-cat" onclick="window.HRz.Menu.navigateToSearch('CLEANING ACCESSORIES')">CLEANING ACCESSORIES</h4>
-                <ul class="mega-col-list">
-                  ${accessories["CLEANING ACCESSORIES"].map(a => `<li><a href="#catalog?search=${encodeURIComponent(a)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(a)}</a></li>`).join("")}
+                  ${accessories["FRONT OIL CAP SILVER"].map(a => `<li><a href="#catalog?search=${encodeURIComponent(a)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(a)}</a></li>`).join("")}
+                  ${accessories["REAR OIL CAP"].map(a => `<li><a href="#catalog?search=${encodeURIComponent(a)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(a)}</a></li>`).join("")}
+                  ${accessories["SIDE STAND BASE"].map(a => `<li><a href="#catalog?search=${encodeURIComponent(a)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(a)}</a></li>`).join("")}
+                  ${accessories["LUGGAGE CARRIER"].map(a => `<li><a href="#catalog?search=${encodeURIComponent(a)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(a)}</a></li>`).join("")}
+                  ${accessories["SADDLE STAY"].map(a => `<li><a href="#catalog?search=${encodeURIComponent(a)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(a)}</a></li>`).join("")}
                 </ul>
               </div>
               <!-- Col 5 -->
@@ -260,6 +279,10 @@ class Menu {
                 <h4 class="mega-col-title second-cat" onclick="window.HRz.Menu.navigateToSearch('BIKE ESSENTIALS')">BIKE ESSENTIALS</h4>
                 <ul class="mega-col-list">
                   ${accessories["BIKE ESSENTIALS"].map(a => `<li><a href="#catalog?search=${encodeURIComponent(a)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(a)}</a></li>`).join("")}
+                </ul>
+                <h4 class="mega-col-title second-cat" onclick="window.HRz.Menu.navigateToSearch('CLEANING ACCESSORIES')">CLEANING ACCESSORIES</h4>
+                <ul class="mega-col-list">
+                  ${accessories["CLEANING ACCESSORIES"].map(a => `<li><a href="#catalog?search=${encodeURIComponent(a)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(a)}</a></li>`).join("")}
                 </ul>
               </div>
             </div>
@@ -380,6 +403,14 @@ class Menu {
       <!-- ROW 2 -->
       <div class="mega-nav-bar-row row-2">
         <div class="mega-nav-item direct-link">
+          <a class="mega-title" href="#catalog?search=Performance" onclick="window.HRz.Menu.closeAll()">PERFORMANCE ACCESSORIES</a>
+        </div>
+        
+        <div class="mega-nav-item direct-link">
+          <a class="mega-title" href="#catalog?search=Lighting" onclick="window.HRz.Menu.closeAll()">LIGHTING</a>
+        </div>
+
+        <div class="mega-nav-item direct-link">
           <a class="mega-title" href="#about" onclick="window.HRz.Menu.closeAll()">ABOUT US</a>
         </div>
 
@@ -482,12 +513,31 @@ class Menu {
               <i class="chevron">+</i>
             </button>
             <div class="accordion-body">
-              <div class="mobile-grid-2col">
+              <div class="sub-accordion-group">
                 ${Object.keys(shopByBike).map(brand => `
-                  <a class="mobile-grid-btn" href="#catalog?search=${encodeURIComponent(brand)}" onclick="window.HRz.Menu.closeAll()">${escapeHTML(brand)}</a>
+                  <div class="sub-accordion-item">
+                    <button class="sub-accordion-toggle" type="button">
+                      <span>${escapeHTML(brand)}</span>
+                      <i class="chevron">+</i>
+                    </button>
+                    <div class="sub-accordion-body" style="display: none;">
+                      <div class="mobile-list-vertical">
+                        <a class="mobile-list-btn" href="#catalog?search=${encodeURIComponent(brand)}" onclick="window.HRz.Menu.closeAll()">
+                          <span>All ${escapeHTML(brand)} Bikes</span>
+                          <i>→</i>
+                        </a>
+                        ${shopByBike[brand].map(model => `
+                          <a class="mobile-list-btn" href="#catalog?search=${encodeURIComponent(model)}" onclick="window.HRz.Menu.closeAll()">
+                            <span>${escapeHTML(model)}</span>
+                            <i>→</i>
+                          </a>
+                        `).join("")}
+                      </div>
+                    </div>
+                  </div>
                 `).join("")}
               </div>
-              <div class="mobile-view-all-wrap">
+              <div class="mobile-view-all-wrap" style="margin-top: 12px;">
                 <a class="mobile-view-all-btn" href="#catalog" onclick="window.HRz.Menu.closeAll()">VIEW ALL MOTORCYCLES →</a>
               </div>
             </div>
@@ -504,6 +554,42 @@ class Menu {
                 ${Object.keys(accessories).map(cat => `
                   <a class="mobile-list-btn" href="#catalog?search=${encodeURIComponent(cat)}" onclick="window.HRz.Menu.closeAll()">
                     <span>${escapeHTML(cat)}</span>
+                    <i>→</i>
+                  </a>
+                `).join("")}
+              </div>
+            </div>
+          </div>
+
+          <!-- PERFORMANCE ACCESSORIES -->
+          <div class="accordion-item">
+            <button class="accordion-toggle" type="button">
+              <span>PERFORMANCE ACCESSORIES</span>
+              <i class="chevron">+</i>
+            </button>
+            <div class="accordion-body">
+              <div class="mobile-list-vertical">
+                ${this.menuData.performanceAccessories.map(a => `
+                  <a class="mobile-list-btn" href="#catalog?search=${encodeURIComponent(a)}" onclick="window.HRz.Menu.closeAll()">
+                    <span>${escapeHTML(a)}</span>
+                    <i>→</i>
+                  </a>
+                `).join("")}
+              </div>
+            </div>
+          </div>
+
+          <!-- LIGHTING -->
+          <div class="accordion-item">
+            <button class="accordion-toggle" type="button">
+              <span>LIGHTING</span>
+              <i class="chevron">+</i>
+            </button>
+            <div class="accordion-body">
+              <div class="mobile-list-vertical">
+                ${this.menuData.lighting.map(a => `
+                  <a class="mobile-list-btn" href="#catalog?search=${encodeURIComponent(a)}" onclick="window.HRz.Menu.closeAll()">
+                    <span>${escapeHTML(a)}</span>
                     <i>→</i>
                   </a>
                 `).join("")}
@@ -683,6 +769,32 @@ class Menu {
         });
 
         item.classList.toggle("active", !isOpen);
+        const chevron = toggle.querySelector(".chevron");
+        if (chevron) chevron.textContent = !isOpen ? "–" : "+";
+      };
+    });
+
+    document.querySelectorAll("#mainMenuDrawer .sub-accordion-toggle").forEach(toggle => {
+      toggle.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const item = toggle.parentElement;
+        const body = item.querySelector('.sub-accordion-body');
+        const isOpen = item.classList.contains("active");
+        
+        // Optionally close other sub items
+        item.parentElement.querySelectorAll(".sub-accordion-item").forEach(i => {
+          if (i !== item) {
+            i.classList.remove("active");
+            const b = i.querySelector('.sub-accordion-body');
+            if (b) b.style.display = 'none';
+            const ch = i.querySelector(".chevron");
+            if (ch) ch.textContent = "+";
+          }
+        });
+
+        item.classList.toggle("active", !isOpen);
+        if (body) body.style.display = !isOpen ? 'block' : 'none';
         const chevron = toggle.querySelector(".chevron");
         if (chevron) chevron.textContent = !isOpen ? "–" : "+";
       };

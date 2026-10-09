@@ -578,6 +578,54 @@
 }
 
 /* Touch-Optimized Brand Grid & Category Lists */
+.sub-accordion-item {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+.sub-accordion-toggle {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: left;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #cbd5e1;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 6px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.sub-accordion-toggle .chevron {
+  font-style: normal;
+  font-size: 18px;
+  font-weight: 400;
+  color: #64748b;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sub-accordion-item.active .sub-accordion-toggle {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-color: var(--red);
+}
+.sub-accordion-item.active .chevron {
+  background: var(--red);
+  color: #fff;
+}
+.sub-accordion-body {
+  padding: 8px 0 8px 12px;
+}
+
 .mobile-grid-2col {
   display: grid;
   grid-template-columns: 1fr 1fr;
