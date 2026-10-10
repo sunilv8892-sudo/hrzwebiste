@@ -6,12 +6,12 @@
 window.HRz = window.HRz || {};
 
 const CACHE_KEYS = {
-  BIKES: "hrz_db_bikes_v13",
-  PRODUCTS: "hrz_db_products_v13",
-  COMPATIBILITY: "hrz_db_compatibility_v13",
-  REVIEWS: "hrz_db_reviews_v13",
-  ORDERS: "hrz_db_orders_v13",
-  BUNDLES: "hrz_db_bundles_v13"
+  BIKES: "hrz_db_bikes_v16",
+  PRODUCTS: "hrz_db_products_v16",
+  COMPATIBILITY: "hrz_db_compatibility_v16",
+  REVIEWS: "hrz_db_reviews_v16",
+  ORDERS: "hrz_db_orders_v16",
+  BUNDLES: "hrz_db_bundles_v16"
 };
 
 const DEFAULT_BIKES = [

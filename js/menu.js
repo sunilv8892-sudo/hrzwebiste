@@ -87,36 +87,34 @@ class Menu {
     ridingGears: {
       sidebar: ["Rider Protection", "Casuals", "Rainwear & Visibility"],
       cards: [
-        { name: "Helmet", image: "images/helmet.webp", category: "Helmets" },
-        { name: "Jacket", image: "images/jacket.webp", category: "Riding Gears" },
-        { name: "Glove", image: "images/gloves.webp", category: "Riding Gears" },
-        { name: "Pants", image: "images/hero-rider.webp", category: "Riding Gears" },
-        { name: "Boot", image: "images/boot.webp", category: "Riding Gears" },
-        { name: "Shoe Protector", image: "images/category_protection.webp", category: "Riding Gears" },
-        { name: "Kneeguard", image: "images/crash_guard_product.webp", category: "Riding Gears" },
-        { name: "Elbow Guards", image: "images/bash_plate_product.webp", category: "Riding Gears" }
+        { name: "Riding Jackets", image: "images/jacket.webp", search: "Riding Jackets" },
+        { name: "Gloves", image: "images/gloves.webp", search: "Gloves" },
+        { name: "Riding Pants", image: "images/hero-rider.webp", search: "Riding Pants" },
+        { name: "Boots", image: "images/boot.webp", search: "Boots" },
+        { name: "Protective Armour", image: "images/category_protection.webp", search: "Protective Armour" },
+        { name: "Riding Suits", image: "images/crash_guard_product.webp", search: "Riding Suits" }
       ]
     },
     luggageTouring: {
       sidebar: ["Bags And Backpacks", "Luggage Accessories", "Carriers and Backrest", "Touring Accessories"],
       cards: [
-        { name: "Saddle Bag", image: "images/saddlebags_product.webp", search: "Saddle Bag" },
-        { name: "Backpack", image: "images/category_luggage.webp", search: "Backpack" },
-        { name: "Tank Bag", image: "images/saddlebags.webp", search: "Tank Bag" },
-        { name: "Tail Bag", image: "images/category_luggage.webp", search: "Tail Bag" },
-        { name: "Luggage Accessories", image: "images/phone_mount_product.webp", search: "Luggage Accessories" },
-        { name: "Carriers and Backrest", image: "images/bash_plate_product.webp", search: "Carriers and Backrest" },
+        { name: "Saddle Bags", image: "images/saddlebags_product.webp", search: "Saddle Bags" },
+        { name: "Panniers", image: "images/category_luggage.webp", search: "Panniers" },
+        { name: "Top Boxes", image: "images/saddlebags.webp", search: "Top Boxes" },
+        { name: "Tank Bags", image: "images/category_luggage.webp", search: "Tank Bags" },
+        { name: "Luggage Racks", image: "images/phone_mount_product.webp", search: "Luggage Racks" },
+        { name: "Saddle Stays", image: "images/bash_plate_product.webp", search: "Saddle Stays" },
         { name: "Touring Accessories", image: "images/fog_lights_product.webp", search: "Touring Accessories" }
       ]
     },
     helmetsAccessories: {
       sidebar: ["Helmets", "Accessories", "Rider Tech"],
       cards: [
-        { name: "Half face Helmet", image: "images/category_helmets.webp", search: "Half face Helmet" },
-        { name: "Full Face Helmet", image: "images/helmet_product.webp", search: "Full Face Helmet" },
-        { name: "Offroad Helmet", image: "images/helmet.webp", search: "Offroad Helmet" },
-        { name: "Helmet Accessories", image: "images/intercom_product.webp", search: "Accessories" },
-        { name: "Rider Tech & Intercom", image: "images/phone_mount_product.webp", search: "Rider Tech" }
+        { name: "Open-Face Helmet", image: "images/category_helmets.webp", search: "Open-Face Helmet" },
+        { name: "Full-Face Helmet", image: "images/helmet_product.webp", search: "Full-Face Helmet" },
+        { name: "Modular Helmet", image: "images/helmet.webp", search: "Modular Helmet" },
+        { name: "Helmet Visor", image: "images/helmet.webp", search: "Helmet Visor" },
+        { name: "Helmet Accessories", image: "images/intercom_product.webp", search: "Helmet Accessories" }
       ]
     },
     brands: [
@@ -307,7 +305,7 @@ class Menu {
               </div>
               <div class="mega-card-grid cols-4">
                 ${ridingGears.cards.map(c => `
-                  <a class="product-menu-card" href="#catalog?search=${encodeURIComponent(c.name)}" onclick="window.HRz.Menu.closeAll()">
+                  <a class="product-menu-card" href="#catalog?search=${encodeURIComponent(c.search || c.name)}" onclick="window.HRz.Menu.closeAll()">
                     <div class="card-img-box">
                       <img src="${c.image}" alt="${escapeHTML(c.name)}" />
                       <span class="plus-badge">+</span>
@@ -606,7 +604,7 @@ class Menu {
             <div class="accordion-body">
               <div class="mobile-list-vertical">
                 ${ridingGears.cards.map(c => `
-                  <a class="mobile-list-btn" href="#catalog?search=${encodeURIComponent(c.name)}" onclick="window.HRz.Menu.closeAll()">
+                  <a class="mobile-list-btn" href="#catalog?search=${encodeURIComponent(c.search || c.name)}" onclick="window.HRz.Menu.closeAll()">
                     <span>${escapeHTML(c.name)}</span>
                     <i>→</i>
                   </a>

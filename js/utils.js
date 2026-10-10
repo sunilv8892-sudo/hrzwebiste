@@ -143,8 +143,9 @@ function smartSearch(query, products, activeBike) {
     const nameStr = p.name.toLowerCase();
     const brandStr = p.brand.toLowerCase();
     const catStr = p.category.toLowerCase();
+    const subcatStr = p.subcategory ? p.subcategory.toLowerCase() : "";
     
-    const allWords = [...new Set([...nameStr.split(/\s+/), ...brandStr.split(/\s+/), ...catStr.split(/\s+/)])];
+    const allWords = [...new Set([...nameStr.split(/\s+/), ...brandStr.split(/\s+/), ...catStr.split(/\s+/), ...subcatStr.split(/\s+/)])];
     
     let tokensMatched = 0;
     
